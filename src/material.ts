@@ -61,8 +61,7 @@ export class Material {
           Is = uLightSpecular * uMaterialSpecular * specular;
         }
 
-        //fragColor = vec4(vec3(Ia + Id + Is), 1.0);
-        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        fragColor = vec4(vec3(Ia + Id + Is), 1.0);
       }
     `
   }
@@ -99,13 +98,17 @@ export class Material {
       "aVertexPosition",
       "aVertexNormal",
     ].forEach(attrName => {
-      this.attributeLocations.set(attrName, gl.getAttribLocation(this.program!, attrName))
+      const loc = gl.getAttribLocation(this.program!, attrName)
+      if (loc < 0) {
+        throw `fail to get attribute location: ${attrName}`
+      }
+      this.attributeLocations.set(attrName, loc)
     });
+
     [
       "uModelViewMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
-      /*
       "uShininess",
       "uLightDirection",
       "uLightAmbient",
@@ -114,7 +117,6 @@ export class Material {
       "uMaterialAmbient",
       "uMaterialDiffuse",
       "uMaterialSpecular",
-      */
     ].forEach(uniName => {
       const loc = gl.getUniformLocation(this.program!, uniName)
       if (loc === null) {

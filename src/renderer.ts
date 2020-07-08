@@ -86,6 +86,7 @@ export class Renderer {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
+    // project
     const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
     const projectionMatrixLocation = mesh.material.getUniformLocation("uProjectionMatrix")
     const normalMatrixLocation = mesh.material.getUniformLocation("uNormalMatrix")
@@ -93,12 +94,22 @@ export class Renderer {
     gl.uniformMatrix4fv(projectionMatrixLocation, false, camera.projectionMatrix)
     gl.uniformMatrix4fv(normalMatrixLocation, false, camera.normalMatrix)
 
+    // light
+    const lightDirectionLocation = mesh.material.getUniformLocation("uLightDirection")
+    const lightAmbientLocation = mesh.material.getUniformLocation("uLightAmbient")
+    const lightDiffuseLocation = mesh.material.getUniformLocation("uLightDiffuse")
+    const materialDiffuseLocation = mesh.material.getUniformLocation("uMaterialDiffuse")
+    gl.uniform3fv(lightDirectionLocation, [0, 0, -1])
+    gl.uniform4fv(lightAmbientLocation, [0.3, 0.3, 0.3, 1])
+    gl.uniform4fv(lightDiffuseLocation, [0.8, 0.8, 0.8, 1])
+    gl.uniform4fv(materialDiffuseLocation, [0.1, 0.5, 1.0, 1])
+
     try {
       gl.bindVertexArray(this.vao!)
 
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-      gl.drawElements(gl.LINES, mesh.geometry.indices.length, gl.UNSIGNED_SHORT, 0)
-      //gl.drawElements(gl.TRIANGLES, mesh.geometry.indices.length, gl.UNSIGNED_SHORT, 0)
+      //gl.drawElements(gl.LINES, mesh.geometry.indices.length, gl.UNSIGNED_SHORT, 0)
+      gl.drawElements(gl.TRIANGLES, mesh.geometry.indices.length, gl.UNSIGNED_SHORT, 0)
 
       gl.bindVertexArray(null)
       gl.bindBuffer(gl.ARRAY_BUFFER, null)
