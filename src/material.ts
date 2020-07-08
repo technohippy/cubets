@@ -123,4 +123,12 @@ export class Material {
       this.uniformLocations.set(uniName, loc)
     });
   }
+
+  getUniformLocation(name: string): WebGLUniformLocation {
+    const loc = this.uniformLocations.get(name)
+    if (loc === undefined) {
+      throw `uniform not found: ${name}`
+    }
+    return loc as WebGLUniformLocation
+  }
 }

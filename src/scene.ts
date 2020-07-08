@@ -5,6 +5,14 @@ export class Scene {
   meshes: Mesh[] = []
   lights: Light[] = []
 
+  add(obj: Mesh | Light) {
+    if (obj instanceof Mesh) {
+      this.addMesh(obj)
+    } else if (obj instanceof Light) {
+      this.addLight(obj)
+    }
+  }
+
   addMesh(mesh: Mesh) {
     this.meshes.push(mesh)
   }

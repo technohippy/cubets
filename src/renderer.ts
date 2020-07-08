@@ -1,7 +1,8 @@
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
-import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../node_modules/gl-matrix/esm/index.js"
 import { Mesh } from "./mesh.js"
+//@ts-ignore
+import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../node_modules/gl-matrix/esm/index.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -51,7 +52,6 @@ export class Renderer {
     const verticesBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, mesh.getVertices(), gl.STATIC_DRAW)
-    console.log(mesh.getVertices())
     const vertexPosition = mesh.material.attributeLocations.get("aVertexPosition")
     if (vertexPosition === undefined) {
       throw "fail to get attribute: aVertexPosition"
@@ -86,21 +86,12 @@ export class Renderer {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-    const modelViewMatrixLocation = mesh.material.uniformLocations.get("uModelViewMatrix")
-    if (modelViewMatrixLocation === undefined) {
-      throw "fail to get uniform: uModelViewMatrix"
-    }
-    const projectionMatrixLocation = mesh.material.uniformLocations.get("uProjectionMatrix")
-    if (projectionMatrixLocation === undefined) {
-      throw "fail to get uniform: uProjectionMatrix"
-    }
-    const normalMatrixLocation = mesh.material.uniformLocations.get("uNormalMatrix")
-    if (normalMatrixLocation === undefined) {
-      throw "fail to get uniform: uNormalMatrix"
-    }
-    gl.uniformMatrix4fv(modelViewMatrixLocation!, false, camera.modelViewMatrix)
-    gl.uniformMatrix4fv(projectionMatrixLocation!, false, camera.projectionMatrix)
-    gl.uniformMatrix4fv(normalMatrixLocation!, false, camera.normalMatrix)
+    const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
+    const projectionMatrixLocation = mesh.material.getUniformLocation("uProjectionMatrix")
+    const normalMatrixLocation = mesh.material.getUniformLocation("uNormalMatrix")
+    gl.uniformMatrix4fv(modelViewMatrixLocation, false, camera.modelViewMatrix)
+    gl.uniformMatrix4fv(projectionMatrixLocation, false, camera.projectionMatrix)
+    gl.uniformMatrix4fv(normalMatrixLocation, false, camera.normalMatrix)
 
     try {
       gl.bindVertexArray(this.vao!)

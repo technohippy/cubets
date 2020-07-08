@@ -12,14 +12,14 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      let scene = new Cubets.Scene()
       let cube = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.Material(),
       )
-      scene.addMesh(cube)
       let light = new Cubets.Light()
-      scene.addLight(light)
+      let scene = new Cubets.Scene()
+      scene.add(cube)
+      scene.add(light)
 
       let camera = new Cubets.Camera("cubets")
       camera.shot(scene)
