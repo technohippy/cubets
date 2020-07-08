@@ -1,6 +1,9 @@
+import { Vec2 } from './math/vec2.js'
+import { Vec3 } from './math/vec3.js'
+
 export class Geometry {
-  vertices = new Float32Array()
-  indices = new Uint16Array()
-  normals = new Float32Array()
-  uvs = new Float32Array()
+  vertices:Vec3[] = []
+  indices:number[] = []
+  normals:Vec3[] = []
+  uvs:Vec2[] = []
 }

@@ -1,8 +1,6 @@
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { Mesh } from "./mesh.js"
-//@ts-ignore
-import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../node_modules/gl-matrix/esm/index.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -125,6 +123,5 @@ export class Renderer {
       const { indicesBuffer } = this.initGLBuffers(mesh)
       this.draw(mesh, camera, indicesBuffer!)
     })
-    console.log("rendered")
   }
 }

@@ -11,14 +11,14 @@ export class Mesh {
   }
 
   getVertices(): Float32Array {
-    return this.geometry.vertices
+    return new Float32Array(this.geometry.vertices.map(v => v.toArray()).flat())
   }
 
   getNormals(): Float32Array {
-    return this.geometry.normals
+    return new Float32Array(this.geometry.normals.map(v => v.toArray()).flat())
   }
 
   getIndices(): Uint16Array {
-    return this.geometry.indices
+    return new Uint16Array(this.geometry.indices)
   }
 }

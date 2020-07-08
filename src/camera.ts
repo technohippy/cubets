@@ -4,12 +4,14 @@ import { Filter } from "./filter.js";
 //@ts-ignore
 import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../node_modules/gl-matrix/esm/index.js"
 
+glMatrix.setMatrixArrayType(Array)
+
 export class Camera {
   renderer: Renderer
   filters: Filter[] = []
-  projectionMatrix: Float32Array = mat4.create()
-  modelViewMatrix: Float32Array = mat4.create()
-  normalMatrix: Float32Array = mat4.create()
+  projectionMatrix: number[] = mat4.create()
+  modelViewMatrix: number[] = mat4.create()
+  normalMatrix: number[] = mat4.create()
 
   constructor(renderer?: Renderer | string) {
     if (typeof renderer === "string") {
