@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <script type="module">
+      import Cubets from "../dist/cubets.js"
+
+      let scene = new Cubets.Scene()
+      let cube = new Cubets.Mesh(
+        new Cubets.CubeGeometry({x:10, y:10, z:10}),
+        new Cubets.Material(),
+      )
+      scene.addMesh(cube)
+      let light = new Cubets.Light()
+      scene.addLight(light)
+
+      let camera = new Cubets.Camera("cubets")
+      camera.shot(scene)
+    </script>
+  </body>
+</html>

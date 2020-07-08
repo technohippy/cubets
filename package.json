@@ -1,0 +1,20 @@
+{
+  "name": "cubets",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "bs": "browser-sync start --server --config bs-config.js",
+    "dev": "tsc -w & npm run bs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ando Yasushi <andyjpn@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/gl-matrix": "^2.4.5",
+    "browser-sync": "^2.26.7",
+    "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.3.0"
+  }
+}
