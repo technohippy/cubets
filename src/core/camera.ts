@@ -39,16 +39,18 @@ export class Camera {
   }
 
   action(scene: Scene) {
+    if (this.#shooting) return
+
     this.#shooting = true
-    this._loop(scene)
+    this._anim(scene)
   }
 
   cut() {
     this.#shooting = false
   }
 
-  private _loop(scene: Scene) {
+  private _anim(scene: Scene) {
     this.shot(scene)
-    if (this.#shooting) requestAnimationFrame(() => this._loop(scene))
+    if (this.#shooting) requestAnimationFrame(() => this._anim(scene))
   }
 }
