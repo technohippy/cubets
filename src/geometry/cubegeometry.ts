@@ -1,6 +1,7 @@
 import { Geometry } from "../core/geometry.js"
 import { Vec2 } from "../math/vec2.js"
 import { Vec3 } from "../math/vec3.js"
+import { Face3} from "../math/face3.js"
 
 export class CubeGeometry extends Geometry {
   size: {x:number, y:number, z:number}
@@ -46,21 +47,14 @@ export class CubeGeometry extends Geometry {
       new Vec3(x2, y2, z2), // 23
     ]
     this.indices = [
-      0,1,3,    0,3,2,    // +x
-      4,5,7,    4,7,6,    // -x
-      8,9,11,   8,11,10,  // +y
-      12,13,15, 12,15,14, // -y
-      16,17,19, 16,19,18, // +z
-      20,21,23, 20,23,22, // -z
+      new Face3(1,0,3),    new Face3(3,0,2),    // +x
+      new Face3(4,5,7),    new Face3(4,7,6),    // -x
+      new Face3(9,8,11),   new Face3(11,8,10),  // +y
+      new Face3(12,13,15), new Face3(12,15,14), // -y
+      new Face3(17,16,19), new Face3(19,16,18), // +z
+      new Face3(20,21,23), new Face3(20,23,22), // -z
     ]
-    this.normals = [
-      new Vec3( 1,0,0), new Vec3( 1,0,0), new Vec3( 1,0,0), new Vec3( 1,0,0),
-      new Vec3(-1,0,0), new Vec3(-1,0,0), new Vec3(-1,0,0), new Vec3(-1,0,0),
-      new Vec3( 0,1,0), new Vec3( 0,1,0), new Vec3( 0,1,0), new Vec3( 0,1,0), 
-      new Vec3(0,-1,0), new Vec3(0,-1,0), new Vec3(0,-1,0), new Vec3(0,-1,0), 
-      new Vec3( 0,0,1), new Vec3( 0,0,1), new Vec3( 0,0,1), new Vec3( 0,0,1),
-      new Vec3(0,0,-1), new Vec3(0,0,-1), new Vec3(0,0,-1), new Vec3(0,0,-1),
-    ]
+    this.normals = Geometry.computeNormals(this.indices, this.vertices)
     this.uvs = [
       new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
       new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),

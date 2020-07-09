@@ -2,7 +2,6 @@ import { Geometry } from "./geometry.js";
 import { Material } from "./material.js";
 import { Transform3 } from "../math/transform3.js"
 import { Vec3 } from "../math/vec3.js"
-import { mat4 } from "gl-matrix";
 
 export class Mesh {
   geometry: Geometry
@@ -50,7 +49,7 @@ export class Mesh {
   }
 
   getIndices(): Uint16Array {
-    return new Uint16Array(this.geometry.indices)
+    return new Uint16Array(this.geometry.indices.map(i => i.toArray()).flat())
   }
 
   private _concentrateMatrixes() {

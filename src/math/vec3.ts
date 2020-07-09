@@ -30,6 +30,28 @@ export class Vec3 {
     })
   }
 
+  add(vec: Vec3):Vec3 {
+    this.x += vec.x
+    this.y += vec.y
+    this.z += vec.z
+    return this
+  }
+
+  divide(val: number):Vec3 {
+    this.x /= val
+    this.y /= val
+    this.z /= val
+    return this
+  }
+
+  length(): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
+  }
+
+  normalize():Vec3 {
+    return this.divide(this.length())
+  }
+
   toArray(): number[] {
     return [this.x, this.y, this.z]
   }
