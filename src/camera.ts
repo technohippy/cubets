@@ -12,6 +12,7 @@ export class Camera {
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
+  shooting = false
 
   constructor(renderer?: Renderer | string) {
     if (typeof renderer === "string") {
@@ -26,12 +27,6 @@ export class Camera {
 
     mat4.identity(this.modelViewMatrix)
     mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0, -20])
-    /*
-    mat4.rotateX(this.modelViewMatrix, this.modelViewMatrix, Math.PI/5)
-    mat4.rotateY(this.modelViewMatrix, this.modelViewMatrix, Math.PI/30)
-    mat4.rotateZ(this.modelViewMatrix, this.modelViewMatrix, Math.PI/5)
-    mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [-6, -9, -15])
-    */
 
     mat4.copy(this.normalMatrix, this.modelViewMatrix)
     mat4.invert(this.normalMatrix, this.normalMatrix)
@@ -45,5 +40,19 @@ export class Camera {
       mesh.material.setup(this.renderer.gl!)
     })
     this.renderer.render(scene, this)
+  }
+
+  action(scene: Scene) {
+    this.shooting = true
+    this._loop(scene)
+  }
+
+  cut() {
+    this.shooting = false
+  }
+
+  private _loop(scene: Scene) {
+    this.shot(scene)
+    if (this.shooting) requestAnimationFrame(() => this._loop(scene))
   }
 }

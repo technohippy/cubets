@@ -41,6 +41,11 @@ export class Transform3 {
     return this.scale(new Vec3(scale, scale, scale))
   }
 
+  multiply(that: Transform3): Transform3 {
+    mat4.mul(this.#mat, this.#mat, that.#mat)
+    return this
+  }
+
   apply(vec: Vec3) {
     vec.asArray(v => {
       return vec3.transformMat4(v, v, this.#mat)

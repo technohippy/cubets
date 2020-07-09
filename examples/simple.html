@@ -12,18 +12,21 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      let cube = new Cubets.Mesh(
+      const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.Material(),
       )
-      cube.rotate(Math.PI/4, new Cubets.Vec3(1,1,1))
-      let light = new Cubets.Light()
-      let scene = new Cubets.Scene()
+      const light = new Cubets.Light()
+      const scene = new Cubets.Scene()
       scene.add(cube)
       scene.add(light)
 
-      let camera = new Cubets.Camera("cubets")
-      camera.shot(scene)
+      const camera = new Cubets.Camera("cubets")
+      camera.action(scene)
+
+      setInterval(() => {
+        cube.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+      }, 10)
     </script>
   </body>
 </html>

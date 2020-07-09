@@ -2,6 +2,7 @@ import { Geometry } from "./geometry.js";
 import { Material } from "./material.js";
 import { Transform3 } from "./math/transform3.js"
 import { Vec3 } from "./math/vec3.js"
+import { mat4 } from "gl-matrix";
 
 export class Mesh {
   geometry: Geometry
@@ -23,6 +24,7 @@ export class Mesh {
   }
 
   getVertices(): Float32Array {
+    this._concentrateMatrixes()
     return new Float32Array(this.geometry.vertices.map(v => {
       const vv = v.clone()
       this.transforms.forEach(t => t.apply(vv))
@@ -31,6 +33,7 @@ export class Mesh {
   }
 
   getNormals(): Float32Array {
+    this._concentrateMatrixes()
     return new Float32Array(this.geometry.normals.map(v => {
       const vv = v.clone()
       this.transforms.forEach(t => t.apply(vv))
@@ -40,5 +43,14 @@ export class Mesh {
 
   getIndices(): Uint16Array {
     return new Uint16Array(this.geometry.indices)
+  }
+
+  private _concentrateMatrixes() {
+    const concentration = this.transforms.pop()
+    if (concentration) {
+      this.transforms.reverse().forEach(t => concentration?.multiply(t))
+      this.transforms.length = 0
+      this.transforms.push(concentration!)
+    }
   }
 }
