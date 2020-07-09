@@ -41,11 +41,14 @@ export class Mesh {
 
   getNormals(): Float32Array {
     this._concentrateMatrixes()
-    return new Float32Array(this.geometry.normals.map(v => {
+    // TODO: getVerticesで計算済みなので、cacheすることを考える
+    const vertices = this.geometry.vertices.map(v => {
       const vv = v.clone()
       this.transforms.forEach(t => t.apply(vv))
-      return vv.toArray()
-    }).flat())
+      return vv
+    })
+    const normals = Geometry.computeNormals(this.geometry.indices, vertices)
+    return new Float32Array(normals.map(v => v.toArray()).flat())
   }
 
   getIndices(): Uint16Array {
