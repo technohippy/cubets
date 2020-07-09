@@ -28,6 +28,8 @@ export class Renderer {
   setupGLContext() {
     this.gl = this.container.getContext("webgl2") as WebGL2RenderingContext
     this.clearGL()
+    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
   }
 
   clearGL(r: number = 0.0, g: number = 0.0, b: number = 0.0, a: number = 1.0) {
@@ -81,8 +83,6 @@ export class Renderer {
 
   draw(mesh: Mesh, camera: Camera, indicesBuffer:WebGLBuffer) {
     const gl = this.gl!
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
     // project
     const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
@@ -115,11 +115,13 @@ export class Renderer {
     } catch (e) {
       console.error(e)
     }
-    //requestAnimationFrame(() => {this.draw(mesh, camera, indicesBuffer)})
   }
 
   render(scene: Scene, camera: Camera) {
+    this.setupGLContext()
+
     scene.eachMesh(mesh => {
+      mesh.material.setup(this.gl!)
       const { indicesBuffer } = this.initGLBuffers(mesh)
       this.draw(mesh, camera, indicesBuffer!)
     })

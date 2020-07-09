@@ -23,6 +23,14 @@ export class Mesh {
     this.transforms.push(Transform3.rotate(rad, axis))
   }
 
+  scale(scale: number) {
+    this.transforms.push(Transform3.scaleScalar(scale))
+  }
+
+  resetTransform() {
+    this.transforms.length = 0
+  }
+
   getVertices(): Float32Array {
     this._concentrateMatrixes()
     return new Float32Array(this.geometry.vertices.map(v => {

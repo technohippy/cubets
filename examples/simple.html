@@ -16,9 +16,17 @@
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.Material(),
       )
+
+      const cube2 = new Cubets.Mesh(
+        new Cubets.CubeGeometry({x:5, y:5, z:5}),
+        new Cubets.Material(),
+      )
+      cube2.translate(new Cubets.Vec3(-6, 0, 4))
+
       const light = new Cubets.Light()
       const scene = new Cubets.Scene()
       scene.add(cube)
+      scene.add(cube2)
       scene.add(light)
 
       const camera = new Cubets.Camera("cubets")
@@ -26,6 +34,7 @@
 
       setInterval(() => {
         cube.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+        cube2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
       }, 10)
     </script>
   </body>

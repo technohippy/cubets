@@ -12,7 +12,7 @@ export class Camera {
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
-  shooting = false
+  #shooting = false
 
   constructor(renderer?: Renderer | string) {
     if (typeof renderer === "string") {
@@ -23,7 +23,7 @@ export class Camera {
 
   initMatrixes() {
     const ar = this.renderer.container.width / this.renderer.container.height
-    mat4.perspective(this.projectionMatrix, 45, ar, 0.1, 50)
+    mat4.perspective(this.projectionMatrix, 45, ar, 0.1, 100)
 
     mat4.identity(this.modelViewMatrix)
     mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0, -20])
@@ -35,24 +35,20 @@ export class Camera {
 
   shot(scene: Scene) {
     this.initMatrixes()
-    this.renderer.setupGLContext()
-    scene.eachMesh(mesh => {
-      mesh.material.setup(this.renderer.gl!)
-    })
     this.renderer.render(scene, this)
   }
 
   action(scene: Scene) {
-    this.shooting = true
+    this.#shooting = true
     this._loop(scene)
   }
 
   cut() {
-    this.shooting = false
+    this.#shooting = false
   }
 
   private _loop(scene: Scene) {
     this.shot(scene)
-    if (this.shooting) requestAnimationFrame(() => this._loop(scene))
+    if (this.#shooting) requestAnimationFrame(() => this._loop(scene))
   }
 }
