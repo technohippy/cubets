@@ -1,30 +1,33 @@
 import { Renderer } from "./renderer.js";
 import { Scene } from "./scene.js";
 import { Filter } from "./filter.js";
-//@ts-ignore
-import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../node_modules/gl-matrix/esm/index.js"
 
+//@ts-ignore
+import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
-export class Camera {
+export abstract class Camera {
   renderer: Renderer
   filters: Filter[] = []
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
-  #shooting = false
 
-  constructor(renderer?: Renderer | string) {
+  #starting = false
+
+  constructor(renderer: Renderer | string) {
     if (typeof renderer === "string") {
-      renderer = new Renderer(renderer)
+      this.renderer = new Renderer(renderer)
+    } else {
+      this.renderer = renderer
     }
-    this.renderer = renderer ?? new Renderer()
   }
 
-  initMatrixes() {
-    const ar = this.renderer.container.width / this.renderer.container.height
-    mat4.perspective(this.projectionMatrix, 45, ar, 0.1, 100)
+  abstract setupProjectionMatrix(): void
 
+  setupMatrixes() {
+    this.setupProjectionMatrix()
+    
     mat4.identity(this.modelViewMatrix)
     mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0, -20])
 
@@ -33,24 +36,24 @@ export class Camera {
     mat4.transpose(this.normalMatrix, this.normalMatrix)
   }
 
-  shot(scene: Scene) {
-    this.initMatrixes()
+  draw(scene: Scene) {
+    this.setupMatrixes()
     this.renderer.render(scene, this)
   }
 
-  action(scene: Scene) {
-    if (this.#shooting) return
+  start(scene: Scene) {
+    if (this.#starting) return
 
-    this.#shooting = true
+    this.#starting = true
     this._anim(scene)
   }
 
-  cut() {
-    this.#shooting = false
+  stop() {
+    this.#starting = false
   }
 
   private _anim(scene: Scene) {
-    this.shot(scene)
-    if (this.#shooting) requestAnimationFrame(() => this._anim(scene))
+    this.draw(scene)
+    if (this.#starting) requestAnimationFrame(() => this._anim(scene))
   }
 }

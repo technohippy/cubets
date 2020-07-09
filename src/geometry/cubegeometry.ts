@@ -1,6 +1,6 @@
-import { Geometry } from "./geometry.js"
-import { Vec2 } from "./math/vec2.js"
-import { Vec3 } from "./math/vec3.js"
+import { Geometry } from "../core/geometry.js"
+import { Vec2 } from "../math/vec2.js"
+import { Vec3 } from "../math/vec3.js"
 
 export class CubeGeometry extends Geometry {
   size: {x:number, y:number, z:number}

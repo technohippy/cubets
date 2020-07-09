@@ -1,6 +1,5 @@
 //@ts-ignore
-import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../../node_modules/gl-matrix/esm/index.js"
-
+import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
 export class Vec3 {

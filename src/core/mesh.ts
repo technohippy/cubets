@@ -1,7 +1,7 @@
 import { Geometry } from "./geometry.js";
 import { Material } from "./material.js";
-import { Transform3 } from "./math/transform3.js"
-import { Vec3 } from "./math/vec3.js"
+import { Transform3 } from "../math/transform3.js"
+import { Vec3 } from "../math/vec3.js"
 import { mat4 } from "gl-matrix";
 
 export class Mesh {

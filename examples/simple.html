@@ -29,8 +29,9 @@
       scene.add(cube2)
       scene.add(light)
 
-      const camera = new Cubets.Camera("cubets")
-      camera.action(scene)
+      //const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
+      const camera = new Cubets.OrthogonalCamera("cubets", 0, 0, 40, -50, 50)
+      camera.start(scene)
 
       setInterval(() => {
         cube.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))

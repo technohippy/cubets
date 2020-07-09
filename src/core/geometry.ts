@@ -1,5 +1,5 @@
-import { Vec2 } from './math/vec2.js'
-import { Vec3 } from './math/vec3.js'
+import { Vec2 } from '../math/vec2.js'
+import { Vec3 } from '../math/vec3.js'
 
 export class Geometry {
   vertices:Vec3[] = []
