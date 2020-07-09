@@ -13,6 +13,10 @@ export class Vec3 {
     this.y = y
     this.z = z
   }
+
+  clone(): Vec3 {
+    return new Vec3(this.x, this.y, this.z)
+  }
  
   translate(amount:Vec3) {
     this.asArray((vals:number[]):number[] => {

@@ -16,6 +16,7 @@
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.Material(),
       )
+      cube.rotate(Math.PI/4, new Cubets.Vec3(1,1,1))
       let light = new Cubets.Light()
       let scene = new Cubets.Scene()
       scene.add(cube)

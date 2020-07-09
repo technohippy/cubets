@@ -8,36 +8,42 @@ export class CubeGeometry extends Geometry {
   constructor(size: {x:number, y:number, z:number}={x:1, y:1, z:1}) {
     super()
     this.size = size
+    const x1 = this.size.x/2
+    const x2 = -this.size.x/2
+    const y1 = this.size.y/2
+    const y2 = -this.size.y/2
+    const z1 = this.size.z/2
+    const z2 = -this.size.z/2
     this.vertices = [
-      new Vec3(+this.size.x/2, +this.size.y/2, +this.size.z/2), // 0
-      new Vec3(+this.size.x/2, +this.size.y/2, -this.size.z/2), // 1
-      new Vec3(+this.size.x/2, -this.size.y/2, +this.size.z/2), // 2
-      new Vec3(+this.size.x/2, -this.size.y/2, -this.size.z/2), // 3
+      new Vec3(x1, y1, z1), // 0
+      new Vec3(x1, y1, z2), // 1
+      new Vec3(x1, y2, z1), // 2
+      new Vec3(x1, y2, z2), // 3
 
-      new Vec3(-this.size.x/2, +this.size.y/2, +this.size.z/2), // 4
-      new Vec3(-this.size.x/2, +this.size.y/2, -this.size.z/2), // 5
-      new Vec3(-this.size.x/2, -this.size.y/2, +this.size.z/2), // 6
-      new Vec3(-this.size.x/2, -this.size.y/2, -this.size.z/2), // 7
+      new Vec3(x2, y1, z1), // 4
+      new Vec3(x2, y1, z2), // 5
+      new Vec3(x2, y2, z1), // 6
+      new Vec3(x2, y2, z2), // 7
 
-      new Vec3(+this.size.x/2, +this.size.y/2, +this.size.z/2), // 8
-      new Vec3(-this.size.x/2, +this.size.y/2, +this.size.z/2), // 9
-      new Vec3(+this.size.x/2, +this.size.y/2, -this.size.z/2), // 10
-      new Vec3(-this.size.x/2, +this.size.y/2, -this.size.z/2), // 11
+      new Vec3(x1, y1, z1), // 8
+      new Vec3(x2, y1, z1), // 9
+      new Vec3(x1, y1, z2), // 10
+      new Vec3(x2, y1, z2), // 11
 
-      new Vec3(+this.size.x/2, -this.size.y/2, +this.size.z/2), // 12
-      new Vec3(-this.size.x/2, -this.size.y/2, +this.size.z/2), // 13
-      new Vec3(+this.size.x/2, -this.size.y/2, -this.size.z/2), // 14
-      new Vec3(-this.size.x/2, -this.size.y/2, -this.size.z/2), // 15
+      new Vec3(x1, y2, z1), // 12
+      new Vec3(x2, y2, z1), // 13
+      new Vec3(x1, y2, z2), // 14
+      new Vec3(x2, y2, z2), // 15
 
-      new Vec3(+this.size.x/2, +this.size.y/2, +this.size.z/2), // 16
-      new Vec3(+this.size.x/2, -this.size.y/2, +this.size.z/2), // 17
-      new Vec3(-this.size.x/2, +this.size.y/2, +this.size.z/2), // 18
-      new Vec3(-this.size.x/2, -this.size.y/2, +this.size.z/2), // 19
+      new Vec3(x1, y1, z1), // 16
+      new Vec3(x1, y2, z1), // 17
+      new Vec3(x2, y1, z1), // 18
+      new Vec3(x2, y2, z1), // 19
 
-      new Vec3(+this.size.x/2, +this.size.y/2, -this.size.z/2), // 20
-      new Vec3(+this.size.x/2, -this.size.y/2, -this.size.z/2), // 21
-      new Vec3(-this.size.x/2, +this.size.y/2, -this.size.z/2), // 22
-      new Vec3(-this.size.x/2, -this.size.y/2, -this.size.z/2), // 23
+      new Vec3(x1, y1, z2), // 20
+      new Vec3(x1, y2, z2), // 21
+      new Vec3(x2, y1, z2), // 22
+      new Vec3(x2, y2, z2), // 23
     ]
     this.indices = [
       0,1,3,    0,3,2,    // +x
