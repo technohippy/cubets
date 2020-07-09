@@ -11,6 +11,7 @@ import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 
 import { Vec3 } from "./math/vec3.js"
+import { RGBAColor } from "./math/rgbacolor.js"
 
 export default {
   Scene: Scene,
@@ -23,4 +24,5 @@ export default {
   Mesh: Mesh,
   Renderer: Renderer,
   Vec3: Vec3,
+  RGBAColor: RGBAColor,
 }

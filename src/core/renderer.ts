@@ -1,6 +1,7 @@
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { Mesh } from "./mesh.js"
+import { Light } from "./light.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -29,7 +30,7 @@ export class Renderer {
     this.gl.depthFunc(this.gl.LEQUAL)
   }
 
-  initGLBuffers(mesh: Mesh): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
+  setupVAO(mesh: Mesh): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
     const vao = this.gl.createVertexArray()
     if (vao === null) {
       throw "fail to create VAO"
@@ -69,7 +70,7 @@ export class Renderer {
     return { verticesBuffer, indicesBuffer, normalBuffer }
   }
 
-  draw(mesh: Mesh, camera: Camera, indicesBuffer:WebGLBuffer) {
+  draw(mesh: Mesh, light: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
     // project
     const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
     const projectionMatrixLocation = mesh.material.getUniformLocation("uProjectionMatrix")
@@ -83,10 +84,12 @@ export class Renderer {
     const lightAmbientLocation = mesh.material.getUniformLocation("uLightAmbient")
     const lightDiffuseLocation = mesh.material.getUniformLocation("uLightDiffuse")
     const materialDiffuseLocation = mesh.material.getUniformLocation("uMaterialDiffuse")
-    this.gl.uniform3fv(lightDirectionLocation, [0, 0, -1])
-    this.gl.uniform4fv(lightAmbientLocation, [0.3, 0.3, 0.3, 1])
-    this.gl.uniform4fv(lightDiffuseLocation, [0.8, 0.8, 0.8, 1])
-    this.gl.uniform4fv(materialDiffuseLocation, [0.1, 0.5, 1.0, 1])
+    this.gl.uniform3fv(lightDirectionLocation, light.direction.toArray())
+    this.gl.uniform4fv(lightAmbientLocation, light.ambientColor.toArray())
+    this.gl.uniform4fv(lightDiffuseLocation, light.diffuseColor.toArray())
+
+    // material
+    this.gl.uniform4fv(materialDiffuseLocation, mesh.material.diffuseColor.toArray())
 
     try {
       this.gl.bindVertexArray(this.vao!)
@@ -106,10 +109,11 @@ export class Renderer {
   render(scene: Scene, camera: Camera) {
     this.clear()
 
+    const light = scene.lights[0]
     scene.eachMesh(mesh => {
       mesh.material.setup(this.gl!)
-      const { indicesBuffer } = this.initGLBuffers(mesh)
-      this.draw(mesh, camera, indicesBuffer!)
+      const { indicesBuffer } = this.setupVAO(mesh)
+      this.draw(mesh, light, camera, indicesBuffer!)
     })
   }
 }

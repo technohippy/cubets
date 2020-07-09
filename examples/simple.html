@@ -19,11 +19,11 @@
 
       const cube2 = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:5, y:5, z:5}),
-        new Cubets.Material(),
+        new Cubets.Material(new Cubets.RGBAColor(0.1, 0.5, 1.0)),
       )
       cube2.translate(new Cubets.Vec3(-6, 0, 4))
 
-      const light = new Cubets.Light()
+      const light = new Cubets.Light(new Cubets.Vec3(0, 0, -1), new Cubets.RGBAColor(0.3, 0.3, 0.3), new Cubets.RGBAColor(0.8, 0.8, 0.8))
       const scene = new Cubets.Scene()
       scene.add(cube)
       scene.add(cube2)

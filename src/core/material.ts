@@ -1,11 +1,15 @@
+import { RGBAColor } from "../math/rgbacolor.js"
+
 export class Material {
+  diffuseColor: RGBAColor
   vsCode: string
   fsCode: string
   program?: WebGLProgram
   attributeLocations = new Map<string, number>()
   uniformLocations = new Map<string, WebGLUniformLocation>()
 
-  constructor() {
+  constructor(diffuseColor: RGBAColor=RGBAColor.random()) {
+    this.diffuseColor = diffuseColor
     this.vsCode = `#version 300 es
       precision mediump float;
 
