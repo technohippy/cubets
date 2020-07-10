@@ -37,8 +37,8 @@
       scene.add(mesh2)
       scene.add(light)
 
-      //const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
-      const camera = new Cubets.OrthogonalCamera("cubets", 0, 0, 40, -50, 50)
+      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
+      // const camera = new Cubets.OrthogonalCamera("cubets", 0, 0, 40, -50, 50)
       camera.start(scene)
 
       setInterval(() => {

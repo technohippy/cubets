@@ -25,7 +25,6 @@ export class OrthogonalCamera extends Camera {
   }
 
   setupProjectionMatrix() {
-
     mat4.ortho(this.projectionMatrix, this.left, this.right, this.bottom, this.top, this.near, this.far)
   }
 }

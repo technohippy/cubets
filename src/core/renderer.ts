@@ -2,8 +2,8 @@ import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Light } from "./light.js"
-import { PhongLight } from "./phonglight.js"
-import { PhongMaterial } from "./phongmaterial.js"
+import { PhongLight } from "./phong/phonglight.js"
+import { PhongMaterial } from "./phong/phongmaterial.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -23,6 +23,16 @@ export class Renderer {
     this.gl = this.container.getContext("webgl2") as WebGL2RenderingContext
   }
 
+  render(scene: Scene, camera: Camera) {
+    this.clear()
+
+    const light = scene.lights[0]
+    scene.eachMesh(mesh => {
+      const { indicesBuffer } = this.setupVAO(scene, mesh)
+      this.draw(scene, mesh, light, camera, indicesBuffer!)
+    })
+  }
+
   clear(r: number = 0.0, g: number = 0.0, b: number = 0.0, a: number = 1.0) {
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
@@ -32,7 +42,7 @@ export class Renderer {
     this.gl.depthFunc(this.gl.LEQUAL)
   }
 
-  setupVAO(mesh: Mesh): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
+  setupVAO(scene: Scene, mesh: Mesh): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
     const vao = this.gl.createVertexArray()
     if (vao === null) {
       throw "fail to create VAO"
@@ -40,67 +50,28 @@ export class Renderer {
     this.vao = vao!
     this.gl.bindVertexArray(this.vao)
 
-    const verticesBuffer = this.gl.createBuffer()
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, verticesBuffer)
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, mesh.getVertices(), this.gl.STATIC_DRAW)
-    const vertexPosition = mesh.material.attributeLocations.get("aVertexPosition")
-    if (vertexPosition === undefined) {
-      throw "fail to get attribute: aVertexPosition"
-    }
-    this.gl.enableVertexAttribArray(vertexPosition!)
-    this.gl.vertexAttribPointer(vertexPosition!, 3, this.gl.FLOAT, false, 0, 0)
-
-    const normalBuffer = this.gl.createBuffer()
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, normalBuffer)
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, mesh.getNormals(), this.gl.STATIC_DRAW)
-    const normalPosition = mesh.material.attributeLocations.get("aVertexNormal")
-    if (normalPosition === undefined) {
-      throw "fail to get attribute: aVertexNormal"
-    }
-    this.gl.enableVertexAttribArray(normalPosition!)
-    this.gl.vertexAttribPointer(normalPosition!, 3, this.gl.FLOAT, false, 0, 0)
-
-    const indicesBuffer = this.gl.createBuffer()
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, mesh.getIndices(), this.gl.STATIC_DRAW)
+    const buffers = mesh.setupGLBuffers(this.gl, scene)
 
     // clear
     this.gl.bindVertexArray(null)
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null)
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null)
 
-    return { verticesBuffer, indicesBuffer, normalBuffer }
+    return buffers
   }
 
-  draw(mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
+  draw(scene: Scene, mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
     const light = light_ as PhongLight
+    const material = mesh.material as PhongMaterial
     
-    // project
-    const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
-    const projectionMatrixLocation = mesh.material.getUniformLocation("uProjectionMatrix")
-    const normalMatrixLocation = mesh.material.getUniformLocation("uNormalMatrix")
-    this.gl.uniformMatrix4fv(modelViewMatrixLocation, false, camera.modelViewMatrix)
-    this.gl.uniformMatrix4fv(projectionMatrixLocation, false, camera.projectionMatrix)
-    this.gl.uniformMatrix4fv(normalMatrixLocation, false, camera.normalMatrix)
-
-    // light
-    const lightDirectionLocation = mesh.material.getUniformLocation("uLightDirection")
-    const lightAmbientLocation = mesh.material.getUniformLocation("uLightAmbient")
-    const lightDiffuseLocation = mesh.material.getUniformLocation("uLightDiffuse")
-    const materialDiffuseLocation = mesh.material.getUniformLocation("uMaterialDiffuse")
-    this.gl.uniform3fv(lightDirectionLocation, light.direction.toArray())
-    this.gl.uniform4fv(lightAmbientLocation, light.ambientColor.toArray())
-    this.gl.uniform4fv(lightDiffuseLocation, light.diffuseColor.toArray())
-
-    // material
-    this.gl.uniform4fv(materialDiffuseLocation, (mesh.material as PhongMaterial).diffuseColor.toArray())
+    camera.setupGLMatrixes(this.gl, scene)
+    light.setupGLVars(this.gl, scene)
+    material.setupGLVars(this.gl, scene)
 
     try {
       this.gl.bindVertexArray(this.vao!)
 
-      this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indicesBuffer)
-      //this.gl.drawElements(this.gl.LINES, mesh.geometry.indices.length * 3, this.gl.UNSIGNED_SHORT, 0)
-      this.gl.drawElements(this.gl.TRIANGLES, mesh.geometry.indices.length * 3, this.gl.UNSIGNED_SHORT, 0)
+      mesh.drawGL(this.gl)
 
       this.gl.bindVertexArray(null)
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null)
@@ -108,16 +79,5 @@ export class Renderer {
     } catch (e) {
       console.error(e)
     }
-  }
-
-  render(scene: Scene, camera: Camera) {
-    this.clear()
-
-    const light = scene.lights[0]
-    scene.eachMesh(mesh => {
-      mesh.material.setup(this.gl!)
-      const { indicesBuffer } = this.setupVAO(mesh)
-      this.draw(mesh, light, camera, indicesBuffer!)
-    })
   }
 }

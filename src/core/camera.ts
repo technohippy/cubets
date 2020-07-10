@@ -4,6 +4,7 @@ import { Filter } from "./filter.js";
 
 //@ts-ignore
 import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { Vec3 } from "../math/vec3.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -13,6 +14,7 @@ export abstract class Camera {
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
 
+  position = new Vec3(0, 0, 20)
   #starting = false
 
   constructor(renderer: Renderer | string) {
@@ -23,11 +25,18 @@ export abstract class Camera {
     }
   }
 
+  setupGLMatrixes(gl:WebGL2RenderingContext, scene:Scene) {
+    const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation()
+    const modelViewMatrixLocation = scene.getModelViewMatrixUniformLocation()
+    const normalMatrixLocation = scene.getNormalMatrixUniformLocation()
+    gl.uniformMatrix4fv(modelViewMatrixLocation, false, this.modelViewMatrix)
+    gl.uniformMatrix4fv(projectionMatrixLocation, false, this.projectionMatrix)
+    gl.uniformMatrix4fv(normalMatrixLocation, false, this.normalMatrix)
+  }
+
   abstract setupProjectionMatrix(): void
 
-  setupMatrixes() {
-    this.setupProjectionMatrix()
-    
+  setupModelViewMatrix() {
     mat4.identity(this.modelViewMatrix)
     mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0, -20])
 
@@ -37,7 +46,13 @@ export abstract class Camera {
   }
 
   draw(scene: Scene) {
-    this.setupMatrixes()
+    if (!scene.prepared) {
+      scene.prepareShaders(this.renderer)
+    }
+
+    this.setupProjectionMatrix()
+    this.setupModelViewMatrix()
+
     this.renderer.render(scene, this)
   }
 
