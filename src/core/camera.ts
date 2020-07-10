@@ -25,10 +25,11 @@ export abstract class Camera {
     }
   }
 
-  setupGLMatrixes(gl:WebGL2RenderingContext, scene:Scene) {
-    const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation()
-    const modelViewMatrixLocation = scene.getModelViewMatrixUniformLocation()
-    const normalMatrixLocation = scene.getNormalMatrixUniformLocation()
+  setupGLMatrixes(renderer:Renderer, scene:Scene) {
+    const gl = renderer.gl
+    const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation(renderer)
+    const modelViewMatrixLocation = scene.getModelViewMatrixUniformLocation(renderer)
+    const normalMatrixLocation = scene.getNormalMatrixUniformLocation(renderer)
     gl.uniformMatrix4fv(modelViewMatrixLocation, false, this.modelViewMatrix)
     gl.uniformMatrix4fv(projectionMatrixLocation, false, this.projectionMatrix)
     gl.uniformMatrix4fv(normalMatrixLocation, false, this.normalMatrix)
@@ -46,7 +47,7 @@ export abstract class Camera {
   }
 
   draw(scene: Scene) {
-    if (!scene.prepared) {
+    if (!this.renderer.isLocationsPrepared) {
       scene.prepareShaders(this.renderer)
     }
 

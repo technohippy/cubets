@@ -1,7 +1,7 @@
-import { Scene } from "./scene";
+import { Renderer } from "./renderer";
 
 export abstract class Material {
   wireframe = false
 
-  abstract setupGLVars(gl:WebGL2RenderingContext, scene:Scene): void;
+  abstract setupGLVars(renderer:Renderer): void;
 }

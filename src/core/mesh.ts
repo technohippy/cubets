@@ -4,6 +4,7 @@ import { Transform3 } from "../math/transform3.js"
 import { Vec3 } from "../math/vec3.js"
 import { Quot } from "../math/quot.js"
 import { Scene } from "./scene.js";
+import { Renderer } from "./renderer.js";
 
 export class Mesh {
   geometry: Geometry
@@ -62,18 +63,19 @@ export class Mesh {
     return new Uint16Array(this.geometry.indices.map(i => i.toArray()).flat())
   }
 
-  setupGLBuffers(gl: WebGL2RenderingContext, scene:Scene): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
+  setupGLBuffers(renderer:Renderer, scene:Scene): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
+    const gl = renderer.gl
     this.verticesBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW)
-    const vertexPosition = scene.getVertexPositionAttribLocation()
+    const vertexPosition = scene.getVertexPositionAttribLocation(renderer)
     gl.enableVertexAttribArray(vertexPosition)
     gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
 
     this.normalBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, this.getNormals(), gl.STATIC_DRAW)
-    const normalPosition = scene.getVertexNormalAttribLocation()
+    const normalPosition = scene.getVertexNormalAttribLocation(renderer)
     gl.enableVertexAttribArray(normalPosition)
     gl.vertexAttribPointer(normalPosition, 3, gl.FLOAT, false, 0, 0)
 

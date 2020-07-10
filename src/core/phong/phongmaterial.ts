@@ -1,6 +1,6 @@
 import { Material } from "../material.js";
 import { RGBAColor } from "../../math/rgbacolor.js";
-import { Scene } from "../scene.js";
+import { Renderer } from "../renderer.js";
 
 export class PhongMaterial extends Material {
   diffuseColor: RGBAColor
@@ -10,8 +10,9 @@ export class PhongMaterial extends Material {
     this.diffuseColor = diffuseColor
   }
 
-  setupGLVars(gl:WebGL2RenderingContext, scene:Scene) {
-    const materialDiffuseLocation = scene.getUniformLocation("uMaterialDiffuse")
+  setupGLVars(renderer:Renderer) {
+    const gl = renderer.gl
+    const materialDiffuseLocation = renderer.getUniformLocation("uMaterialDiffuse")
     gl.uniform4fv(materialDiffuseLocation, this.diffuseColor.toArray())
   }
 }

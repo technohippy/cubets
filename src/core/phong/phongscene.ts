@@ -1,6 +1,7 @@
 import { Scene } from "../scene.js";
 import { PhongLight } from "./phonglight.js";
 import { PhongMaterial } from "./phongmaterial.js";
+import { Renderer } from "../renderer.js";
 
 export class PhongScene extends Scene {
   static Light = PhongLight
@@ -10,24 +11,24 @@ export class PhongScene extends Scene {
     super(PhongScene.vertexShader, PhongScene.fragmentShader)
   }
 
-  getVertexPositionAttribLocation(): number {
-    return this.getAttributeLocation("aVertexPosition")
+  getVertexPositionAttribLocation(renderer:Renderer): number {
+    return renderer.getAttributeLocation("aVertexPosition")
   }
 
-  getVertexNormalAttribLocation(): number {
-    return this.getAttributeLocation("aVertexNormal")
+  getVertexNormalAttribLocation(renderer:Renderer): number {
+    return renderer.getAttributeLocation("aVertexNormal")
   }
 
-  getProjectionMatrixUniformLocation(): WebGLUniformLocation {
-    return this.getUniformLocation("uProjectionMatrix")
+  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+    return renderer.getUniformLocation("uProjectionMatrix")
   }
 
-  getModelViewMatrixUniformLocation(): WebGLUniformLocation {
-    return this.getUniformLocation("uModelViewMatrix")
+  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+    return renderer.getUniformLocation("uModelViewMatrix")
   }
 
-  getNormalMatrixUniformLocation(): WebGLUniformLocation {
-    return this.getUniformLocation("uNormalMatrix")
+  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+    return renderer.getUniformLocation("uNormalMatrix")
   }
 
   modelViewMatrixName(): string {

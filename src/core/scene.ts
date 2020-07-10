@@ -5,9 +5,6 @@ import { Renderer } from './renderer.js'
 export abstract class Scene {
   vertexShader: string
   fragmentShader: string
-  attributeLocations = new Map<string, number>()
-  uniformLocations = new Map<string, WebGLUniformLocation>()
-  prepared: boolean = false
 
   meshes: Mesh[] = []
   lights: Light[] = []
@@ -75,7 +72,7 @@ export abstract class Scene {
       if (loc < 0) {
         throw `fail to get attribute location: ${attrName}`
       }
-      this.attributeLocations.set(attrName, loc)
+      renderer.attributeLocations.set(attrName, loc)
     })
 
     this.getUniformNames().forEach(uniName => {
@@ -83,34 +80,17 @@ export abstract class Scene {
       if (loc === null) {
         throw `fail to get uniform location: ${uniName}`
       }
-      this.uniformLocations.set(uniName, loc)
+      renderer.uniformLocations.set(uniName, loc)
     })
-
-    this.prepared = true
+    renderer.isLocationsPrepared = true
   }
 
-  getAttributeLocation(name: string): number {
-    const loc = this.attributeLocations.get(name)
-    if (loc === undefined) {
-      throw `attribute not found: ${name}`
-    }
-    return loc!
-  }
+  abstract getVertexPositionAttribLocation(renderer:Renderer): number;
+  abstract getVertexNormalAttribLocation(renderer:Renderer): number;
 
-  getUniformLocation(name: string): WebGLUniformLocation {
-    const loc = this.uniformLocations.get(name)
-    if (loc === undefined) {
-      throw `uniform not found: ${name}`
-    }
-    return loc as WebGLUniformLocation
-  }
-
-  abstract getVertexPositionAttribLocation(): number;
-  abstract getVertexNormalAttribLocation(): number;
-
-  abstract getProjectionMatrixUniformLocation(): WebGLUniformLocation;
-  abstract getModelViewMatrixUniformLocation(): WebGLUniformLocation;
-  abstract getNormalMatrixUniformLocation(): WebGLUniformLocation;
+  abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
+  abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
+  abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
 
   abstract getAttributeNames(): string[];
 

@@ -10,6 +10,10 @@ export class Renderer {
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
 
+  locationsPrepared = false
+  attributeLocations = new Map<string, number>()
+  uniformLocations = new Map<string, WebGLUniformLocation>()
+
   constructor(container?: HTMLCanvasElement | string) {
     if (!container) {
       container = document.createElement("canvas")
@@ -50,7 +54,7 @@ export class Renderer {
     this.vao = vao!
     this.gl.bindVertexArray(this.vao)
 
-    const buffers = mesh.setupGLBuffers(this.gl, scene)
+    const buffers = mesh.setupGLBuffers(this, scene)
 
     // clear
     this.gl.bindVertexArray(null)
@@ -64,9 +68,9 @@ export class Renderer {
     const light = light_ as PhongLight
     const material = mesh.material as PhongMaterial
     
-    camera.setupGLMatrixes(this.gl, scene)
-    light.setupGLVars(this.gl, scene)
-    material.setupGLVars(this.gl, scene)
+    camera.setupGLMatrixes(this, scene)
+    light.setupGLVars(this)
+    material.setupGLVars(this)
 
     try {
       this.gl.bindVertexArray(this.vao!)
@@ -79,5 +83,21 @@ export class Renderer {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  getAttributeLocation(name: string): number {
+    const loc = this.attributeLocations.get(name)
+    if (loc === undefined) {
+      throw `attribute not found: ${name}`
+    }
+    return loc!
+  }
+
+  getUniformLocation(name: string): WebGLUniformLocation {
+    const loc = this.uniformLocations.get(name)
+    if (loc === undefined) {
+      throw `uniform not found: ${name}`
+    }
+    return loc as WebGLUniformLocation
   }
 }
