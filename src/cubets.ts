@@ -27,4 +27,5 @@ export default {
   Renderer: Renderer,
   Vec3: Vec3,
   RGBAColor: RGBAColor,
+  Color: RGBAColor,
 }

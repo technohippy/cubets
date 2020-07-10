@@ -29,7 +29,7 @@ export class Renderer {
     const light = scene.lights[0]
     scene.eachMesh(mesh => {
       const { indicesBuffer } = this.setupVAO(scene, mesh)
-      this.draw(scene, mesh, light, camera, indicesBuffer!)
+      this.renderMesh(scene, mesh, light, camera, indicesBuffer!)
     })
   }
 
@@ -60,7 +60,7 @@ export class Renderer {
     return buffers
   }
 
-  draw(scene: Scene, mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
+  renderMesh(scene: Scene, mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
     const light = light_ as PhongLight
     const material = mesh.material as PhongMaterial
     

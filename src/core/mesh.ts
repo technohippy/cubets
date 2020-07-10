@@ -2,17 +2,19 @@ import { Geometry } from "./geometry.js";
 import { Material } from "./material.js";
 import { Transform3 } from "../math/transform3.js"
 import { Vec3 } from "../math/vec3.js"
+import { Quot } from "../math/quot.js"
 import { Scene } from "./scene.js";
 
 export class Mesh {
   geometry: Geometry
   material: Material
+  position = new Vec3()
+  rotation = new Quot()
+  transforms: Transform3[] = []
 
   verticesBuffer?: WebGLBuffer
   indicesBuffer?: WebGLBuffer
   normalBuffer?: WebGLBuffer
-
-  transforms: Transform3[] = []
 
   constructor(geometry: Geometry, material: Material) {
     this.geometry = geometry
