@@ -1,7 +1,17 @@
 import { Mesh } from './mesh.js'
 import { Light } from './light.js'
+import { Camera } from './camera.js'
+import { Material } from './material.js'
 
-export class Scene {
+export abstract class Scene {
+  vertexShader: string
+  fragmentShader: string
+
+  constructor(vs: string, fs: string) {
+    this.vertexShader = vs
+    this.fragmentShader = fs
+  }
+
   meshes: Mesh[] = []
   lights: Light[] = []
 

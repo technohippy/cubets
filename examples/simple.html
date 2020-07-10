@@ -12,21 +12,29 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      const cube = new Cubets.Mesh(
+      const scene = new Cubets.PhongScene()
+
+      const light = new Cubets.PhongScene.Light(
+        new Cubets.Vec3(0, 0, -1),
+        new Cubets.RGBAColor(0.3, 0.3, 0.3),
+        new Cubets.RGBAColor(0.8, 0.8, 0.8)
+      )
+      const material1 = new Cubets.PhongScene.Material()
+      const material2 = new Cubets.PhongScene.Material(new Cubets.RGBAColor(0.1, 0.5, 1.0))
+
+      const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
-        new Cubets.Material(),
+        material1,
       )
 
-      const cube2 = new Cubets.Mesh(
+      const mesh2 = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:5, y:5, z:5}),
-        new Cubets.Material(new Cubets.RGBAColor(0.1, 0.5, 1.0)),
+        material2,
       )
-      cube2.translate(new Cubets.Vec3(-6, 0, 4))
+      mesh2.translate(new Cubets.Vec3(-6, 0, 4))
 
-      const light = new Cubets.Light(new Cubets.Vec3(0, 0, -1), new Cubets.RGBAColor(0.3, 0.3, 0.3), new Cubets.RGBAColor(0.8, 0.8, 0.8))
-      const scene = new Cubets.Scene()
-      scene.add(cube)
-      scene.add(cube2)
+      scene.add(mesh)
+      scene.add(mesh2)
       scene.add(light)
 
       //const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
@@ -34,8 +42,8 @@
       camera.start(scene)
 
       setInterval(() => {
-        cube.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
-        cube2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
+        mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+        mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
       }, 10)
     </script>
   </body>

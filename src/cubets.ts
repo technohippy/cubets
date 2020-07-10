@@ -1,4 +1,5 @@
 import { Scene } from "./core/scene.js"
+import { PhongScene } from "./core/phongscene.js"
 import { Camera } from "./core/camera.js"
 import { Renderer } from "./core/renderer.js"
 import { Light } from "./core/light.js"
@@ -15,6 +16,7 @@ import { RGBAColor } from "./math/rgbacolor.js"
 
 export default {
   Scene: Scene,
+  PhongScene: PhongScene,
   Camera: Camera,
   PerspectiveCamera: PerspectiveCamera, 
   OrthogonalCamera: OrthogonalCamera,

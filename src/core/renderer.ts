@@ -2,6 +2,8 @@ import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Light } from "./light.js"
+import { PhongLight } from "./phonglight.js"
+import { PhongMaterial } from "./phongmaterial.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -70,7 +72,9 @@ export class Renderer {
     return { verticesBuffer, indicesBuffer, normalBuffer }
   }
 
-  draw(mesh: Mesh, light: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
+  draw(mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
+    const light = light_ as PhongLight
+    
     // project
     const modelViewMatrixLocation = mesh.material.getUniformLocation("uModelViewMatrix")
     const projectionMatrixLocation = mesh.material.getUniformLocation("uProjectionMatrix")
@@ -89,7 +93,7 @@ export class Renderer {
     this.gl.uniform4fv(lightDiffuseLocation, light.diffuseColor.toArray())
 
     // material
-    this.gl.uniform4fv(materialDiffuseLocation, mesh.material.diffuseColor.toArray())
+    this.gl.uniform4fv(materialDiffuseLocation, (mesh.material as PhongMaterial).diffuseColor.toArray())
 
     try {
       this.gl.bindVertexArray(this.vao!)
