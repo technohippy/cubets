@@ -44,6 +44,13 @@ export class Vec3 {
     return this
   }
 
+  negate():Vec3 {
+    this.x *= -1
+    this.y *= -1
+    this.z *= -1
+    return this
+  }
+
   length(): number {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
   }

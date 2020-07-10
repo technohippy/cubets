@@ -2,15 +2,16 @@ import { Geometry } from "./geometry.js";
 import { Material } from "./material.js";
 import { Transform3 } from "../math/transform3.js"
 import { Vec3 } from "../math/vec3.js"
-import { Quot } from "../math/quot.js"
+import { Quat } from "../math/quat.js"
 import { Scene } from "./scene.js";
 import { Renderer } from "./renderer.js";
 
 export class Mesh {
   geometry: Geometry
   material: Material
+
   position = new Vec3()
-  rotation = new Quot()
+  rotation = new Quat()
   transforms: Transform3[] = []
 
   verticesBuffer?: WebGLBuffer
@@ -39,19 +40,27 @@ export class Mesh {
   }
 
   getVertices(): Float32Array {
+    const positionTransform = Transform3.translate(this.position)
+    const rotationTransform = this.rotation.toTransform()
     this._concentrateMatrixes()
     return new Float32Array(this.geometry.vertices.map(v => {
       const vv = v.clone()
+      rotationTransform.apply(vv)
+      positionTransform.apply(vv)
       this.transforms.forEach(t => t.apply(vv))
       return vv.toArray()
     }).flat())
   }
 
   getNormals(): Float32Array {
+    const positionTransform = Transform3.translate(this.position)
+    const rotationTransform = this.rotation.toTransform()
     this._concentrateMatrixes()
     // TODO: getVerticesで計算済みなので、cacheすることを考える
     const vertices = this.geometry.vertices.map(v => {
       const vv = v.clone()
+      rotationTransform.apply(vv)
+      positionTransform.apply(vv)
       this.transforms.forEach(t => t.apply(vv))
       return vv
     })

@@ -10,7 +10,7 @@ export class Renderer {
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
 
-  locationsPrepared = false
+  isLocationsPrepared = false
   attributeLocations = new Map<string, number>()
   uniformLocations = new Map<string, WebGLUniformLocation>()
 

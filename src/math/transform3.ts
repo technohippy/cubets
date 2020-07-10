@@ -5,7 +5,11 @@ import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
 export class Transform3 {
-  #mat: number[] = mat4.create()
+  #mat: number[]
+
+  constructor(mat:number[] = mat4.create()) {
+    this.#mat = mat
+  }
 
   static translate(amount: Vec3): Transform3 {
     return new Transform3().translate(amount)

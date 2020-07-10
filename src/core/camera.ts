@@ -1,10 +1,10 @@
 import { Renderer } from "./renderer.js";
 import { Scene } from "./scene.js";
 import { Filter } from "./filter.js";
+import { Vec3 } from "../math/vec3.js";
 
 //@ts-ignore
 import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
-import { Vec3 } from "../math/vec3.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -14,7 +14,7 @@ export abstract class Camera {
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
 
-  position = new Vec3(0, 0, 20)
+  position = new Vec3()
   #starting = false
 
   constructor(renderer: Renderer | string) {
@@ -39,7 +39,7 @@ export abstract class Camera {
 
   setupModelViewMatrix() {
     mat4.identity(this.modelViewMatrix)
-    mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0, -20])
+    mat4.translate(this.modelViewMatrix, this.modelViewMatrix, this.position.toArray())
 
     mat4.copy(this.normalMatrix, this.modelViewMatrix)
     mat4.invert(this.normalMatrix, this.normalMatrix)

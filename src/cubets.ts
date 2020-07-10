@@ -12,6 +12,7 @@ import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 
 import { Vec3 } from "./math/vec3.js"
+import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
 
 export default {
@@ -26,6 +27,7 @@ export default {
   Mesh: Mesh,
   Renderer: Renderer,
   Vec3: Vec3,
+  Quat: Quat,
   RGBAColor: RGBAColor,
   Color: RGBAColor,
 }
