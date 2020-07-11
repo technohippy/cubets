@@ -41,9 +41,10 @@
       camera.position.z = 20
       camera.start(scene)
 
-      const camera2 = new Cubets.OrthogonalCamera("cubets2", 0, 0, 40, -50, 50)
+      const camera2 = new Cubets.OrthogonalCamera("cubets2", 40, -50, 50)
       camera2.position.x = -10
       camera2.position.z = 20
+      camera2.target = new Cubets.Vec3()
       camera2.start(scene)
 
       setInterval(() => {
