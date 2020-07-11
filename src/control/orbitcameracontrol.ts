@@ -49,12 +49,9 @@ export class OrbitCameraControl {
       }
       this.mousemoveEvent = evt => {
         if (!this.moving) return
-        /*
-        this.cameraPolarCoord.phai += evt.movementY / 180 * Math.PI
-        this.cameraPolarCoord.theta += evt.movementX / 180 * Math.PI
-        */
         this.cameraPolarCoord.phai += evt.movementX / 180 * Math.PI
         this.cameraPolarCoord.theta -= evt.movementY / 180 * Math.PI
+        this.cameraPolarCoord.theta = this._clamp(this.cameraPolarCoord.theta, 0, Math.PI) 
         const nextPosition = this.cameraPolarCoord.toVec3().add(this.target)
         this.camera.position.copy(nextPosition)
       }
@@ -73,5 +70,9 @@ export class OrbitCameraControl {
       this.container.removeEventListener("mouseleave", this.mouseleaveEvent!)
       this.container.removeEventListener("mousemove", this.mousemoveEvent!)
     }
+  }
+
+  private _clamp(val:number, min:number, max:number) {
+    return Math.max(min, Math.min(max, val))
   }
 }
