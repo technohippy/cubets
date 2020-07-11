@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cubets: Cube</title>
+    <title>Cubets: Animation</title>
     <style>
       canvas {
         border:1px solid gray;
@@ -25,18 +25,26 @@
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.PhongScene.Material(),
       )
-      mesh.rotation = Cubets.Quat.fromEuler(30, 30, 45)
+
+      const mesh2 = new Cubets.Mesh(
+        new Cubets.CubeGeometry({x:5, y:5, z:5}),
+        new Cubets.PhongScene.Material(new Cubets.Color(0.1, 0.5, 1.0)),
+      )
+      mesh2.position = new Cubets.Vec3(-6, 0, 4)
+      mesh2.rotation = Cubets.Quat.fromEuler(0, 0, 45)
 
       scene.add(mesh)
+      scene.add(mesh2)
       scene.add(light)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 1000)
-      //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
+      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
       camera.position.z = 20
-      camera.position.y = 10
-      camera.target = new Cubets.Vec3()
-
       camera.start(scene)
+
+      setInterval(() => {
+        mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+        mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
+      }, 10)
     </script>
   </body>
 </html>

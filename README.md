@@ -25,14 +25,14 @@ just for my learning purpose
     new Cubets.CubeGeometry({x:5, y:5, z:5}),
     new Cubets.PhongScene.Material(new Cubets.RGBAColor(0.1, 0.5, 1.0)),
   )
-  mesh2.translate(new Cubets.Vec3(-6, 0, 4))
+  mesh2.position = new Cubets.Vec3(-6, 0, 4)
 
   scene.add(mesh)
   scene.add(mesh2)
   scene.add(light)
 
   const camera = new Cubets.PerspectiveCamera("gl-canvas", 45, 0.1, 100)
-  // const camera = new Cubets.OrthogonalCamera("cubets", 0, 0, 40, -50, 50)
+  camera.position.z = 20
   camera.start(scene)
 
   setInterval(() => {
@@ -41,3 +41,9 @@ just for my learning purpose
   }, 10)
 </script>
 ```
+
+Ref.
+----
+
+- https://github.com/PacktPublishing/Real-Time-3D-Graphics-with-WebGL-2
+- https://webglfundamentals.org/webgl/lessons/ja/

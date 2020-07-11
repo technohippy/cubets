@@ -2,9 +2,11 @@ import { Renderer } from "./renderer.js";
 import { Scene } from "./scene.js";
 import { Filter } from "./filter.js";
 import { Vec3 } from "../math/vec3.js";
+import { Quat } from "../math/quat.js";
 
 //@ts-ignore
-import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { glMatrix, mat4, vec3, quat } from "../../../node_modules/gl-matrix/esm/index.js"
+import { mat3 } from "gl-matrix";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -15,6 +17,8 @@ export abstract class Camera {
   normalMatrix: number[] = mat4.create()
 
   position = new Vec3()
+  rotation = new Quat()
+  target?: Vec3
   #starting = false
 
   constructor(renderer: Renderer | string) {
@@ -38,9 +42,39 @@ export abstract class Camera {
   abstract setupProjectionMatrix(): void
 
   setupModelViewMatrix() {
-    mat4.identity(this.modelViewMatrix)
-    mat4.translate(this.modelViewMatrix, this.modelViewMatrix, this.position.toArray())
+    const translationMat = mat4.create()
+    mat4.translate(translationMat, translationMat, this.position.toArray())
+    const rotationMat = mat4.create()
+    if (this.target) {
+      // ignore this.rotation
+      // https://webglfundamentals.org/webgl/lessons/ja/webgl-3d-camera.html
+      const up = [0, 1, 0]
+      const zAxis = vec3.subtract(vec3.create(), this.position.toArray(), this.target.toArray())
+      const xAxis = vec3.cross(vec3.create(), up, zAxis)
+      const yAxis = vec3.cross(vec3.create(), zAxis, xAxis)
+      vec3.normalize(xAxis, xAxis)
+      vec3.normalize(yAxis, yAxis)
+      vec3.normalize(zAxis, zAxis)
+      mat4.copy(rotationMat, [
+        xAxis[0], xAxis[1], xAxis[2], 0,
+        yAxis[0], yAxis[1], yAxis[2], 0,
+        zAxis[0], zAxis[1], zAxis[2], 0,
+        this.position.x, this.position.y, this.position.z, 1,
+      ])
+    } else {
+      // ignore this.target
+      mat4.fromQuat(rotationMat, this.rotation.toArray())
+    }
 
+    const cameraMat = mat4.create()
+    mat4.multiply(cameraMat, cameraMat, translationMat)
+    mat4.multiply(cameraMat, cameraMat, rotationMat)
+
+    mat4.invert(this.modelViewMatrix, cameraMat)
+
+    // K = (M^-1)^T
+    // K:normal matrix
+    // M:model-view matrix
     mat4.copy(this.normalMatrix, this.modelViewMatrix)
     mat4.invert(this.normalMatrix, this.normalMatrix)
     mat4.transpose(this.normalMatrix, this.normalMatrix)

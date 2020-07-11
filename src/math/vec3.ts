@@ -36,8 +36,22 @@ export class Vec3 {
     this.z += vec.z
     return this
   }
+  
+  subtract(vec: Vec3):Vec3 {
+    this.x -= vec.x
+    this.y -= vec.y
+    this.z -= vec.z
+    return this
+  }
 
-  divide(val: number):Vec3 {
+  multiplyScalar(val: number):Vec3 {
+    this.x *= val
+    this.y *= val
+    this.z *= val
+    return this
+  }
+
+  divideScalar(val: number):Vec3 {
     this.x /= val
     this.y /= val
     this.z /= val
@@ -56,7 +70,7 @@ export class Vec3 {
   }
 
   normalize():Vec3 {
-    return this.divide(this.length())
+    return this.divideScalar(this.length())
   }
 
   toArray(): number[] {
