@@ -6,7 +6,6 @@ import { Quat } from "../math/quat.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3, quat } from "../../../node_modules/gl-matrix/esm/index.js"
-import { mat3 } from "gl-matrix";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -27,6 +26,14 @@ export abstract class Camera {
     } else {
       this.renderer = renderer
     }
+  }
+
+  followTarget(target:Vec3) {
+    this.target = target
+  }
+
+  resetTarget() {
+    this.target = undefined
   }
 
   setupGLMatrixes(renderer:Renderer, scene:Scene) {

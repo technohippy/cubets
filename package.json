@@ -10,7 +10,6 @@
   "author": "Ando Yasushi <andyjpn@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/gl-matrix": "^2.4.5",
     "browser-sync": "^2.26.7",
     "typescript": "^3.9.6"
   },

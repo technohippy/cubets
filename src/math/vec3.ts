@@ -1,3 +1,5 @@
+import { PolarCoord } from "./polarcoord.js"
+
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
@@ -11,6 +13,13 @@ export class Vec3 {
     this.x = x
     this.y = y
     this.z = z
+  }
+
+  copy(v:Vec3): Vec3 {
+    this.x = v.x
+    this.y = v.y
+    this.z = v.z
+    return this
   }
 
   clone(): Vec3 {
@@ -69,6 +78,10 @@ export class Vec3 {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
   }
 
+  distance(that:Vec3): number {
+    return this.clone().subtract(that).length()
+  }
+
   normalize():Vec3 {
     return this.divideScalar(this.length())
   }
@@ -83,5 +96,16 @@ export class Vec3 {
 
   asArray(fn:(vals:number[]) => number[]) {
     this.fromArray(fn(this.toArray()))
+  }
+
+  toPolar(): PolarCoord {
+    const r = this.length()
+    const theta = Math.acos(this.y/r)
+    const phai = this.x === 0 ? Math.PI : Math.atan(this.z/this.x)
+    return new PolarCoord(r, theta, phai)
+  }
+
+  fromPolar(polar: PolarCoord): Vec3 {
+    return this.copy(polar.toVec3())
   }
 }

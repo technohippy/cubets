@@ -11,6 +11,8 @@ import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
 
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 
+import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
+
 import { Vec3 } from "./math/vec3.js"
 import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
@@ -26,6 +28,7 @@ export default {
   Material: Material,
   Mesh: Mesh,
   Renderer: Renderer,
+  OrbitCameraControl: OrbitCameraControl,
   Vec3: Vec3,
   Quat: Quat,
   RGBAColor: RGBAColor,
