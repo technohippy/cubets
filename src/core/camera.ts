@@ -35,7 +35,8 @@ export abstract class Camera {
   }
 
   removeControl(control: CameraControl) {
-    throw "not yet"
+    this.controls.splice(this.controls.indexOf(control), 1)
+    control.detachEvents()
   }
 
   followTarget(target:Vec3) {

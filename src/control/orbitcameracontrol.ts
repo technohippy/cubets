@@ -34,7 +34,6 @@ export class OrbitCameraControl extends CameraControl {
     this.initialRadius = camera.position.distance(this.target)
     this.cameraPolarCoord = camera.position.clone().subtract(this.target).toPolar()
     camera.followTarget(this.target)
-    this.attachEvents()
   }
 
   attachEvents() {
@@ -68,7 +67,7 @@ export class OrbitCameraControl extends CameraControl {
     this.container!.addEventListener("mousewheel", this.mousewheelEventListener!)
   }
 
-  detatchEvents() {
+  detachEvents() {
     if (this.mousedownEvent) {
       this.container!.removeEventListener("mousedown", this.mousedownEvent!)
       this.container!.removeEventListener("mouseup", this.mouseupEvent!)

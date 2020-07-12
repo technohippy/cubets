@@ -9,7 +9,11 @@ export abstract class CameraControl {
     if (!this.container) {
       this.container = this.camera.renderer.container
     }
+    this.attachEvents()
   }
+
+  abstract attachEvents(): void
+  abstract detachEvents(): void
 
   protected _clamp(val:number, min:number, max:number) {
     return Math.max(min, Math.min(max, val))
