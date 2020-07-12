@@ -6,7 +6,7 @@ export class OrbitCameraControl {
   camera:Camera
   container:HTMLElement
   target:Vec3
-  radius:number
+  initialRadius:number
   cameraPolarCoord:PolarCoord
   moving = false
 
@@ -14,6 +14,7 @@ export class OrbitCameraControl {
   mouseupEvent?: (this: HTMLElement, ev: MouseEvent) => any
   mouseleaveEvent?: (this: HTMLElement, ev: MouseEvent) => any
   mousemoveEvent?: (this: HTMLElement, ev: MouseEvent) => any
+  mousewheelEventListener?: (this: HTMLElement, ev: MouseEvent) => any
 
   constructor(camera:Camera, target:Vec3=new Vec3(), container?:string | HTMLElement) {
     if (container === undefined) {
@@ -29,7 +30,7 @@ export class OrbitCameraControl {
     }
     this.camera = camera
     this.target = target
-    this.radius = this.camera.position.distance(this.target)
+    this.initialRadius = this.camera.position.distance(this.target)
     this.cameraPolarCoord = this.camera.position.clone().subtract(this.target).toPolar()
     this.camera.followTarget(this.target)
 
@@ -51,9 +52,11 @@ export class OrbitCameraControl {
         if (!this.moving) return
         this.cameraPolarCoord.phai += evt.movementX / 180 * Math.PI
         this.cameraPolarCoord.theta -= evt.movementY / 180 * Math.PI
-        this.cameraPolarCoord.theta = this._clamp(this.cameraPolarCoord.theta, 0, Math.PI) 
-        const nextPosition = this.cameraPolarCoord.toVec3().add(this.target)
-        this.camera.position.copy(nextPosition)
+        this._update()
+      }
+      this.mousewheelEventListener = evt => {
+        this.cameraPolarCoord.radius += (evt as WheelEvent).deltaY
+        this._update()
       }
     }
 
@@ -61,6 +64,8 @@ export class OrbitCameraControl {
     this.container.addEventListener("mouseup", this.mouseupEvent!)
     this.container.addEventListener("mouseleave", this.mouseleaveEvent!)
     this.container.addEventListener("mousemove", this.mousemoveEvent!)
+    //@ts-ignore
+    this.container.addEventListener("mousewheel", this.mousewheelEventListener!)
   }
 
   detatchEvents() {
@@ -69,7 +74,16 @@ export class OrbitCameraControl {
       this.container.removeEventListener("mouseup", this.mouseupEvent!)
       this.container.removeEventListener("mouseleave", this.mouseleaveEvent!)
       this.container.removeEventListener("mousemove", this.mousemoveEvent!)
+      //@ts-ignore
+      this.container.removeEventListener("mousewheel", this.mousewheelEventListener!)
     }
+  }
+
+  private _update() {
+      this.cameraPolarCoord.theta = this._clamp(this.cameraPolarCoord.theta, 0, Math.PI) 
+      this.cameraPolarCoord.radius = this._clamp(this.cameraPolarCoord.radius, 0.5 * this.initialRadius, 2 * this.initialRadius)
+      const nextPosition = this.cameraPolarCoord.toVec3().add(this.target)
+      this.camera.position.copy(nextPosition)
   }
 
   private _clamp(val:number, min:number, max:number) {

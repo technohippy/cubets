@@ -55,6 +55,7 @@ export class PhongScene extends Scene {
       "uModelViewMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
+      "uWireframe",
       "uShininess",
       "uLightDirection",
       "uLightAmbient",
@@ -90,6 +91,7 @@ export class PhongScene extends Scene {
   static fragmentShader = `#version 300 es
     precision mediump float;
 
+    uniform int uWireframe;
     uniform float uShininess;
     uniform vec3 uLightDirection;
     uniform vec4 uLightAmbient;
@@ -105,6 +107,11 @@ export class PhongScene extends Scene {
     out vec4 fragColor;
 
     void main(void) {
+      if (0 < uWireframe) {
+        fragColor = uMaterialAmbient;
+        return;
+      }
+
       vec3 L = normalize(uLightDirection);
       vec3 N = normalize(vNormal);
       float lambertTerm = dot(N, -L);

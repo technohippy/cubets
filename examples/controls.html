@@ -21,9 +21,11 @@
         new Cubets.Color(0.8, 0.8, 0.8)
       )
 
+      const material = new Cubets.PhongScene.Material(new Cubets.Color(1,1,1))
+      material.wireframe = true
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
-        new Cubets.PhongScene.Material(),
+        material,
       )
 
       scene.add(mesh)
