@@ -28,4 +28,8 @@ export class Face3 {
   toArray(): number[] {
     return [this.p1, this.p2, this.p3]
   }
+
+  toLineArray(): number[] {
+    return [this.p1, this.p2, this.p2, this.p3, this.p3, this.p1]
+  }
 }

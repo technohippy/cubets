@@ -69,7 +69,11 @@ export class Mesh {
   }
 
   getIndices(): Uint16Array {
-    return new Uint16Array(this.geometry.indices.map(i => i.toArray()).flat())
+    if (this.material.wireframe) {
+      return new Uint16Array(this.geometry.indices.map(face => face.toLineArray()).flat())
+    } else {
+      return new Uint16Array(this.geometry.indices.map(face => face.toArray()).flat())
+    }
   }
 
   setupGLBuffers(renderer:Renderer, scene:Scene): {verticesBuffer:WebGLBuffer | null, indicesBuffer:WebGLBuffer | null, normalBuffer:WebGLBuffer | null} {
@@ -103,7 +107,7 @@ export class Mesh {
     if (this.indicesBuffer) {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer)
       if (this.material.wireframe) {
-        gl.drawElements(gl.LINES, this.geometry.indices.length * 3, gl.UNSIGNED_SHORT, 0)
+        gl.drawElements(gl.LINES, this.geometry.indices.length * 3 * 2, gl.UNSIGNED_SHORT, 0)
       } else {
         gl.drawElements(gl.TRIANGLES, this.geometry.indices.length * 3, gl.UNSIGNED_SHORT, 0)
       }

@@ -12,8 +12,8 @@ just for my learning purpose
 
   const light = new Cubets.PhongScene.Light(
     new Cubets.Vec3(0, 0, -1),
-    new Cubets.RGBAColor(0.3, 0.3, 0.3),
-    new Cubets.RGBAColor(0.8, 0.8, 0.8)
+    new Cubets.Color(0.3, 0.3, 0.3),
+    new Cubets.Color(0.8, 0.8, 0.8)
   )
 
   const mesh = new Cubets.Mesh(
@@ -23,7 +23,7 @@ just for my learning purpose
 
   const mesh2 = new Cubets.Mesh(
     new Cubets.CubeGeometry({x:5, y:5, z:5}),
-    new Cubets.PhongScene.Material(new Cubets.RGBAColor(0.1, 0.5, 1.0)),
+    new Cubets.PhongScene.Material(new Cubets.Color(0.1, 0.5, 1.0)),
   )
   mesh2.position = new Cubets.Vec3(-6, 0, 4)
 
