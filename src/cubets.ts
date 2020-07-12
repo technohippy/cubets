@@ -5,6 +5,7 @@ import { Renderer } from "./core/renderer.js"
 import { Light } from "./core/light.js"
 import { Material } from "./core/material.js"
 import { Mesh } from "./core/mesh.js"
+import { Viewport } from "./core/viewport.js"
 
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
 import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
@@ -13,6 +14,7 @@ import { CubeGeometry } from "./geometry/cubegeometry.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
 
+import { Vec2 } from "./math/vec2.js"
 import { Vec3 } from "./math/vec3.js"
 import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
@@ -29,8 +31,10 @@ export default {
   Mesh: Mesh,
   Renderer: Renderer,
   OrbitCameraControl: OrbitCameraControl,
+  Vec2: Vec2,
   Vec3: Vec3,
   Quat: Quat,
   RGBAColor: RGBAColor,
   Color: RGBAColor,
+  Viewport: Viewport,
 }

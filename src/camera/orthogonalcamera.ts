@@ -1,5 +1,5 @@
 import { Camera } from "../core/camera.js"
-import { Renderer } from "../core/renderer.js"
+import { Viewport } from "../core/viewport.js"
 
 //@ts-ignore
 import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
@@ -13,9 +13,9 @@ export class OrthogonalCamera extends Camera {
   near: number
   far: number
 
-  constructor(renderer: Renderer | string, width: number, near: number, far: number) {
-    super(renderer)
-    const height = width / this.renderer.container.width * this.renderer.container.height
+  constructor(viewport:Viewport | string, width: number, near: number, far: number) {
+    super(viewport)
+    const height = width / this.getAspectRatio()
     this.left = -width / 2
     this.right = +width / 2
     this.bottom = -height / 2

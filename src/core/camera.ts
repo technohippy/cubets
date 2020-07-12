@@ -7,6 +7,7 @@ import { CameraControl } from "../control/cameracontrol.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { Viewport } from "./viewport.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -22,12 +23,15 @@ export abstract class Camera {
   target?: Vec3
   #starting = false
 
-  constructor(renderer: Renderer | string) {
-    if (typeof renderer === "string") {
-      this.renderer = new Renderer(renderer)
-    } else {
-      this.renderer = renderer
+  constructor(viewport: Viewport | string) {
+    if (typeof viewport === "string") {
+      viewport = new Viewport(viewport)
     }
+    this.renderer = new Renderer(viewport)
+  }
+
+  getAspectRatio(): number {
+    return this.renderer.getAspectRatio()
   }
 
   addControl(control: CameraControl) {

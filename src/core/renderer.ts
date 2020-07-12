@@ -4,9 +4,11 @@ import { Mesh } from "./mesh.js"
 import { Light } from "./light.js"
 import { PhongLight } from "./phong/phonglight.js"
 import { PhongMaterial } from "./phong/phongmaterial.js"
+import { Viewport } from "./viewport.js"
 
 export class Renderer {
   container: HTMLCanvasElement
+  viewport: Viewport
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
 
@@ -14,17 +16,14 @@ export class Renderer {
   attributeLocations = new Map<string, number>()
   uniformLocations = new Map<string, WebGLUniformLocation>()
 
-  constructor(container?: HTMLCanvasElement | string) {
-    if (!container) {
-      container = document.createElement("canvas")
-      container.setAttribute("height", "400")
-      container.setAttribute("width", "600")
-      document.body.append(container)
-    } else if (typeof container === "string") {
-      container = document.getElementById(container) as HTMLCanvasElement
-    }
-    this.container = container
+  constructor(viewport:Viewport) {
+    this.container = viewport.container
     this.gl = this.container.getContext("webgl2") as WebGL2RenderingContext
+    this.viewport = viewport
+  }
+
+  getAspectRatio(): number {
+    return this.viewport.getAspectRatio()
   }
 
   render(scene: Scene, camera: Camera) {
@@ -38,10 +37,10 @@ export class Renderer {
   }
 
   clear(r: number = 0.0, g: number = 0.0, b: number = 0.0, a: number = 1.0) {
-    this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
+    this.viewport.apply(this.gl)
     this.gl.clearColor(r, g, b, a)
     this.gl.clearDepth(1.0)
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
     this.gl.enable(this.gl.DEPTH_TEST)
     this.gl.depthFunc(this.gl.LEQUAL)
   }

@@ -1,5 +1,5 @@
 import { Camera } from "../core/camera.js"
-import { Renderer } from "../core/renderer.js"
+import { Viewport } from "../core/viewport.js"
 
 //@ts-ignore
 import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
@@ -10,15 +10,14 @@ export class PerspectiveCamera extends Camera {
   near: number
   far: number
 
-  constructor(renderer: Renderer | string, fov: number, near: number, far: number) {
-    super(renderer)
+  constructor(viewport: Viewport | string, fov: number, near: number, far: number) {
+    super(viewport)
     this.fov = fov
     this.near = near
     this.far = far
   }
 
   setupProjectionMatrix() {
-    const aspectRatio = this.renderer.container.width / this.renderer.container.height
-    mat4.perspective(this.projectionMatrix, this.fov, aspectRatio, this.near, this.far)
+    mat4.perspective(this.projectionMatrix, this.fov, this.getAspectRatio(), this.near, this.far)
   }
 }
