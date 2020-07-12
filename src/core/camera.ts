@@ -3,9 +3,10 @@ import { Scene } from "./scene.js";
 import { Filter } from "./filter.js";
 import { Vec3 } from "../math/vec3.js";
 import { Quat } from "../math/quat.js";
+import { CameraControl } from "../control/cameracontrol.js";
 
 //@ts-ignore
-import { glMatrix, mat4, vec3, quat } from "../../../node_modules/gl-matrix/esm/index.js"
+import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -15,6 +16,7 @@ export abstract class Camera {
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
 
+  controls:CameraControl[] = []
   position = new Vec3()
   rotation = new Quat()
   target?: Vec3
@@ -26,6 +28,14 @@ export abstract class Camera {
     } else {
       this.renderer = renderer
     }
+  }
+
+  addControl(control: CameraControl) {
+    this.controls.push(control)
+  }
+
+  removeControl(control: CameraControl) {
+    throw "not yet"
   }
 
   followTarget(target:Vec3) {
@@ -100,6 +110,12 @@ export abstract class Camera {
 
   start(scene: Scene) {
     if (this.#starting) return
+
+    this.controls.forEach(control => {
+      if (!control.camera) {
+        control.setCamera(this)
+      }
+    })
 
     this.#starting = true
     this._anim(scene)

@@ -22,7 +22,7 @@
       )
 
       const material = new Cubets.PhongScene.Material(new Cubets.Color(1,1,1))
-      material.wireframe = true
+      //material.wireframe = true
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         material,
@@ -34,7 +34,7 @@
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 20
-      const control = new Cubets.OrbitCameraControl(camera, new Cubets.Vec3(0, 0, 0))
+      camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
     </script>
   </body>
