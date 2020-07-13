@@ -113,8 +113,10 @@ export abstract class Camera {
     this.renderer.render(scene, this)
   }
 
-  start(scene: Scene) {
+  async start(scene: Scene) {
     if (this.#starting) return
+
+    await Promise.all(scene.collectTextures().map(t => t.loadImage()))
 
     this.controls.forEach(control => {
       if (!control.camera) {

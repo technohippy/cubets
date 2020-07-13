@@ -1,6 +1,7 @@
 import { Mesh } from './mesh.js'
 import { Light } from './light.js'
 import { Renderer } from './renderer.js'
+import { Texture } from './texture.js'
 
 export abstract class Scene {
   vertexShader: string
@@ -41,6 +42,15 @@ export abstract class Scene {
 
   eachLight(fn: (obj: Light) => void) {
     this.lights.forEach(fn)
+  }
+
+  collectTextures(): Texture[] {
+    const textures:Texture[] = []
+    this.eachMesh(m => {
+      const tex = m.material.texture
+      if (tex) textures.push(tex)
+    })
+    return textures
   }
 
   prepareShaders(renderer: Renderer) {

@@ -5,6 +5,21 @@ export class Texture {
     this.image = image
   }
 
+  loadImage():Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (typeof this.image === "string") {
+        const image = new Image()
+        image.onload = () => {
+          this.image = image
+          resolve()
+        }
+        image.src = this.image
+      } else {
+        resolve()
+      }
+    })
+  }
+
   setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation) {
     if (typeof this.image === "string") {
       const img = new Image()
