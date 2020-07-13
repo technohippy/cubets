@@ -5,6 +5,7 @@ export class RGBAColor {
   a: number
 
   static White = new RGBAColor(1, 1, 1)
+  static Gray = new RGBAColor(0.5, 0.5, 0.5)
   static Black = new RGBAColor(0, 0, 0)
   static Red = new RGBAColor(1, 0, 0)
   static Green = new RGBAColor(0, 1, 0)

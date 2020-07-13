@@ -25,12 +25,12 @@
       const randomMaterial = new Cubets.PhongScene.Material()
       const normalMaterial = new Cubets.PhongScene.Material()
       normalMaterial.normal = true
-      const wireframeMaterial = new Cubets.PhongScene.Material(new Cubets.Color(1,1,1))
+      const wireframeMaterial = new Cubets.PhongScene.Material(Cubets.Color.White, Cubets.Color.White)
       wireframeMaterial.wireframe = true
 
       const materials = [
-        randomMaterial,
         normalMaterial, 
+        randomMaterial,
         wireframeMaterial,
       ]
       const geometries = [
@@ -50,7 +50,7 @@
         })
       })
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
+      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 1000)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 20
       camera.addControl(new Cubets.OrbitCameraControl())

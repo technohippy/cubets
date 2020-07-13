@@ -7,11 +7,15 @@ export class PhongMaterial extends Material {
   ambientColor: RGBAColor
   specularColor: RGBAColor
 
-  constructor(diffuseColor: RGBAColor=RGBAColor.random(), ambientColor: RGBAColor=RGBAColor.White, specularColor: RGBAColor=RGBAColor.White) {
+  constructor(
+    diffuseColor: RGBAColor=RGBAColor.random(),
+    ambientColor: RGBAColor=RGBAColor.Gray,
+    specularColor: RGBAColor=RGBAColor.White
+  ) {
     super()
     this.diffuseColor = diffuseColor
-    this.ambientColor = new RGBAColor(1, 1, 1)
-    this.specularColor = new RGBAColor(1, 1, 1)
+    this.ambientColor = ambientColor
+    this.specularColor = specularColor
   }
 
   setupGLVars(renderer:Renderer) {

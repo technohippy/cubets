@@ -21,6 +21,8 @@
   - 樽型変形: postprocessing
   - viewportを指定して2視点出力
 - Skybox
+- group geometries
+- multi lights
 
 == Bugs
 
