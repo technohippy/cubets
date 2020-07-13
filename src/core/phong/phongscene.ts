@@ -145,7 +145,7 @@ export class PhongScene extends Scene {
 
         vec3 E = normalize(vEyeVector);
         vec3 R = reflect(L, N);
-        float specular = pow(max(dot(R, E), 0.0), uShininess+100000.0);
+        float specular = pow(max(dot(R, E), 0.0), uShininess);
         Is = uLightSpecular * uMaterialSpecular * specular;
       }
 
