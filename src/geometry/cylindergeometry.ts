@@ -14,7 +14,7 @@ export class CylinderGeometry extends Geometry {
     const numPhi = 16
     const dPhi = 2 * Math.PI / numPhi
     this.vertices = [new Vec3(0, -this.height / 2, 0)];
-    [-this.height / 2, this.height / 2].forEach(y => {
+    [-this.height / 2, -this.height / 2, this.height / 2, this.height / 2].forEach(y => {
       for (let phiId = 0; phiId < numPhi; phiId++) {
         const phi = phiId * dPhi
         this.vertices.push(new Vec3(this.radius * Math.cos(phi), y, this.radius * Math.sin(phi)))
@@ -29,13 +29,13 @@ export class CylinderGeometry extends Geometry {
       this.indices.push(new Face3(0, prevId, id))
     }
     // top
-    for (let id = 1+numPhi; id <= 1+numPhi+numPhi; id++) {
-      const prevId = id === 1+numPhi ? id + numPhi - 1 : id - 1
-      this.indices.push(new Face3(numPhi+numPhi+1, id, prevId))
+    for (let id = 1+3*numPhi; id <= 4*numPhi; id++) {
+      const prevId = id === 1+3*numPhi ? id + numPhi - 1 : id - 1
+      this.indices.push(new Face3(4*numPhi+1, id, prevId))
     }
     // side
-    for (let bottomId = 1; bottomId <= numPhi; bottomId++) {
-      const prevBottomId = bottomId === 1 ? bottomId + numPhi - 1 : bottomId - 1
+    for (let bottomId = 1+numPhi; bottomId <= 2*numPhi; bottomId++) {
+      const prevBottomId = bottomId === 1+numPhi ? bottomId + numPhi - 1 : bottomId - 1
       const topId = bottomId + numPhi
       const prevTopId = prevBottomId + numPhi
       this.indices.push(new Face3(bottomId, prevTopId, topId))
