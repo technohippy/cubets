@@ -57,6 +57,7 @@ export class PhongScene extends Scene {
       "uNormalMatrix",
       "uWireframeMode",
       "uNormalMode",
+      "uLightFollowCameraMode",
       "uShininess",
       "uLightDirection",
       "uLightAmbient",
@@ -75,25 +76,33 @@ export class PhongScene extends Scene {
     uniform mat4 uProjectionMatrix;
     uniform mat4 uNormalMatrix;
 
+    uniform vec3 uLightDirection;
+
     in vec3 aVertexPosition;
     in vec3 aVertexNormal;
 
     out vec3 vNormal;
     out vec3 vEyeVector;
+    out vec3 vLightVector;
 
     void main(void) {
       vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
       vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
       vEyeVector = -vec3(vertex.xyz);
+      vLightVector = (vec4(uLightDirection, 1.0) * inverse(uModelViewMatrix)).xyz;
       gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
     }
   `
   static fragmentShader = `#version 300 es
     precision mediump float;
 
+    uniform mat4 uModelViewMatrix;
+
     uniform int uNormalMode;
     uniform int uWireframeMode;
+    uniform int uLightFollowCameraMode;
+
     uniform float uShininess;
     uniform vec3 uLightDirection;
     uniform vec4 uLightAmbient;
@@ -105,6 +114,7 @@ export class PhongScene extends Scene {
 
     in vec3 vNormal;
     in vec3 vEyeVector;
+    in vec3 vLightVector;
 
     out vec4 fragColor;
 
@@ -118,7 +128,12 @@ export class PhongScene extends Scene {
         return;
       }
 
-      vec3 L = normalize(uLightDirection);
+      vec3 L;
+      if (0 < uLightFollowCameraMode) {
+        L = normalize(uLightDirection);
+      } else {
+        L = normalize(vLightVector);
+      }
       vec3 N = normalize(vNormal);
       float lambertTerm = dot(N, -L);
       vec4 Ia = uLightAmbient * uMaterialAmbient;
@@ -130,7 +145,7 @@ export class PhongScene extends Scene {
 
         vec3 E = normalize(vEyeVector);
         vec3 R = reflect(L, N);
-        float specular = pow(max(dot(R, E), 0.0), uShininess);
+        float specular = pow(max(dot(R, E), 0.0), uShininess+1000.);
         Is = uLightSpecular * uMaterialSpecular * specular;
       }
 

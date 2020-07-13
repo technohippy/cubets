@@ -20,6 +20,7 @@
 - VR mode
   - 樽型変形: postprocessing
   - viewportを指定して2視点出力
+- Skybox
 
 == Bugs
 
@@ -27,6 +28,7 @@
 
 - glmatrixの型定義？
 - importから.jsを除けない？
+  - //@ts-ignoreも
 - sourcemap
 - organize files with subdirecories
 - reduce draw calls

@@ -4,6 +4,12 @@ export class RGBAColor {
   b: number
   a: number
 
+  static White = new RGBAColor(1, 1, 1)
+  static Black = new RGBAColor(0, 0, 0)
+  static Red = new RGBAColor(1, 0, 0)
+  static Green = new RGBAColor(0, 1, 0)
+  static Blue = new RGBAColor(0, 0, 1)
+
   static random(): RGBAColor {
     return new RGBAColor(Math.random(), Math.random(), Math.random())
   }
