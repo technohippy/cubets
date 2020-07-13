@@ -12,6 +12,7 @@ import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
 
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 import { SphereGeometry } from "./geometry/spheregeometry.js"
+import { CylinderGeometry } from "./geometry/cylindergeometry.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
 
@@ -29,6 +30,7 @@ export default {
   Light: Light,
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
+  CylinderGeometry: CylinderGeometry,
   Material: Material,
   Mesh: Mesh,
   Renderer: Renderer,
