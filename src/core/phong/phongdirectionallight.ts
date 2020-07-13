@@ -3,7 +3,7 @@ import { Vec3 } from "../../math/vec3.js";
 import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
 
-export class PhongLight extends Light {
+export class PhongDirectionalLight extends Light {
   shouldFollowCamera = false
 
   direction: Vec3
@@ -11,7 +11,7 @@ export class PhongLight extends Light {
   diffuseColor: RGBAColor
   specularColor: RGBAColor
 
-  constructor(direction:Vec3, ambientColor:RGBAColor, diffuseColor:RGBAColor, specularColor:RGBAColor=RGBAColor.White) {
+  constructor(direction:Vec3, ambientColor:RGBAColor, diffuseColor:RGBAColor, specularColor:RGBAColor=RGBAColor.Gray) {
     super()
     this.direction = direction
     this.ambientColor = ambientColor

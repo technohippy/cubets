@@ -17,6 +17,7 @@ export class Mesh {
   verticesBuffer?: WebGLBuffer
   indicesBuffer?: WebGLBuffer
   normalBuffer?: WebGLBuffer
+  textureCoordsBuffer?: WebGLBuffer
 
   constructor(geometry: Geometry, material: Material) {
     this.geometry = geometry
@@ -68,6 +69,10 @@ export class Mesh {
     return new Float32Array(normals.map(v => v.toArray()).flat())
   }
 
+  getTextureCoords(): Float32Array {
+    return new Float32Array(this.geometry.uvs.map(uv => uv.toArray()).flat())
+  }
+
   getIndices(): Uint16Array {
     if (this.material.wireframe) {
       return new Uint16Array(this.geometry.indices.map(face => face.toLineArray()).flat())
@@ -81,16 +86,23 @@ export class Mesh {
     this.verticesBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW)
-    const vertexPosition = scene.getVertexPositionAttribLocation(renderer)
-    gl.enableVertexAttribArray(vertexPosition)
-    gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0)
+    const vertexLocation = scene.getVertexPositionAttribLocation(renderer)
+    gl.enableVertexAttribArray(vertexLocation)
+    gl.vertexAttribPointer(vertexLocation, 3, gl.FLOAT, false, 0, 0)
 
     this.normalBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, this.getNormals(), gl.STATIC_DRAW)
-    const normalPosition = scene.getVertexNormalAttribLocation(renderer)
-    gl.enableVertexAttribArray(normalPosition)
-    gl.vertexAttribPointer(normalPosition, 3, gl.FLOAT, false, 0, 0)
+    const normalLocation = scene.getVertexNormalAttribLocation(renderer)
+    gl.enableVertexAttribArray(normalLocation)
+    gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0)
+
+    this.textureCoordsBuffer = gl.createBuffer()!
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordsBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, this.getTextureCoords(), gl.STATIC_DRAW)
+    const textureCoordsLocation = scene.getVertexTextureCoordsAttribLocation(renderer)
+    gl.enableVertexAttribArray(textureCoordsLocation)
+    gl.vertexAttribPointer(textureCoordsLocation, 2, gl.FLOAT, false, 0, 0)
 
     this.indicesBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer)

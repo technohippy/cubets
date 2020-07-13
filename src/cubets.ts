@@ -6,6 +6,7 @@ import { Light } from "./core/light.js"
 import { Material } from "./core/material.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
+import { Texture } from "./core/texture.js"
 
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
 import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
@@ -41,4 +42,5 @@ export default {
   RGBAColor: RGBAColor,
   Color: RGBAColor,
   Viewport: Viewport,
+  Texture: Texture,
 }

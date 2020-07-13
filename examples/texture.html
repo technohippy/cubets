@@ -22,9 +22,11 @@
       )
       light.shouldFollowCamera = true
 
+      const material = new Cubets.PhongScene.Material(Cubets.Color.White)
+      material.texture = new Cubets.Texture("./images/unk.png")
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
-        new Cubets.PhongScene.Material(),
+        material,
       )
 
       scene.add(mesh)

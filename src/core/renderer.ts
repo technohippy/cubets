@@ -2,7 +2,7 @@ import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Light } from "./light.js"
-import { PhongLight } from "./phong/phonglight.js"
+import { PhongDirectionalLight } from "./phong/phongdirectionallight.js"
 import { PhongMaterial } from "./phong/phongmaterial.js"
 import { Viewport } from "./viewport.js"
 
@@ -64,7 +64,7 @@ export class Renderer {
   }
 
   renderMesh(scene: Scene, mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
-    const light = light_ as PhongLight
+    const light = light_ as PhongDirectionalLight
     const material = mesh.material as PhongMaterial
     
     camera.setupGLMatrixes(this, scene)

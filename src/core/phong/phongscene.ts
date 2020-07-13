@@ -1,10 +1,10 @@
 import { Scene } from "../scene.js";
-import { PhongLight } from "./phonglight.js";
+import { PhongDirectionalLight } from "./phongdirectionallight.js";
 import { PhongMaterial } from "./phongmaterial.js";
 import { Renderer } from "../renderer.js";
 
 export class PhongScene extends Scene {
-  static Light = PhongLight
+  static Light = PhongDirectionalLight
   static Material = PhongMaterial
 
   constructor() {
@@ -17,6 +17,10 @@ export class PhongScene extends Scene {
 
   getVertexNormalAttribLocation(renderer:Renderer): number {
     return renderer.getAttributeLocation("aVertexNormal")
+  }
+
+  getVertexTextureCoordsAttribLocation(renderer:Renderer): number {
+    return renderer.getAttributeLocation("aVertexTextureCoords")
   }
 
   getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
@@ -47,6 +51,7 @@ export class PhongScene extends Scene {
     return [
       "aVertexPosition",
       "aVertexNormal",
+      "aVertexTextureCoords",
     ]
   }
 
@@ -58,6 +63,7 @@ export class PhongScene extends Scene {
       "uWireframeMode",
       "uNormalMode",
       "uLightFollowCameraMode",
+      "uSampler",
       "uShininess",
       "uLightDirection",
       "uLightAmbient",
@@ -80,10 +86,12 @@ export class PhongScene extends Scene {
 
     in vec3 aVertexPosition;
     in vec3 aVertexNormal;
+    in vec2 aVertexTextureCoords;
 
     out vec3 vNormal;
     out vec3 vEyeVector;
     out vec3 vLightVector;
+    out vec2 vTextureCoords;
 
     void main(void) {
       vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
@@ -91,6 +99,7 @@ export class PhongScene extends Scene {
       vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
       vEyeVector = -vec3(vertex.xyz);
       vLightVector = (vec4(uLightDirection, 1.0) * inverse(uModelViewMatrix)).xyz;
+      vTextureCoords = aVertexTextureCoords;
       gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
     }
   `
@@ -98,6 +107,7 @@ export class PhongScene extends Scene {
     precision mediump float;
 
     uniform mat4 uModelViewMatrix;
+    uniform sampler2D uSampler;
 
     uniform int uNormalMode;
     uniform int uWireframeMode;
@@ -115,6 +125,7 @@ export class PhongScene extends Scene {
     in vec3 vNormal;
     in vec3 vEyeVector;
     in vec3 vLightVector;
+    in vec2 vTextureCoords;
 
     out vec4 fragColor;
 
@@ -150,6 +161,7 @@ export class PhongScene extends Scene {
       }
 
       fragColor = vec4(vec3(Ia + Id + Is), 1.0);
+      fragColor = fragColor * texture(uSampler, vTextureCoords);
     }
   `
 }

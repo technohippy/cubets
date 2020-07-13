@@ -35,5 +35,15 @@ export class PhongMaterial extends Material {
     gl.uniform4fv(materialAmbientLocation, this.ambientColor.toArray())
     gl.uniform4fv(materialSpecularLocation, this.specularColor.toArray())
     gl.uniform1f(shininessLocation, this.shininess)
+
+    if (this.texture) {
+      const samplerLocation = renderer.getUniformLocation("uSampler")
+      const glTexture = this.texture.setupGLTexture(gl)
+      if (glTexture) {
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, glTexture)
+        gl.uniform1i(samplerLocation, 0)
+      }
+    }
   }
 }

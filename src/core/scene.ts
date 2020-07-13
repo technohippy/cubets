@@ -85,15 +85,16 @@ export abstract class Scene {
     renderer.isLocationsPrepared = true
   }
 
-  abstract getVertexPositionAttribLocation(renderer:Renderer): number;
-  abstract getVertexNormalAttribLocation(renderer:Renderer): number;
+  abstract getVertexPositionAttribLocation(renderer:Renderer): number
+  abstract getVertexNormalAttribLocation(renderer:Renderer): number
+  abstract getVertexTextureCoordsAttribLocation(renderer:Renderer): number
 
-  abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
-  abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
-  abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation;
+  abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
+  abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
+  abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
 
-  abstract getAttributeNames(): string[];
+  abstract getAttributeNames(): string[]
 
-  abstract getUniformNames(): string[];
+  abstract getUniformNames(): string[]
 
 }

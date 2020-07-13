@@ -9,7 +9,6 @@
 - particle system
 - drop shadow
 - vertex color 
-- phong shading
 - Gouraud Scene追加
 - 複雑なモデルの読み込み
 - ジオメトリ追加
@@ -37,6 +36,7 @@
 
 = DONE
 
+- phong shading
 - ジオメトリ追加
   - 球
 - Wireframe mode
