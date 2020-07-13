@@ -44,7 +44,6 @@
       materials.forEach((m, x) => {
         geometries.forEach((g, y) => {
           const mesh = new Cubets.Mesh(g, m)
-          console.log(baseX + x * unit, baseY + y * unit, 0)
           mesh.position = new Cubets.Vec3(baseX + x * unit, baseY + y * unit, 0)
           scene.add(mesh)
         })

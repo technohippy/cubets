@@ -38,25 +38,7 @@ export class OrbitCameraControl extends CameraControl {
 
   attachEvents() {
     if (!this.mousedownEvent) {
-      this.mousedownEvent = evt => {
-        this.moving = true
-      }
-      this.mouseupEvent = evt => {
-        this.moving = false
-      }
-      this.mouseleaveEvent = evt => {
-        this.moving = false
-      }
-      this.mousemoveEvent = evt => {
-        if (!this.moving) return
-        this.cameraPolarCoord!.phai += evt.movementX / 180 * Math.PI
-        this.cameraPolarCoord!.theta -= evt.movementY / 180 * Math.PI
-        this._update()
-      }
-      this.mousewheelEventListener = evt => {
-        this.cameraPolarCoord!.radius += (evt as WheelEvent).deltaY
-        this._update()
-      }
+      this._setupEvents()
     }
 
     this.container!.addEventListener("mousedown", this.mousedownEvent!)
@@ -75,6 +57,28 @@ export class OrbitCameraControl extends CameraControl {
       this.container!.removeEventListener("mousemove", this.mousemoveEvent!)
       //@ts-ignore
       this.container!.removeEventListener("mousewheel", this.mousewheelEventListener!)
+    }
+  }
+
+  private _setupEvents() {
+    this.mousedownEvent = evt => {
+      this.moving = true
+    }
+    this.mouseupEvent = evt => {
+      this.moving = false
+    }
+    this.mouseleaveEvent = evt => {
+      this.moving = false
+    }
+    this.mousemoveEvent = evt => {
+      if (!this.moving) return
+      this.cameraPolarCoord!.phai += evt.movementX / 180 * Math.PI
+      this.cameraPolarCoord!.theta -= evt.movementY / 180 * Math.PI
+      this._update()
+    }
+    this.mousewheelEventListener = evt => {
+      this.cameraPolarCoord!.radius += (evt as WheelEvent).deltaY
+      this._update()
     }
   }
 

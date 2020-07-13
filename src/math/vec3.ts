@@ -101,7 +101,7 @@ export class Vec3 {
   toPolar(): PolarCoord {
     const r = this.length()
     const theta = Math.acos(this.y/r)
-    const phai = this.x === 0 ? Math.PI : Math.atan(this.z/this.x)
+    const phai = Math.atan(this.z/(this.x + 0.00001))
     return new PolarCoord(r, theta, phai)
   }
 

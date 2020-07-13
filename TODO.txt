@@ -23,11 +23,6 @@
 
 == Bugs
 
-- Wireframe mode
-  - 一部ラインが表示されない
-  - クリックすると回転する？
-- 光源の位置が直方体と球で違って見える
-
 == Refactoring
 
 - glmatrixの型定義？
@@ -47,3 +42,9 @@
 - OrbitControlにzoom追加
 - Camera Controls (Orbit)
 - implement Light class
+
+= Bug Fix
+
+- Wireframe mode
+  - クリックすると回転する？
+- 光源の位置が直方体と球で違って見える
