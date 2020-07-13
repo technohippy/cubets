@@ -13,8 +13,10 @@ export class PhongMaterial extends Material {
   setupGLVars(renderer:Renderer) {
     const gl = renderer.gl
     const wireframeLocation = renderer.getUniformLocation("uWireframe")
+    const normalLocation = renderer.getUniformLocation("uNormal")
     const materialDiffuseLocation = renderer.getUniformLocation("uMaterialDiffuse")
     gl.uniform1i(wireframeLocation, this.wireframe ? 1 : 0)
+    gl.uniform1i(normalLocation, this.normal ? 1 : 0)
     gl.uniform4fv(materialDiffuseLocation, this.diffuseColor.toArray())
   }
 }

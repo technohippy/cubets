@@ -9,10 +9,10 @@
 - particle system
 - drop shadow
 - vertex color 
+- phong shading
 - Gouraud Scene追加
 - 複雑なモデルの読み込み
 - ジオメトリ追加
-  - 球
   - 座標軸
   - 平面
 - PBR
@@ -23,6 +23,7 @@
 - Wireframe mode
   - 一部ラインが表示されない
   - クリックすると回転する？
+- 光源の位置が直方体と球で違って見える
 
 == Refactoring
 
@@ -34,6 +35,8 @@
 
 = DONE
 
+- ジオメトリ追加
+  - 球
 - Wireframe mode
   - シェーディングをOFFに
 - viewportの一部に出力
