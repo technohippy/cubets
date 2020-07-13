@@ -9,6 +9,11 @@ export abstract class Geometry {
   uvs:Vec2[] = []
 
   static computeNormals(indices:Face3[], vertices:Vec3[]) {
+    /*
+    return vertices.map(v => {
+      return v.normalize()
+    })
+    */
     const normals:Vec3[][] = []
     indices.forEach(index => {
       const normal = index.normal(vertices)

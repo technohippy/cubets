@@ -21,12 +21,36 @@
         new Cubets.Color(0.8, 0.8, 0.8)
       )
 
-      const mesh = new Cubets.Mesh(
+      const wireframeMaterial = new Cubets.PhongScene.Material(new Cubets.Color(1,1,1))
+      wireframeMaterial.wireframe = true
+      const cube1 = new Cubets.Mesh(
+        new Cubets.CubeGeometry({x:10, y:10, z:10}),
+        wireframeMaterial,
+      )
+      cube1.position = new Cubets.Vec3(-10, 10, 0)
+
+      const cube2 = new Cubets.Mesh(
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.PhongScene.Material(),
       )
+      cube2.position = new Cubets.Vec3(-10, -10, 0)
 
-      scene.add(mesh)
+      const sphere1 = new Cubets.Mesh(
+        new Cubets.SphereGeometry(8),
+        wireframeMaterial,
+      )
+      sphere1.position = new Cubets.Vec3(10, 10, 0)
+
+      const sphere2 = new Cubets.Mesh(
+        new Cubets.SphereGeometry(8),
+        new Cubets.PhongScene.Material(),
+      )
+      sphere2.position = new Cubets.Vec3(10, -10, 0)
+
+      scene.add(cube1)
+      scene.add(cube2)
+      scene.add(sphere1)
+      scene.add(sphere2)
       scene.add(light)
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)

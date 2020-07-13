@@ -16,6 +16,10 @@ export class Face3 {
   }
 
   normal(vertices: Vec3[]): Vec3 {
+    if (vertices[this.p1] === undefined) throw `invalid p1:${this.p1} in (${this.p1}, ${this.p2}, ${this.p3}: max:${vertices.length - 1})`
+    if (vertices[this.p2] === undefined) throw `invalid p2:${this.p2} in (${this.p1}, ${this.p2}, ${this.p3}: max:${vertices.length - 1})`
+    if (vertices[this.p3] === undefined) throw `invalid p3:${this.p3} in (${this.p1}, ${this.p2}, ${this.p3}: max:${vertices.length - 1})`
+
     const v1 = vertices[this.p1].toArray()
     const v2 = vertices[this.p2].toArray()
     const v3 = vertices[this.p3].toArray()
