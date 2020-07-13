@@ -55,8 +55,8 @@ export class PhongScene extends Scene {
       "uModelViewMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
-      "uWireframe",
-      "uNormal",
+      "uWireframeMode",
+      "uNormalMode",
       "uShininess",
       "uLightDirection",
       "uLightAmbient",
@@ -92,8 +92,8 @@ export class PhongScene extends Scene {
   static fragmentShader = `#version 300 es
     precision mediump float;
 
-    uniform int uNormal;
-    uniform int uWireframe;
+    uniform int uNormalMode;
+    uniform int uWireframeMode;
     uniform float uShininess;
     uniform vec3 uLightDirection;
     uniform vec4 uLightAmbient;
@@ -109,11 +109,11 @@ export class PhongScene extends Scene {
     out vec4 fragColor;
 
     void main(void) {
-      if (0 < uNormal) {
+      if (0 < uNormalMode) {
         fragColor = vec4(vNormal, 1);
         return;
       }
-      if (0 < uWireframe) {
+      if (0 < uWireframeMode) {
         fragColor = uMaterialAmbient;
         return;
       }

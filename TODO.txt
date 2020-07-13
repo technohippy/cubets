@@ -17,6 +17,9 @@
   - 平面
 - PBR
 - Stencil Buffer
+- VR mode
+  - 樽型変形: postprocessing
+  - viewportを指定して2視点出力
 
 == Bugs
 
