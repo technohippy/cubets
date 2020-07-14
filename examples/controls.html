@@ -23,9 +23,9 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      const scene = new Cubets.PhongScene()
+      const scene = new Cubets.Scene()
 
-      const light = new Cubets.PhongScene.Light(
+      const light = new Cubets.Scene.Light(
         new Cubets.Vec3(0, 0, -1),
         new Cubets.Color(0.3, 0.3, 0.3),
         new Cubets.Color(0.8, 0.8, 0.8)
@@ -33,8 +33,8 @@
       light.shouldFollowCamera = true
 
       const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry({x:10, y:10, z:10}),
-        new Cubets.PhongScene.Material(),
+        new Cubets.CubeGeometry(10, 10, 10),
+        new Cubets.Scene.Material(),
       )
 
       scene.add(mesh)

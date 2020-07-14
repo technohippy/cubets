@@ -3,6 +3,8 @@ import { PhongScene } from "./core/phong/phongscene.js"
 import { Camera } from "./core/camera.js"
 import { Renderer } from "./core/renderer.js"
 import { Light } from "./core/light.js"
+import { PhongDirectionalLight } from "./core/phong/phongdirectionallight.js"
+import { PhongPositionalLight } from "./core/phong/phongpositionallight.js"
 import { Material } from "./core/material.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
@@ -23,12 +25,14 @@ import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
 
 export default {
-  Scene: Scene,
+  Scene: PhongScene,
   PhongScene: PhongScene,
   Camera: Camera,
   PerspectiveCamera: PerspectiveCamera, 
   OrthogonalCamera: OrthogonalCamera,
   Light: Light,
+  PhongPositionalLight: PhongPositionalLight,
+  PhongDirectionalLight: PhongDirectionalLight,
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,

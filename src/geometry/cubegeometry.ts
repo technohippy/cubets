@@ -4,17 +4,21 @@ import { Vec3 } from "../math/vec3.js"
 import { Face3} from "../math/face3.js"
 
 export class CubeGeometry extends Geometry {
-  size: {x:number, y:number, z:number}
+  x:number
+  y:number
+  z:number
 
-  constructor(size: {x:number, y:number, z:number}={x:1, y:1, z:1}) {
+  constructor(x:number=1, y:number=1, z:number=1) {
     super()
-    this.size = size
-    const x1 = this.size.x/2
-    const x2 = -this.size.x/2
-    const y1 = this.size.y/2
-    const y2 = -this.size.y/2
-    const z1 = this.size.z/2
-    const z2 = -this.size.z/2
+    this.x = x
+    this.y = y
+    this.z = z
+    const x1 = this.x/2
+    const x2 = -this.x/2
+    const y1 = this.y/2
+    const y2 = -this.y/2
+    const z1 = this.z/2
+    const z2 = -this.z/2
     this.vertices = [
       new Vec3(x1, y1, z1), // 0
       new Vec3(x1, y1, z2), // 1
@@ -64,12 +68,12 @@ export class CubeGeometry extends Geometry {
       new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
     ]
     this.uvs = [
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
-      new Vec2(1,0), new Vec2(1,1), new Vec2(0,0), new Vec2(0,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
+      new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
     ]
   }
 }

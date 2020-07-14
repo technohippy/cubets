@@ -18,39 +18,54 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      const scene = new Cubets.PhongScene()
+      const scene = new Cubets.Scene()
 
-      const light1 = new Cubets.PhongScene.Light(
-        new Cubets.Vec3(0, 1, -1),
+      const positionalLight = new Cubets.PhongPositionalLight(
+        new Cubets.Vec3(0, 0, 0),
         new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.0)
-      )
-      const light2 = new Cubets.PhongScene.Light(
-        new Cubets.Vec3(-1, 1, 0),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.0, 0.8, 0.8)
-      )
-      const light3 = new Cubets.PhongScene.Light(
-        new Cubets.Vec3(0, -1, 0),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.0, 0.8)
+        new Cubets.Color(1.0, 0.0, 0.0)
       )
 
-      const mesh = new Cubets.Mesh(
+      const directionalLight1 = new Cubets.Scene.Light(
+        new Cubets.Vec3(1, 0.5, 0.2),
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(1.0, 0.0, 0.0)
+      )
+      const directionalLight2 = new Cubets.Scene.Light(
+        new Cubets.Vec3(-1, -0.5, -0.2),
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0.0, 0.8, 0.0)
+      )
+
+      const sphere = new Cubets.Mesh(
         new Cubets.SphereGeometry(8),
-        new Cubets.PhongScene.Material(),
+        new Cubets.Scene.Material(),
       )
+      sphere.position.x = -10
+      const cube = new Cubets.Mesh(
+        new Cubets.CubeGeometry(16, 16, 16),
+        new Cubets.Scene.Material(),
+      )
+      cube.position.x = 10
 
-      scene.add(mesh)
-      scene.add(light1)
-      scene.add(light2)
-      scene.add(light3)
+      scene.add(sphere)
+      scene.add(cube)
+      scene.add(positionalLight)
+      scene.add(directionalLight1)
+      scene.add(directionalLight2)
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 20
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
+
+      let t = 0
+      setInterval(() => {
+        positionalLight.position.z = 15 * Math.sin(t)
+        positionalLight.position.y = 10 * Math.cos(0.7 * t)
+        t += 0.02
+      }, 10)
     </script>
   </body>
 </html>

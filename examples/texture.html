@@ -39,9 +39,9 @@
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
-      const scene = new Cubets.PhongScene()
+      const scene = new Cubets.Scene()
 
-      const light = new Cubets.PhongScene.Light(
+      const light = new Cubets.Scene.Light(
         new Cubets.Vec3(0, 0, -1),
         new Cubets.Color(0.3, 0.3, 0.3),
         new Cubets.Color(0.8, 0.8, 0.8)
@@ -49,20 +49,20 @@
       light.shouldFollowCamera = true
       scene.add(light)
 
-      const urlMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      const urlMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       urlMaterial.texture = new Cubets.Texture("./images/unk.png")
 
-      const imgMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      const imgMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
 
-      const videoMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      const videoMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       videoMaterial.texture = new Cubets.Texture(document.getElementById("video"))
 
-      const canvasMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      const canvasMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
 
       const geometries = [
-        new Cubets.CubeGeometry({x:10, y:10, z:10}),
+        new Cubets.CubeGeometry(10, 10, 10),
         new Cubets.SphereGeometry(5),
         new Cubets.CylinderGeometry(5, 10),
       ]

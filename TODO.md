@@ -19,6 +19,7 @@
 - vertex color 
 - VR mode
   - 樽型変形: postprocessing
+    - https://jp.mathworks.com/help/images/creating-a-gallery-of-transformed-images.html
   - viewportを指定して2視点出力
 - Animation
 - Gouraud Scene追加

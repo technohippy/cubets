@@ -63,6 +63,8 @@ export class PhongScene extends Scene {
       "uNormalMode",
       "uLightFollowCameraMode",
       "uShininess",
+      "uPositionalLight",
+      "uLightPosition",
       "uLightDirection",
       "uLightAmbient",
       "uLightDiffuse",
@@ -88,6 +90,8 @@ export class PhongScene extends Scene {
       uniform mat4 uProjectionMatrix;
       uniform mat4 uNormalMatrix;
 
+      uniform int uPositionalLight[numLights];
+      uniform vec3 uLightPosition[numLights];
       uniform vec3 uLightDirection[numLights];
 
       in vec3 aVertexPosition;
@@ -111,11 +115,18 @@ export class PhongScene extends Scene {
         vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
         vEyeVector = -vec3(vertex.xyz);
         for (int i = 0; i < numLights; i++) {
-          vLightVector[i] = (vec4(uLightDirection[i], 1.0) * inverse(uModelViewMatrix)).xyz;
+          if (0 < uPositionalLight[i]) {
+            vec4 lightPosition = uModelViewMatrix * vec4(uLightPosition[i], 1.0);
+            vLightVector[i] = vertex.xyz - lightPosition.xyz;
+          } else {
+            vLightVector[i] = (vec4(uLightDirection[i], 1.0) * inverse(uModelViewMatrix)).xyz;
+          }
         }
+
         #ifdef TEXTURE
         vTextureCoords = aVertexTextureCoords;
         #endif
+
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
     `
