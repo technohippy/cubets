@@ -9,8 +9,11 @@
     </style>
   </head>
   <body>
-    <canvas id="cubets" width="600" height="400"></canvas>
-    <img id="image" width="128" src="./images/sunset.png">
+    <canvas id="cubets" width="600" height="400"></canvas><br/>
+    <div style="width:128px; height:128px; float:left; text-align:center; line-height:128px;">URL</div>
+    <img id="image" width="128" src="./images/sunset.png" />
+    <!-- https://www.home-movie.biz/free_movie.html -->
+    <video id="video" width="128" height="128" src="./images/track.mp4" loop autoplay></video>
     <canvas id="canvas" width="128" height="128"></canvas>
     <script type="module">
       const canvas = document.getElementById("canvas")
@@ -42,25 +45,31 @@
       const imgMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
       imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
 
+      const videoMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      videoMaterial.texture = new Cubets.Texture(document.getElementById("video"))
+
       const canvasMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
       canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
-
-      // TODO: video
 
       const geometries = [
         new Cubets.CubeGeometry({x:10, y:10, z:10}),
         new Cubets.SphereGeometry(5),
         new Cubets.CylinderGeometry(5, 10),
       ]
-      const materials = [urlMaterial, imgMaterial, canvasMaterial]
+      const materials = [
+        urlMaterial, 
+        imgMaterial, 
+        videoMaterial, 
+        canvasMaterial,
+      ]
       const width = 15
       const margin = 5
       const base = -materials.length * 15 / 2
-      geometries.forEach((g, i) => {
-        materials.forEach((m, j) => {
+      materials.forEach((m, i) => {
+        geometries.forEach((g, j) => {
           const mesh = new Cubets.Mesh(g, m)
           mesh.position.x = base + i * 15 + margin * materials.length/2
-          mesh.position.y = base + j * 15 + margin * materials.length/2
+          mesh.position.y = base + j * 15 + margin * geometries.length
           scene.add(mesh)
         })
       })

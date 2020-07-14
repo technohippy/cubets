@@ -2,25 +2,27 @@
 
 ## Enhancement
 
-- BumpMap
-- Animation
+- multi lights
 - postprocessing
+- load 3d objects (.json)
+- Skybox
+- group geometries
 - particle system
+- picker
+- BumpMap
 - drop shadow
-- vertex color 
-- Gouraud Scene追加
-- 複雑なモデルの読み込み
-- ジオメトリ追加
-  - 座標軸
-  - 平面
+- add some geometries
+  - axis
+  - plane
 - PBR
 - Stencil Buffer
+- vertex color 
 - VR mode
   - 樽型変形: postprocessing
   - viewportを指定して2視点出力
-- Skybox
-- group geometries
-- multi lights
+- Animation
+- Gouraud Scene追加
+- multi textures for one mesh
 
 ## Bugs
 
@@ -30,11 +32,11 @@
 - importから.jsを除けない？
   - //@ts-ignoreも
 - sourcemap
-- organize files with subdirecories
 - reduce draw calls
 
 # DONE
 
+- organize files with subdirecories
 - Texture
 - phong shading
 - ジオメトリ追加
