@@ -5,6 +5,7 @@ import { Renderer } from "./core/renderer.js"
 import { Light } from "./core/light.js"
 import { PhongDirectionalLight } from "./core/phong/phongdirectionallight.js"
 import { PhongPositionalLight } from "./core/phong/phongpositionallight.js"
+import { PhongSpotLight } from "./core/phong/phongspotlight.js"
 import { Material } from "./core/material.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
@@ -33,6 +34,7 @@ export default {
   Light: Light,
   PhongPositionalLight: PhongPositionalLight,
   PhongDirectionalLight: PhongDirectionalLight,
+  PhongSpotLight: PhongSpotLight,
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,

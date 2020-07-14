@@ -69,6 +69,7 @@ export class PhongScene extends Scene {
       "uLightAmbient",
       "uLightDiffuse",
       "uLightSpecular",
+      "uCutoff",
       "uMaterialAmbient",
       "uMaterialDiffuse",
       "uMaterialSpecular",
@@ -101,7 +102,7 @@ export class PhongScene extends Scene {
       in vec2 aVertexTextureCoords;
       #endif
 
-      out vec3 vNormal;
+      out vec3 vNormal[numLights];
       out vec3 vEyeVector;
       out vec3 vLightVector[numLights];
 
@@ -112,12 +113,13 @@ export class PhongScene extends Scene {
       void main(void) {
         vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
-        vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
         vEyeVector = -vec3(vertex.xyz);
         for (int i = 0; i < numLights; i++) {
+          vNormal[i] = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
           if (0 < uPositionalLight[i]) {
             vec4 lightPosition = uModelViewMatrix * vec4(uLightPosition[i], 1.0);
             vLightVector[i] = vertex.xyz - lightPosition.xyz;
+            vNormal[i] = vNormal[i] - uLightDirection[i];
           } else {
             vLightVector[i] = (vec4(uLightDirection[i], 1.0) * inverse(uModelViewMatrix)).xyz;
           }
@@ -145,20 +147,25 @@ export class PhongScene extends Scene {
       uniform sampler2D uSampler;
       #endif
 
+      // flags
       uniform int uNormalMode;
       uniform int uWireframeMode;
+
+      // light
       uniform int uLightFollowCameraMode[numLights];
       uniform vec3 uLightDirection[numLights];
       uniform vec4 uLightAmbient[numLights];
       uniform vec4 uLightDiffuse[numLights];
       uniform vec4 uLightSpecular[numLights];
+      uniform float uCutoff[numLights];
 
+      // material
       uniform float uShininess;
       uniform vec4 uMaterialAmbient;
       uniform vec4 uMaterialDiffuse;
       uniform vec4 uMaterialSpecular;
 
-      in vec3 vNormal;
+      in vec3 vNormal[numLights];
       in vec3 vEyeVector;
       in vec3 vLightVector[numLights];
 
@@ -170,7 +177,7 @@ export class PhongScene extends Scene {
 
       void main(void) {
         if (0 < uNormalMode) {
-          fragColor = vec4(vNormal, 1);
+          fragColor = vec4(vNormal[0], 1);
           return;
         }
         if (0 < uWireframeMode) {
@@ -187,14 +194,14 @@ export class PhongScene extends Scene {
           } else {
             L = normalize(vLightVector[i]);
           }
-          vec3 N = normalize(vNormal);
+          vec3 N = normalize(vNormal[i]);
           float lambertTerm = dot(N, -L);
           vec4 Ia = uLightAmbient[i] * uMaterialAmbient;
           vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);
           vec4 Is = vec4(0.0, 0.0, 0.0, 1.0);
 
           if (lambertTerm > 0.0) {
-            Id = uLightDiffuse[i] * uMaterialDiffuse * lambertTerm;
+            Id = uLightDiffuse[i] * uMaterialDiffuse * pow(lambertTerm, uCutoff[i]);
 
             vec3 E = normalize(vEyeVector);
             vec3 R = reflect(L, N);

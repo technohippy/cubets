@@ -22,18 +22,19 @@
 
       const positionalLight = new Cubets.PhongPositionalLight(
         new Cubets.Vec3(0, 0, 0),
-        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0, 0, 0),
         new Cubets.Color(1.0, 0.0, 0.0)
       )
 
-      const directionalLight1 = new Cubets.Scene.Light(
+      const directionalLight = new Cubets.Scene.Light(
         new Cubets.Vec3(1, 0.5, 0.2),
-        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0, 0, 0),
         new Cubets.Color(1.0, 0.0, 0.0)
       )
-      const directionalLight2 = new Cubets.Scene.Light(
-        new Cubets.Vec3(-1, -0.5, -0.2),
-        new Cubets.Color(0.3, 0.3, 0.3),
+      const spotLight = new Cubets.PhongSpotLight(
+        new Cubets.Vec3(0, 20, 0),
+        new Cubets.Vec3(0, -1, 0),
+        new Cubets.Color(0, 0, 0),
         new Cubets.Color(0.0, 0.8, 0.0)
       )
 
@@ -51,8 +52,8 @@
       scene.add(sphere)
       scene.add(cube)
       scene.add(positionalLight)
-      scene.add(directionalLight1)
-      scene.add(directionalLight2)
+      scene.add(directionalLight)
+      scene.add(spotLight)
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)

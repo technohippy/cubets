@@ -20,16 +20,10 @@ export abstract class PhongLight extends Light {
   getGLVars(renderer:Renderer): {type:string, loc:WebGLUniformLocation, value:any}[] {
     const ret:{type:string, loc:WebGLUniformLocation, value:any}[] = []
     const gl = renderer.gl
-    //const positionalLightLocation = renderer.getUniformLocation("uPositionalLight")
-    //const lightPositionLocation = renderer.getUniformLocation("uLightPosition")
-    //const lightDirectionLocation = renderer.getUniformLocation("uLightDirection")
     const lightFollowCameraModeLocation = renderer.getUniformLocation("uLightFollowCameraMode")
     const lightAmbientLocation = renderer.getUniformLocation("uLightAmbient")
     const lightDiffuseLocation = renderer.getUniformLocation("uLightDiffuse")
     const lightSpecularLocation = renderer.getUniformLocation("uLightSpecular")
-    //ret.push({type:"1i", loc:positionalLightLocation, value:0})
-    //ret.push({type:"3f", loc:lightPositionLocation, value:[0, 0, 0]})
-    //ret.push({type:"3f", loc:lightDirectionLocation, value:this.direction.toArray()})
     ret.push({type:"1i", loc:lightFollowCameraModeLocation, value:this.shouldFollowCamera ? 1 : 0})
     ret.push({type:"4f", loc:lightAmbientLocation, value:this.ambientColor.toArray()})
     ret.push({type:"4f", loc:lightDiffuseLocation, value:this.diffuseColor.toArray()})

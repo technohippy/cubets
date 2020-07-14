@@ -3,6 +3,7 @@
 ## Enhancement
 
 - point light
+- add plane geometry
 - postprocessing
 - load 3d objects (.json)
 - Skybox
@@ -11,9 +12,7 @@
 - particle system
 - BumpMap
 - drop shadow
-- add some geometries
-  - axis
-  - plane
+- add axis geometry
 - PBR
 - Stencil Buffer
 - vertex color 
@@ -21,16 +20,16 @@
   - 樽型変形: postprocessing
     - https://jp.mathworks.com/help/images/creating-a-gallery-of-transformed-images.html
   - viewportを指定して2視点出力
-- Animation
-- Gouraud Scene追加
+- Animation tools
+- add Gouraud Scene
 - multi textures for one mesh
+- add TSDoc comments
 
 ## Bugs
 
 ## Refactoring
 
-- glmatrixの型定義？
-- importから.jsを除けない？
+- glmatrix
   - //@ts-ignoreも
 - sourcemap
 - reduce draw calls

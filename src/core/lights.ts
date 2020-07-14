@@ -28,10 +28,19 @@ export class Lights {
         case "1i":
           gl.uniform1iv(loc, val)
           break;
+        case "1f":
+          gl.uniform1fv(loc, val)
+          break;
         case "3f":
+          if (val.length % 3 !== 0) {
+            throw `invalid value: ${val}`
+          }
           gl.uniform3fv(loc, val)
           break;
         case "4f":
+          if (val.length % 4 !== 0) {
+            throw `invalid value: ${val}`
+          }
           gl.uniform4fv(loc, val)
           break;
         default:
