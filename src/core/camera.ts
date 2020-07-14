@@ -116,7 +116,7 @@ export abstract class Camera {
   async start(scene: Scene) {
     if (this.#starting) return
 
-    await Promise.all(scene.collectTextures().map(t => t.loadImage()))
+    await scene.loadAllTextures()
 
     this.controls.forEach(control => {
       if (!control.camera) {

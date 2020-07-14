@@ -1,6 +1,6 @@
-= TODO
+# TODO
 
-== Enhancement
+## Enhancement
 
 - BumpMap
 - Animation
@@ -22,9 +22,9 @@
 - group geometries
 - multi lights
 
-== Bugs
+## Bugs
 
-== Refactoring
+## Refactoring
 
 - glmatrixの型定義？
 - importから.jsを除けない？
@@ -33,7 +33,7 @@
 - organize files with subdirecories
 - reduce draw calls
 
-= DONE
+# DONE
 
 - Texture
 - phong shading

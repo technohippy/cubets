@@ -9,11 +9,6 @@ export abstract class Geometry {
   uvs:Vec2[] = []
 
   static computeNormals(indices:Face3[], vertices:Vec3[]) {
-    /*
-    return vertices.map(v => {
-      return v.normalize()
-    })
-    */
     const normals:Vec3[][] = []
     indices.forEach(index => {
       const normal = index.normal(vertices)
@@ -28,5 +23,25 @@ export abstract class Geometry {
       const sumV = vs.reduce((sum, val):Vec3 => sum.add(val), new Vec3(0, 0, 0))
       return sumV.normalize()
     })
+  }
+
+  protected _computeUvs() {
+    const min = new Vec3(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+    const max = new Vec3(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY)
+    this.indices.forEach(face => {
+      [
+        this.vertices[face.p1],
+        this.vertices[face.p2],
+        this.vertices[face.p3],
+      ].forEach(v => {
+        ["x", "y", "z"].forEach(axis => {
+          //@ts-ignore
+          if (v[axis] < min[axis]) min[axis] = v[axis]
+          //@ts-ignore
+          if (max[axis] < v[axis]) max.x = v[axis]
+        })
+      })
+    })
+    console.log(min, max)
   }
 }

@@ -10,6 +10,8 @@ export abstract class Scene {
   meshes: Mesh[] = []
   lights: Light[] = []
 
+  #textures?: Texture[]
+
   constructor(vs: string, fs: string) {
     this.vertexShader = vs
     this.fragmentShader = fs
@@ -45,24 +47,34 @@ export abstract class Scene {
   }
 
   collectTextures(): Texture[] {
-    const textures:Texture[] = []
-    this.eachMesh(m => {
-      const tex = m.material.texture
-      if (tex) textures.push(tex)
-    })
-    return textures
+    if (this.#textures === undefined) {
+      this.#textures = []
+      this.eachMesh(m => {
+        const tex = m.material.texture
+        if (tex) this.#textures?.push(tex)
+      })
+    }
+    return this.#textures
+  }
+
+  hasTexture(): boolean {
+    return 0 < this.collectTextures().length
+  }
+
+  async loadAllTextures(): Promise<void[]> {
+    return Promise.all(this.collectTextures().map(t => t.loadImage()))
   }
 
   prepareShaders(renderer: Renderer) {
     const vs = renderer.gl.createShader(renderer.gl.VERTEX_SHADER)!
-    renderer.gl.shaderSource(vs, this.vertexShader)
+    renderer.gl.shaderSource(vs, this.getVertexShader())
     renderer.gl.compileShader(vs)
     if (!renderer.gl.getShaderParameter(vs, renderer.gl.COMPILE_STATUS)) {
       console.error(renderer.gl.getShaderInfoLog(vs))
     }
 
     const fs = renderer.gl.createShader(renderer.gl.FRAGMENT_SHADER)!
-    renderer.gl.shaderSource(fs, this.fragmentShader)
+    renderer.gl.shaderSource(fs, this.getFragmentShader())
     renderer.gl.compileShader(fs)
     if (!renderer.gl.getShaderParameter(fs, renderer.gl.COMPILE_STATUS)) {
       console.error(renderer.gl.getShaderInfoLog(fs))
@@ -94,6 +106,9 @@ export abstract class Scene {
     })
     renderer.isLocationsPrepared = true
   }
+
+  abstract getVertexShader():string
+  abstract getFragmentShader():string
 
   abstract getVertexPositionAttribLocation(renderer:Renderer): number
   abstract getVertexNormalAttribLocation(renderer:Renderer): number

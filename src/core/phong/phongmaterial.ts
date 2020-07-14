@@ -38,12 +38,7 @@ export class PhongMaterial extends Material {
 
     if (this.texture) {
       const samplerLocation = renderer.getUniformLocation("uSampler")
-      const glTexture = this.texture.setupGLTexture(gl)
-      if (glTexture) {
-        gl.activeTexture(gl.TEXTURE0)
-        gl.bindTexture(gl.TEXTURE_2D, glTexture)
-        gl.uniform1i(samplerLocation, 0)
-      }
+      this.texture.setupGLTexture(gl, samplerLocation)
     }
   }
 }
