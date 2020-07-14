@@ -29,10 +29,9 @@ export class Renderer {
   render(scene: Scene, camera: Camera) {
     this.clear()
 
-    const light = scene.lights[0]
     scene.eachMesh(mesh => {
       const { indicesBuffer } = this.setupVAO(scene, mesh)
-      this.renderMesh(scene, mesh, light, camera, indicesBuffer!)
+      this.renderMesh(scene, mesh, camera, indicesBuffer!)
     })
   }
 
@@ -63,13 +62,15 @@ export class Renderer {
     return buffers
   }
 
-  renderMesh(scene: Scene, mesh: Mesh, light_: Light, camera: Camera, indicesBuffer:WebGLBuffer) {
-    const light = light_ as PhongDirectionalLight
-    const material = mesh.material as PhongMaterial
-    
+  renderMesh(scene: Scene, mesh: Mesh, camera: Camera, indicesBuffer:WebGLBuffer) {
     camera.setupGLMatrixes(this, scene)
-    light.setupGLVars(this)
-    material.setupGLVars(this)
+    scene.lights.setupGLVars(this)
+    /*
+    scene.lights.forEach((l, i) => {
+      l.setupGLVars(this)
+    })
+    */
+    mesh.material.setupGLVars(this)
 
     try {
       this.gl.bindVertexArray(this.vao!)

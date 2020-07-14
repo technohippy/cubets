@@ -1,5 +1,6 @@
 import { Mesh } from './mesh.js'
 import { Light } from './light.js'
+import { Lights } from './lights.js'
 import { Renderer } from './renderer.js'
 import { Texture } from './texture.js'
 
@@ -8,7 +9,7 @@ export abstract class Scene {
   fragmentShader: string
 
   meshes: Mesh[] = []
-  lights: Light[] = []
+  lights = new Lights()
 
   #textures?: Texture[]
 

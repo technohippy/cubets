@@ -19,17 +19,19 @@ export class PhongDirectionalLight extends Light {
     this.specularColor = specularColor
   }
 
-  setupGLVars(renderer:Renderer) {
+  getGLVars(renderer:Renderer): {type:string, loc:WebGLUniformLocation, value:any}[] {
+    const ret:{type:string, loc:WebGLUniformLocation, value:any}[] = []
     const gl = renderer.gl
     const lightFollowCameraModeLocation = renderer.getUniformLocation("uLightFollowCameraMode")
     const lightDirectionLocation = renderer.getUniformLocation("uLightDirection")
     const lightAmbientLocation = renderer.getUniformLocation("uLightAmbient")
     const lightDiffuseLocation = renderer.getUniformLocation("uLightDiffuse")
     const lightSpecularLocation = renderer.getUniformLocation("uLightSpecular")
-    gl.uniform1i(lightFollowCameraModeLocation, this.shouldFollowCamera ? 1 : 0)
-    gl.uniform3fv(lightDirectionLocation, this.direction.toArray())
-    gl.uniform4fv(lightAmbientLocation, this.ambientColor.toArray())
-    gl.uniform4fv(lightDiffuseLocation, this.diffuseColor.toArray())
-    gl.uniform4fv(lightSpecularLocation, this.specularColor.toArray())
+    ret.push({type:"1i", loc:lightFollowCameraModeLocation, value:this.shouldFollowCamera ? 1 : 0})
+    ret.push({type:"3f", loc:lightDirectionLocation, value:this.direction.toArray()})
+    ret.push({type:"4f", loc:lightAmbientLocation, value:this.ambientColor.toArray()})
+    ret.push({type:"4f", loc:lightDiffuseLocation, value:this.diffuseColor.toArray()})
+    ret.push({type:"4f", loc:lightSpecularLocation, value:this.specularColor.toArray()})
+    return ret
   }
 }

@@ -3,12 +3,13 @@
 ## Enhancement
 
 - multi lights
+- point light
 - postprocessing
 - load 3d objects (.json)
 - Skybox
 - group geometries
-- particle system
 - picker
+- particle system
 - BumpMap
 - drop shadow
 - add some geometries
