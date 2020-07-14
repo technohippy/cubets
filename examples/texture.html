@@ -10,6 +10,19 @@
   </head>
   <body>
     <canvas id="cubets" width="600" height="400"></canvas>
+    <img id="image" src="./images/unk.png">
+    <canvas id="canvas" width="128" height="128"></canvas>
+    <script type="module">
+      const canvas = document.getElementById("canvas")
+      const gc = canvas.getContext("2d")
+      canvas.addEventListener("click", (evt) => {
+        gc.fillStyle = "#" + Math.floor(0xffffff * Math.random()).toString(16).padStart(6, "0")
+        gc.beginPath()
+        gc.arc(evt.offsetX, evt.offsetY, 15, 0, 2 * Math.PI)
+        gc.closePath()
+        gc.fill()
+      })
+    </script>
     <script type="module">
       import Cubets from "../dist/cubets.js"
 
@@ -21,16 +34,31 @@
         new Cubets.Color(0.8, 0.8, 0.8)
       )
       light.shouldFollowCamera = true
-
-      const material = new Cubets.PhongScene.Material(Cubets.Color.White)
-      material.texture = new Cubets.Texture("./images/unk.png")
-      const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry({x:10, y:10, z:10}),
-        material,
-      )
-
-      scene.add(mesh)
       scene.add(light)
+
+      const urlMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      urlMaterial.texture = new Cubets.Texture("./images/unk.png")
+
+      const imgMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
+
+      const canvasMaterial = new Cubets.PhongScene.Material(Cubets.Color.White)
+      canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
+
+      // TODO: video
+
+      const materials = [urlMaterial, imgMaterial, canvasMaterial]
+      const width = 15
+      const margin = 5
+      const baseX = -materials.length * 15 / 2
+      materials.forEach((m, i) => {
+        const mesh = new Cubets.Mesh(
+          new Cubets.CubeGeometry({x:10, y:10, z:10}),
+          m,
+        )
+        mesh.position.x = baseX + i * 15 + margin * materials.length/2
+        scene.add(mesh)
+      })
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)

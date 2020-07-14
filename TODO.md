@@ -2,7 +2,6 @@
 
 == Enhancement
 
-- Texture
 - BumpMap
 - Animation
 - postprocessing
@@ -36,6 +35,7 @@
 
 = DONE
 
+- Texture
 - phong shading
 - ジオメトリ追加
   - 球

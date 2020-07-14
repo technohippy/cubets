@@ -1,7 +1,7 @@
 export class Texture {
-  image: string | HTMLImageElement
+  image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
-  constructor(image:string | HTMLImageElement) {
+  constructor(image:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement) {
     this.image = image
   }
 
