@@ -8,7 +8,7 @@ export abstract class Geometry {
   normals:Vec3[] = []
   uvs:Vec2[] = []
 
-  static computeNormals(indices:Face3[], vertices:Vec3[]) {
+  static computeNormals(indices:Face3[], vertices:Vec3[]): Vec3[] {
     const normals:Vec3[][] = []
     indices.forEach(index => {
       const normal = index.normal(vertices)
@@ -25,7 +25,7 @@ export abstract class Geometry {
     })
   }
 
-  protected _computeUvs() {
+  protected _computeUvs(): Vec2[] {
     const min = new Vec3(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
     const max = new Vec3(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY)
     this.indices.forEach(face => {
@@ -38,10 +38,17 @@ export abstract class Geometry {
           //@ts-ignore
           if (v[axis] < min[axis]) min[axis] = v[axis]
           //@ts-ignore
-          if (max[axis] < v[axis]) max.x = v[axis]
+          if (max[axis] < v[axis]) max[axis] = v[axis]
         })
       })
     })
-    console.log(min, max)
+
+    const w = max.x - min.x
+    const h = max.y - min.y
+    const uvs: Vec2[] = []
+    this.vertices.forEach(v => {
+      uvs.push(new Vec2((v.x - min.x) / w, (max.y - v.y) / h))
+    })
+    return uvs
   }
 }

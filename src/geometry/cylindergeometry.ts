@@ -43,8 +43,6 @@ export class CylinderGeometry extends Geometry {
     }
 
     this.normals = Geometry.computeNormals(this.indices, this.vertices)
-
-    // 仮
-    this.uvs = new Array<Vec2>(this.indices.length).fill(new Vec2(0, 0))
+    this.uvs = this._computeUvs()
   }
 }

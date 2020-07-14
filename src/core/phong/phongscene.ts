@@ -78,10 +78,8 @@ export class PhongScene extends Scene {
   }
 
   getVertexShader() {
-    const hasTexture = 0 < this.collectTextures().length
-
     return `#version 300 es
-      ${hasTexture ? "#define TEXTURE" : ""}
+      ${this.hasTexture() ? "#define TEXTURE" : ""}
       precision mediump float;
 
       uniform mat4 uModelViewMatrix;
@@ -118,10 +116,8 @@ export class PhongScene extends Scene {
   }
 
   getFragmentShader() {
-    const hasTexture = 0 < this.collectTextures().length
-
     return `#version 300 es
-      ${hasTexture ? "#define TEXTURE" : ""}
+      ${this.hasTexture() ? "#define TEXTURE" : ""}
       precision mediump float;
 
       uniform mat4 uModelViewMatrix;

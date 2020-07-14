@@ -47,17 +47,22 @@
 
       // TODO: video
 
+      const geometries = [
+        new Cubets.CubeGeometry({x:10, y:10, z:10}),
+        new Cubets.SphereGeometry(5),
+        new Cubets.CylinderGeometry(5, 10),
+      ]
       const materials = [urlMaterial, imgMaterial, canvasMaterial]
       const width = 15
       const margin = 5
-      const baseX = -materials.length * 15 / 2
-      materials.forEach((m, i) => {
-        const mesh = new Cubets.Mesh(
-          new Cubets.CubeGeometry({x:10, y:10, z:10}),
-          m,
-        )
-        mesh.position.x = baseX + i * 15 + margin * materials.length/2
-        scene.add(mesh)
+      const base = -materials.length * 15 / 2
+      geometries.forEach((g, i) => {
+        materials.forEach((m, j) => {
+          const mesh = new Cubets.Mesh(g, m)
+          mesh.position.x = base + i * 15 + margin * materials.length/2
+          mesh.position.y = base + j * 15 + margin * materials.length/2
+          scene.add(mesh)
+        })
       })
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
