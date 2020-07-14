@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- point light
 - add plane geometry
 - postprocessing
 - load 3d objects (.json)
@@ -36,6 +35,7 @@
 
 # DONE
 
+- point light
 - multi lights
 - organize files with subdirecories
 - Texture

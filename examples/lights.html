@@ -27,15 +27,16 @@
       )
 
       const directionalLight = new Cubets.Scene.Light(
-        new Cubets.Vec3(1, 0.5, 0.2),
+        new Cubets.Vec3(1, -0.5, 0.2),
         new Cubets.Color(0, 0, 0),
-        new Cubets.Color(1.0, 0.0, 0.0)
+        new Cubets.Color(0.0, 1.0, 0.0)
       )
+
       const spotLight = new Cubets.PhongSpotLight(
         new Cubets.Vec3(0, 20, 0),
         new Cubets.Vec3(0, -1, 0),
         new Cubets.Color(0, 0, 0),
-        new Cubets.Color(0.0, 0.8, 0.0)
+        new Cubets.Color(0.0, 0.0, 1.0)
       )
 
       const sphere = new Cubets.Mesh(

@@ -14,6 +14,7 @@ import { Texture } from "./core/texture.js"
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
 import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
 
+import { PlaneGeometry } from "./geometry/planegeometry.js"
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 import { SphereGeometry } from "./geometry/spheregeometry.js"
 import { CylinderGeometry } from "./geometry/cylindergeometry.js"
@@ -35,6 +36,7 @@ export default {
   PhongPositionalLight: PhongPositionalLight,
   PhongDirectionalLight: PhongDirectionalLight,
   PhongSpotLight: PhongSpotLight,
+  PlaneGeometry: PlaneGeometry,
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,
