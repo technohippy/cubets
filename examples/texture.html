@@ -6,7 +6,16 @@
       canvas {
         border:1px solid gray;
       }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
     </style>
+    <link rel="stylesheet" href="js/default.min.css">
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="js/utils.js"></script>
   </head>
   <body>
     <canvas id="cubets" width="600" height="400"></canvas><br/>
@@ -15,6 +24,7 @@
     <!-- https://www.home-movie.biz/free_movie.html -->
     <video id="video" width="128" height="128" src="./images/track.mp4" loop autoplay></video>
     <canvas id="canvas" width="128" height="128"></canvas>
+    <div id="code"></div><script>loadCode()</script>
     <script type="module">
       const canvas = document.getElementById("canvas")
       const gc = canvas.getContext("2d")

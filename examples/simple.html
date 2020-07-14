@@ -6,10 +6,21 @@
       canvas {
         border:1px solid gray;
       }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
     </style>
+    <link rel="stylesheet" href="js/default.min.css">
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="js/utils.js"></script>
   </head>
   <body>
     <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div>
+    <script>loadCode()</script>
     <script type="module">
       import Cubets from "../dist/cubets.js"
 

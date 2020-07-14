@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- multi lights
 - point light
 - postprocessing
 - load 3d objects (.json)
@@ -37,6 +36,7 @@
 
 # DONE
 
+- multi lights
 - organize files with subdirecories
 - Texture
 - phong shading
