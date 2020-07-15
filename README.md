@@ -8,22 +8,22 @@ just for my learning purpose
 <script type="module">
   import Cubets from "../dist/cubets.js"
 
-  const scene = new Cubets.PhongScene()
+  const scene = new Cubets.Scene()
 
-  const light = new Cubets.PhongScene.Light(
+  const light = new Cubets.Scene.Light(
     new Cubets.Vec3(0, 0, -1),
     new Cubets.Color(0.3, 0.3, 0.3),
     new Cubets.Color(0.8, 0.8, 0.8)
   )
 
   const mesh = new Cubets.Mesh(
-    new Cubets.CubeGeometry({x:10, y:10, z:10}),
-    new Cubets.PhongScene.Material(),
+    new Cubets.CubeGeometry(10, 10, 10),
+    new Cubets.Scene.Material(),
   )
 
   const mesh2 = new Cubets.Mesh(
-    new Cubets.CubeGeometry({x:5, y:5, z:5}),
-    new Cubets.PhongScene.Material(new Cubets.Color(0.1, 0.5, 1.0)),
+    new Cubets.CubeGeometry(5, 5, 5),
+    new Cubets.Scene.Material(new Cubets.Color(0.1, 0.5, 1.0)),
   )
   mesh2.position = new Cubets.Vec3(-6, 0, 4)
 

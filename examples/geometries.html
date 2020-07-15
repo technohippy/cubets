@@ -45,16 +45,17 @@
       ]
       const geometries = [
         new Cubets.PlaneGeometry(10, 10),
+        new Cubets.GroundGeometry(20, 20, 5, 5),
         new Cubets.CubeGeometry(10, 10, 10),
         new Cubets.SphereGeometry(8),
         new Cubets.CylinderGeometry(8, 10),
       ]
 
       const unit = 20
-      const baseX = -(materials.length - 1) * unit / 2
-      const baseY = -(geometries.length - 1) * unit / 2
-      materials.forEach((m, x) => {
-        geometries.forEach((g, y) => {
+      const baseX = -(geometries.length - 1) * unit / 2
+      const baseY = -(materials.length - 1) * unit / 2
+      materials.forEach((m, y) => {
+        geometries.forEach((g, x) => {
           const mesh = new Cubets.Mesh(g, m)
           mesh.position = new Cubets.Vec3(baseX + x * unit, baseY + y * unit, 0)
           scene.add(mesh)

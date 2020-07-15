@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- add plane geometry
 - postprocessing
 - load 3d objects (.json)
 - Skybox
@@ -10,6 +9,7 @@
 - picker
 - particle system
 - BumpMap
+- &lt;refactoring>
 - drop shadow
 - add axis geometry
 - PBR
@@ -35,6 +35,7 @@
 
 # DONE
 
+- add plane geometry
 - point light
 - multi lights
 - organize files with subdirecories
