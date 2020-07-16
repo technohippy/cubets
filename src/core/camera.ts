@@ -1,18 +1,18 @@
 import { Renderer } from "./renderer.js";
 import { Scene } from "./scene.js";
-import { Filter } from "./filter.js";
+import { Filter, FilterChain } from "./filter.js";
 import { Vec3 } from "../math/vec3.js";
 import { Quat } from "../math/quat.js";
 import { CameraControl } from "../control/cameracontrol.js";
+import { Viewport } from "./viewport.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
-import { Viewport } from "./viewport.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
   renderer: Renderer
-  filters: Filter[] = []
+  filters = new FilterChain()
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
   normalMatrix: number[] = mat4.create()
@@ -49,6 +49,15 @@ export abstract class Camera {
 
   resetTarget() {
     this.target = undefined
+  }
+
+  addFilter(filter: Filter) {
+    filter.setupFrameBuffer(this.renderer)
+    this.filters.join(filter)
+  }
+
+  removeFilter(filter: Filter) {
+    throw "not yet"
   }
 
   setupGLMatrixes(renderer:Renderer, scene:Scene) {
@@ -103,8 +112,10 @@ export abstract class Camera {
   }
 
   draw(scene: Scene) {
-    if (!this.renderer.isLocationsPrepared) {
-      scene.prepareShaders(this.renderer)
+    if (!this.renderer.program) {
+      this.renderer.prepareProgram(scene)
+      this.renderer.use()
+      this.renderer.setupLocations(scene)
     }
 
     this.setupProjectionMatrix()
@@ -113,7 +124,7 @@ export abstract class Camera {
     this.renderer.render(scene, this)
   }
 
-  async start(scene: Scene) {
+  async start(scene: Scene, loop:boolean=true) {
     if (this.#starting) return
 
     await scene.loadAllTextures()
@@ -122,10 +133,14 @@ export abstract class Camera {
       if (!control.camera) {
         control.setCamera(this)
       }
-    })
+    });
 
-    this.#starting = true
+    if (loop) this.#starting = true
     this._anim(scene)
+  }
+
+  startOnce(scene: Scene) {
+    this.start(scene, false)
   }
 
   stop() {

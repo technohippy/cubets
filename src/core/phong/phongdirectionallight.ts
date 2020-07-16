@@ -14,14 +14,14 @@ export class PhongDirectionalLight extends PhongLight {
   getGLVars(renderer:Renderer): {type:string, loc:WebGLUniformLocation, value:any}[] {
     const ret = super.getGLVars(renderer)
     const gl = renderer.gl
+    const cutoffLocation = renderer.getUniformLocation("uCutoff")
     const positionalLightLocation = renderer.getUniformLocation("uPositionalLight")
     const lightPositionLocation = renderer.getUniformLocation("uLightPosition")
     const lightDirectionLocation = renderer.getUniformLocation("uLightDirection")
-    const cutoffLocation = renderer.getUniformLocation("uCutoff")
+    ret.push({type:"1f", loc:cutoffLocation, value:1})
     ret.push({type:"1i", loc:positionalLightLocation, value:0})
     ret.push({type:"3f", loc:lightPositionLocation, value:[0, 0, 0]})
     ret.push({type:"3f", loc:lightDirectionLocation, value:this.direction.toArray()})
-    ret.push({type:"1f", loc:cutoffLocation, value:1})
     return ret
   }
 }

@@ -10,6 +10,12 @@ export class PlaneGeometry extends Geometry {
     super()
     this.x = x
     this.y = y
+    this.setSize(x, y)
+  }
+
+  setSize(x:number, y:number) {
+    this.x = x
+    this.y = y
     const x1 = this.x/2
     const x2 = -this.x/2
     const y1 = this.y/2
@@ -30,6 +36,14 @@ export class PlaneGeometry extends Geometry {
       new Vec3(0, 0, 1),
       new Vec3(0, 0, 1),
     ]
+    /*
+    this.normals = [
+      new Vec3(0, 0, -1),
+      new Vec3(0, 0, -1),
+      new Vec3(0, 0, -1),
+      new Vec3(0, 0, -1),
+    ]
+    */
     this.uvs = [
       new Vec2(0,0), new Vec2(0,1), new Vec2(1,0), new Vec2(1,1),
     ]

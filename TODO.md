@@ -9,22 +9,28 @@
 - picker
 - particle system
 - BumpMap
-- &lt;refactoring>
-- drop shadow
+- **make tiny applications with cubets**
+- texture properties
+- multi textures for one mesh
 - add axis geometry
+- vertex color 
+- add TSDoc comments
+- **release alpha**
+  - build a website
+- drop shadow
 - PBR
 - Stencil Buffer
-- vertex color 
 - VR mode
   - 樽型変形: postprocessing
     - https://jp.mathworks.com/help/images/creating-a-gallery-of-transformed-images.html
   - viewportを指定して2視点出力
 - Animation tools
-- add Gouraud Scene
-- multi textures for one mesh
-- add TSDoc comments
+- add Gouraud Scene (or other scene/shader)
+- shader toy
 
 ## Bugs
+
+- check spotlight direction
 
 ## Refactoring
 
@@ -33,7 +39,25 @@
 - sourcemap
 - reduce draw calls
 
+```
+    this.attributes = {};
+    const attributesCount = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
+    for (let i = 0; i < attributesCount; i++) {
+      const attrib = gl.getActiveAttrib(this.program, i);
+      this.attributes[attrib.name] = gl.getAttribLocation(this.program, attrib.name);
+    }
+
+    this.uniforms = {};
+    const uniformsCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < uniformsCount; i++) {
+      const uniform = gl.getActiveUniform(this.program, i);
+      this.uniforms[uniform.name] = gl.getUniformLocation(this.program, uniform.name);
+    }
+```
+
 # DONE
+
+## Enhancement
 
 - add plane geometry
 - point light
@@ -41,17 +65,14 @@
 - organize files with subdirecories
 - Texture
 - phong shading
-- ジオメトリ追加
-  - 球
+- add sphere geometry
 - Wireframe mode
-  - シェーディングをOFFに
-- viewportの一部に出力
-  - cameraで設定
-- OrbitControlにzoom追加
+- viewport setting
+- add zoom function to OrbitControl
 - Camera Controls (Orbit)
 - implement Light class
 
-= Bug Fix
+## Bug Fix
 
 - Wireframe mode
   - クリックすると回転する？

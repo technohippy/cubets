@@ -3,19 +3,19 @@ import { Light } from './light.js'
 import { Lights } from './lights.js'
 import { Renderer } from './renderer.js'
 import { Texture } from './texture.js'
+import { RGBAColor } from '../math/rgbacolor.js'
 
 export abstract class Scene {
-  vertexShader: string
-  fragmentShader: string
+  name?: string
+  clearColor = RGBAColor.Black
 
   meshes: Mesh[] = []
   lights = new Lights()
 
   #textures?: Texture[]
 
-  constructor(vs: string, fs: string) {
-    this.vertexShader = vs
-    this.fragmentShader = fs
+  constructor(name?:string) {
+    this.name = name
   }
 
   add(obj: Mesh | Light) {
@@ -66,48 +66,6 @@ export abstract class Scene {
     return Promise.all(this.collectTextures().map(t => t.loadImage()))
   }
 
-  prepareShaders(renderer: Renderer) {
-    const vs = renderer.gl.createShader(renderer.gl.VERTEX_SHADER)!
-    renderer.gl.shaderSource(vs, this.getVertexShader())
-    renderer.gl.compileShader(vs)
-    if (!renderer.gl.getShaderParameter(vs, renderer.gl.COMPILE_STATUS)) {
-      console.error(renderer.gl.getShaderInfoLog(vs))
-    }
-
-    const fs = renderer.gl.createShader(renderer.gl.FRAGMENT_SHADER)!
-    renderer.gl.shaderSource(fs, this.getFragmentShader())
-    renderer.gl.compileShader(fs)
-    if (!renderer.gl.getShaderParameter(fs, renderer.gl.COMPILE_STATUS)) {
-      console.error(renderer.gl.getShaderInfoLog(fs))
-    }
-
-    const program = renderer.gl.createProgram()!
-    renderer.gl.attachShader(program, vs)
-    renderer.gl.attachShader(program, fs)
-    renderer.gl.linkProgram(program)
-    if (!renderer.gl.getProgramParameter(program, renderer.gl.LINK_STATUS)) {
-      throw("fail to initialize shaders")
-    }
-    renderer.gl.useProgram(program)
-
-    this.getAttributeNames().forEach(attrName => {
-      const loc = renderer.gl.getAttribLocation(program, attrName)
-      if (loc < 0) {
-        throw `fail to get attribute location: ${attrName}`
-      }
-      renderer.attributeLocations.set(attrName, loc)
-    })
-
-    this.getUniformNames().forEach(uniName => {
-      const loc = renderer.gl.getUniformLocation(program!, uniName)
-      if (loc === null) {
-        throw `fail to get uniform location: ${uniName}`
-      }
-      renderer.uniformLocations.set(uniName, loc)
-    })
-    renderer.isLocationsPrepared = true
-  }
-
   abstract getVertexShader():string
   abstract getFragmentShader():string
 
@@ -122,5 +80,4 @@ export abstract class Scene {
   abstract getAttributeNames(): string[]
 
   abstract getUniformNames(): string[]
-
 }

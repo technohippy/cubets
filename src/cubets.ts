@@ -1,4 +1,3 @@
-import { Scene } from "./core/scene.js"
 import { PhongScene } from "./core/phong/phongscene.js"
 import { Camera } from "./core/camera.js"
 import { Renderer } from "./core/renderer.js"
@@ -19,6 +18,8 @@ import { GroundGeometry } from "./geometry/groundgeometry.js"
 import { CubeGeometry } from "./geometry/cubegeometry.js"
 import { SphereGeometry } from "./geometry/spheregeometry.js"
 import { CylinderGeometry } from "./geometry/cylindergeometry.js"
+
+import { GrayscaleFilter } from "./filter/grayscalefilter.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
 
@@ -42,6 +43,7 @@ export default {
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,
+  GrayscaleFilter: GrayscaleFilter,
   Material: Material,
   Mesh: Mesh,
   Renderer: Renderer,
