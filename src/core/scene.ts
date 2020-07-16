@@ -14,10 +14,6 @@ export abstract class Scene {
 
   #textures?: Texture[]
 
-  constructor(name?:string) {
-    this.name = name
-  }
-
   add(obj: Mesh | Light) {
     if (obj instanceof Mesh) {
       this.addMesh(obj)

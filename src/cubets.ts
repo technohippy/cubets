@@ -20,6 +20,7 @@ import { SphereGeometry } from "./geometry/spheregeometry.js"
 import { CylinderGeometry } from "./geometry/cylindergeometry.js"
 
 import { GrayscaleFilter } from "./filter/grayscalefilter.js"
+import { InvertFilter } from "./filter/invertfilter.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
 
@@ -44,6 +45,7 @@ export default {
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,
   GrayscaleFilter: GrayscaleFilter,
+  InvertFilter: InvertFilter,
   Material: Material,
   Mesh: Mesh,
   Renderer: Renderer,

@@ -18,7 +18,10 @@
     <script src="js/utils.js"></script>
   </head>
   <body>
-    <canvas id="cubets" width="600" height="400"></canvas>
+    <canvas id="cubets1" width="297" height="200"></canvas>
+    <canvas id="cubets2" width="297" height="200"></canvas><br>
+    <canvas id="cubets3" width="297" height="200"></canvas>
+    <canvas id="cubets4" width="297" height="200"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <script type="module">
       import Cubets from "../dist/cubets.js"
@@ -47,13 +50,30 @@
       scene.add(mesh2)
       scene.add(light)
 
-      const grayscale = new Cubets.GrayscaleFilter()
+      const camera1 = new Cubets.PerspectiveCamera("cubets1", 45, 0.1, 100)
+      camera1.position.z = 20
+      camera1.start(scene)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
-      camera.position.z = 20
-      camera.addFilter(grayscale)
-      camera.start(scene)
-      //camera.startOnce(scene)
+      const grayscale = new Cubets.GrayscaleFilter()
+      const camera2 = new Cubets.PerspectiveCamera("cubets2", 45, 0.1, 100)
+      camera2.position.z = 20
+      camera2.addFilter(grayscale)
+      camera2.start(scene)
+
+      const invert = new Cubets.InvertFilter()
+      const camera3 = new Cubets.PerspectiveCamera("cubets3", 45, 0.1, 100)
+      camera3.position.z = 20
+      camera3.addFilter(invert)
+      camera3.start(scene)
+
+      const grayscale2 = new Cubets.GrayscaleFilter()
+      const invert2 = new Cubets.InvertFilter()
+      const camera4 = new Cubets.PerspectiveCamera("cubets4", 45, 0.1, 100)
+      camera4.position.z = 20
+      camera4.addFilter(grayscale2)
+      camera4.addFilter(invert2)
+      camera4.start(scene)
+
 
       setInterval(() => {
         mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))

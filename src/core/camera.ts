@@ -53,7 +53,7 @@ export abstract class Camera {
 
   addFilter(filter: Filter) {
     filter.setupFrameBuffer(this.renderer)
-    this.filters.join(filter)
+    this.filters.push(filter)
   }
 
   removeFilter(filter: Filter) {

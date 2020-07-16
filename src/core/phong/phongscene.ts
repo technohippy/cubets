@@ -7,10 +7,6 @@ export class PhongScene extends Scene {
   static Light = PhongDirectionalLight
   static Material = PhongMaterial
 
-  constructor(name="phone scene") {
-    super(name)
-  }
-
   getVertexPositionAttribLocation(renderer:Renderer): number {
     return renderer.getAttributeLocation("aVertexPosition")
   }

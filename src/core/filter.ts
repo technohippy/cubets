@@ -3,13 +3,8 @@ import { Scene } from "./scene.js"
 import { Material } from "./material.js"
 import { PlaneGeometry } from "../geometry/planegeometry.js";
 import { Mesh } from "../core/mesh.js";
-import { RGBAColor } from "../math/rgbacolor.js";
-import { Quat } from "../math/quat.js";
 
 export abstract class Filter {
-  prev?: Filter
-  next?: Filter
-
   scene: Scene
   plane: PlaneGeometry
   planeMesh: Mesh
@@ -21,14 +16,15 @@ export abstract class Filter {
   inputFrameBuffer:WebGLFramebuffer | null = null
   outputFrameBuffer:WebGLFramebuffer | null = null
 
-  constructor() {
-    this.scene = new FilterScene()
-    this.scene.clearColor = RGBAColor.Blue
+  constructor(scene:FilterScene | string, material:FilterMaterial = new FilterMaterial()) {
+    material.filter = this
+    if (typeof scene === "string") {
+      const body = scene as string
+      scene = new FilterScene((frag:string, frame:string)=>body)
+    }
+    this.scene = scene
     this.plane = new PlaneGeometry(2, 2)
-    this.planeMesh = new Mesh(
-      this.plane,
-      new FilterScene.Material(this),
-    )
+    this.planeMesh = new Mesh(this.plane, material)
     this.scene.add(this.planeMesh)
   }
 
@@ -82,80 +78,50 @@ export abstract class Filter {
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
   }
 
-  get first(): Filter | undefined {
-    let first: Filter = this
-    while (first.prev) {
-      first = first.prev
-    }
-    return first
+  draw() {
+    this.renderer!.render(this.scene)
   }
+}
 
-  get last(): Filter {
-    let last: Filter = this
-    while (last.next) {
-      last = last.next
+export class FilterChain {
+  filters: Filter[] = []
+
+  push(filter:Filter) {
+    if (0 < this.filters.length) {
+      const lastFilter = this.filters[this.filters.length-1]
+      lastFilter.outputFrameBuffer = filter.inputFrameBuffer
     }
-    return last
+    this.filters.push(filter)
   }
 
   forEach(fn:(filter:Filter) => void) {
-    fn(this)
-    this.next?.forEach(fn)
-  }
-
-  join(filter: Filter) {
-    let lastFilter = this.last
-    lastFilter.next = filter
-    filter.prev = lastFilter
-    lastFilter.outputFrameBuffer = filter.inputFrameBuffer
-  }
-
-  abstract draw(): void
-}
-
-export class FilterChain extends Filter {
-  get first(): Filter | undefined {
-    return this.next
-  }
-
-  exist(): boolean {
-    return this.next !== undefined
+    this.filters.forEach(fn)
   }
 
   apply(parentRenderer: Renderer, fn:() => void) {
     const gl = parentRenderer.gl
 
-    let cur = this.next
-    if (cur) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, cur.inputFrameBuffer)
+    if (0 < this.filters.length) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, this.filters[0].inputFrameBuffer)
     }
 
     fn()
     
-    while (cur) {
-      cur.renderer!.use()
-      gl.bindFramebuffer(gl.FRAMEBUFFER, cur.outputFrameBuffer)
-      cur.draw()
-      cur = cur.next
-    }
+    this.filters.forEach(filter => {
+      filter.renderer!.use()
+      gl.bindFramebuffer(gl.FRAMEBUFFER, filter.outputFrameBuffer)
+      filter.draw()
+    })
 
     parentRenderer.use()
   }
-
-  draw() {
-    // TODO: 本当はFilterChainはFilterを継承しなくていい
-  }
 }
 
-class FilterMaterial extends Material {
-  filter:Filter
-
-  constructor(filter:Filter) {
-    super()
-    this.filter = filter
-  }
+export class FilterMaterial extends Material {
+  filter?:Filter
 
   setupGLVars(renderer:Renderer) {
+    if (!this.filter) throw "no filter"
     if (!this.filter.inputTexture)  throw "no inputTexture"
 
     const gl = renderer.gl
@@ -170,14 +136,18 @@ class FilterMaterial extends Material {
 export class FilterScene extends Scene {
   static Material = FilterMaterial
 
-  constructor(name="filter scene") {
-    super(name)
+  fragmentShaderBodyFn?:(fragColor:string, frameColor:string)=>string
+
+  constructor(fragmentShaderBodyFn?:(fragColor:string, frameColor:string)=>string) {
+    super()
+    this.fragmentShaderBodyFn = fragmentShaderBodyFn
   }
 
   hasTexture(): boolean {
     return true
   }
 
+  // overridable
   getVertexPositionAttribLocation(renderer:Renderer): number {
     return renderer.getAttributeLocation("aVertexPosition")
   }
@@ -186,6 +156,7 @@ export class FilterScene extends Scene {
     return -1
   }
 
+  // overridable
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number { 
     return renderer.getAttributeLocation("aVertexTextureCoords")
   }
@@ -205,10 +176,12 @@ export class FilterScene extends Scene {
     return renderer.getUniformLocation("nerver called")
   }
 
+  // overridable
   getAttributeNames(): string[] {
     return [ "aVertexPosition", "aVertexTextureCoords" ]
   }
 
+  // overridable
   getUniformNames(): string[] {
     return [ "uSampler" ]
   }
@@ -230,6 +203,7 @@ export class FilterScene extends Scene {
   }
 
   getFragmentShader():string {
+    const body = this.getFragmentShaderBody("fragColor", "frameColor")
     return `#version 300 es
       precision mediump float;
 
@@ -241,13 +215,15 @@ export class FilterScene extends Scene {
 
       void main(void) {
         vec4 frameColor = texture(uSampler, vTextureCoords);
-        float luminance = frameColor.r * 0.3 + frameColor.g * 0.59 + frameColor.b * 0.11;
-        fragColor = vec4(luminance, luminance, luminance, frameColor.a);
-
-        // for test
-        //fragColor = vec4(1.0, 0.0, 0.0, 1.0);
-        //fragColor = frameColor;
+        ${this.getFragmentShaderBody("fragColor", "frameColor")}
       }
    `
+  }
+
+  getFragmentShaderBody(fragColor:string, frameColor:string):string {
+    if (this.fragmentShaderBodyFn) {
+      return this.fragmentShaderBodyFn(fragColor, frameColor)
+    }
+    throw "subclass responsibility"
   }
 }
