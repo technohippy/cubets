@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- postprocessing
 - load 3d objects (.json)
 - Skybox
 - group geometries
@@ -34,6 +33,8 @@
 
 ## Refactoring
 
+- performance
+  - 特にpostprocessingがガクガクする
 - glmatrix
   - //@ts-ignoreも
 - sourcemap
@@ -59,6 +60,7 @@
 
 ## Enhancement
 
+- postprocessing
 - add plane geometry
 - point light
 - multi lights

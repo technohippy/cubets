@@ -54,10 +54,10 @@
       camera1.position.z = 20
       camera1.start(scene)
 
-      const grayscale = new Cubets.GrayscaleFilter()
+      const blur = new Cubets.BlurFilter()
       const camera2 = new Cubets.PerspectiveCamera("cubets2", 45, 0.1, 100)
       camera2.position.z = 20
-      camera2.addFilter(grayscale)
+      camera2.addFilter(blur)
       camera2.start(scene)
 
       const invert = new Cubets.InvertFilter()
@@ -66,11 +66,11 @@
       camera3.addFilter(invert)
       camera3.start(scene)
 
-      const grayscale2 = new Cubets.GrayscaleFilter()
+      const blur2 = new Cubets.BlurFilter()
       const invert2 = new Cubets.InvertFilter()
       const camera4 = new Cubets.PerspectiveCamera("cubets4", 45, 0.1, 100)
       camera4.position.z = 20
-      camera4.addFilter(grayscale2)
+      camera4.addFilter(blur2)
       camera4.addFilter(invert2)
       camera4.start(scene)
 

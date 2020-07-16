@@ -204,20 +204,23 @@ export class FilterScene extends Scene {
 
   getFragmentShader():string {
     const body = this.getFragmentShaderBody("fragColor", "frameColor")
-    return `#version 300 es
-      precision mediump float;
-
-      uniform sampler2D uSampler;
-
-      in vec2 vTextureCoords;
-
-      out vec4 fragColor;
+    return `${this.getFragmentShaderHead()}
 
       void main(void) {
         vec4 frameColor = texture(uSampler, vTextureCoords);
         ${this.getFragmentShaderBody("fragColor", "frameColor")}
       }
    `
+  }
+
+  getFragmentShaderHead():string {
+    return `#version 300 es
+      precision mediump float;
+
+      uniform sampler2D uSampler;
+      in vec2 vTextureCoords;
+      out vec4 fragColor;
+    `
   }
 
   getFragmentShaderBody(fragColor:string, frameColor:string):string {

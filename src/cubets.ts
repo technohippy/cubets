@@ -21,6 +21,7 @@ import { CylinderGeometry } from "./geometry/cylindergeometry.js"
 
 import { GrayscaleFilter } from "./filter/grayscalefilter.js"
 import { InvertFilter } from "./filter/invertfilter.js"
+import { BlurFilter } from "./filter/blurfilter.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
 
@@ -46,6 +47,7 @@ export default {
   CylinderGeometry: CylinderGeometry,
   GrayscaleFilter: GrayscaleFilter,
   InvertFilter: InvertFilter,
+  BlurFilter: BlurFilter,
   Material: Material,
   Mesh: Mesh,
   Renderer: Renderer,
