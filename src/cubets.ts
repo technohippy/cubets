@@ -9,6 +9,7 @@ import { Material } from "./core/material.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
 import { Texture } from "./core/texture.js"
+import { CubeTexture } from "./core/cubetexture.js"
 
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
 import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
@@ -59,4 +60,5 @@ export default {
   Color: RGBAColor,
   Viewport: Viewport,
   Texture: Texture,
+  CubeTexture: CubeTexture,
 }

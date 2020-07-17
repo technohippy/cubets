@@ -34,10 +34,10 @@ export class Texture {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-      gl.bindTexture(gl.TEXTURE_2D, null)
+      //gl.bindTexture(gl.TEXTURE_2D, null)
 
       gl.activeTexture(gl.TEXTURE0)
-      gl.bindTexture(gl.TEXTURE_2D, texture)
+      //gl.bindTexture(gl.TEXTURE_2D, texture)
       gl.uniform1i(location, 0)
     }
   }

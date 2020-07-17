@@ -2,8 +2,6 @@
 
 ## Enhancement
 
-- add design doc
-- learn typescript
 - group geometries
 - load 3d objects (.json)
 - Skybox
@@ -16,8 +14,8 @@
 - add axis geometry
 - vertex color 
 - add TSDoc comments
+- build a website
 - **release alpha**
-  - build a website
 - drop shadow
 - PBR
 - Stencil Buffer
@@ -28,6 +26,7 @@
 - Animation tools
 - add Gouraud Scene (or other scene/shader)
 - shader toy
+- morphing
 
 ## Bugs
 
@@ -35,13 +34,26 @@
 
 ## Refactoring
 
-- renderMesh signature
+- rollup.jsで一ファイルに纏める
+- introduce interfaces
 - performance
   - 特にpostprocessingがガクガクする
 - glmatrix
   - //@ts-ignoreも
 - sourcemap
 - reduce draw calls
+
+## Apps
+
+- パーリンノイズによる地形生成
+  - fly control
+  - firstperson control
+  - skybox
+  - 時間の変化によるカラーパレット変更
+  - 二重テクスチャ
+    - 青空と星空
+- birdboids
+- l-systems
 
 # DONE
 
@@ -66,3 +78,7 @@
 - Wireframe mode
   - クリックすると回転する？
 - 光源の位置が直方体と球で違って見える
+
+## Refactoring
+
+- renderMesh signature

@@ -77,6 +77,7 @@ export class OrbitCameraControl extends CameraControl {
       this._update()
     }
     this.mousewheelEventListener = evt => {
+      evt.preventDefault()
       this.cameraPolarCoord!.radius += (evt as WheelEvent).deltaY
       this._update()
     }

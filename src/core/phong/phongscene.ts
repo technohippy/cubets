@@ -147,6 +147,10 @@ export class PhongScene extends Scene {
       uniform sampler2D uSampler;
       #endif
 
+      #ifdef CUBETEXTURE
+      uniform samplerCube uSampler;
+      #endif
+
       // flags
       uniform int uNormalMode;
       uniform int uWireframeMode;
@@ -171,6 +175,10 @@ export class PhongScene extends Scene {
 
       #ifdef TEXTURE
       in vec2 vTextureCoords;
+      #endif
+
+      #ifdef CUBETEXTURE
+      in vec3 vCubeTextureCoords;
       #endif
 
       out vec4 fragColor;
@@ -211,8 +219,13 @@ export class PhongScene extends Scene {
 
           fragColor = fragColor + vec4(vec3(Ia + Id + Is), 1.0);
         }
+
         #ifdef TEXTURE
         fragColor = fragColor * texture(uSampler, vTextureCoords);
+        #endif
+
+        #ifdef CUBETEXTURE
+        fragColor = fragColor * texture(uSampler, vCubeTextureCoords);
         #endif
       }
     `
