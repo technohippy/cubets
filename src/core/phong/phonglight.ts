@@ -1,5 +1,4 @@
 import { Light } from "../light.js";
-import { Vec3 } from "../../math/vec3.js";
 import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
 

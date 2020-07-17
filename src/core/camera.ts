@@ -10,7 +10,13 @@ import { Viewport } from "./viewport.js";
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
-export abstract class Camera {
+export interface FilteredCamera {
+  resetFilters(): void
+  applyFilters(renderer:Renderer, fn:()=>void): void
+  setupGLMatrixes(renderer:Renderer, scene:Scene): void
+}
+
+export abstract class Camera implements FilteredCamera {
   renderer: Renderer
   filters = new FilterChain()
   projectionMatrix: number[] = mat4.create()
@@ -58,6 +64,16 @@ export abstract class Camera {
 
   removeFilter(filter: Filter) {
     throw "not yet"
+  }
+
+  resetFilters() {
+    this.filters.forEach(f => {
+      f.resetFrameBuffer()
+    })
+  }
+
+  applyFilters(renderer:Renderer, fn:()=>void) {
+    this.filters.apply(renderer, fn)
   }
 
   setupGLMatrixes(renderer:Renderer, scene:Scene) {

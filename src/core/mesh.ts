@@ -40,55 +40,17 @@ export class Mesh {
     this.transforms.length = 0
   }
 
-  getVertices(): Float32Array {
-    const positionTransform = Transform3.translate(this.position)
-    const rotationTransform = this.rotation.toTransform()
-    this._concentrateMatrixes()
-    return new Float32Array(this.geometry.vertices.map(v => {
-      const vv = v.clone()
-      rotationTransform.apply(vv)
-      positionTransform.apply(vv)
-      this.transforms.forEach(t => t.apply(vv))
-      return vv.toArray()
-    }).flat())
-  }
-
-  getNormals(): Float32Array {
-    const positionTransform = Transform3.translate(this.position)
-    const rotationTransform = this.rotation.toTransform()
-    this._concentrateMatrixes()
-    // TODO: getVerticesで計算済みなので、cacheすることを考える
-    const vertices = this.geometry.vertices.map(v => {
-      const vv = v.clone()
-      rotationTransform.apply(vv)
-      positionTransform.apply(vv)
-      this.transforms.forEach(t => t.apply(vv))
-      return vv
-    })
-    const normals = Geometry.computeNormals(this.geometry.indices, vertices)
-    return new Float32Array(normals.map(v => v.toArray()).flat())
-  }
-
-  getTextureCoords(): Float32Array {
-    return new Float32Array(this.geometry.uvs.map(uv => uv.toArray()).flat())
-  }
-
-  getIndices(): Uint16Array {
-    if (this.material.wireframe) {
-      return new Uint16Array(this.geometry.indices.map(face => face.toLineArray()).flat())
-    } else {
-      return new Uint16Array(this.geometry.indices.map(face => face.toArray()).flat())
-    }
-  }
-
   setupGLBuffers(renderer:Renderer, scene:Scene) {
     const gl = renderer.gl
+
+    this._concentrateMatrixes()
+    const transformedVertices = this.geometry.transformVertices(this.position, this.rotation, this.transforms)
 
     const vertexLocation = scene.getVertexPositionAttribLocation(renderer)
     if (0 <= vertexLocation) {
       this.verticesBuffer = gl.createBuffer()!
       gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW)
+      gl.bufferData(gl.ARRAY_BUFFER, this.geometry.getVertices(transformedVertices), gl.STATIC_DRAW)
       gl.enableVertexAttribArray(vertexLocation)
       gl.vertexAttribPointer(vertexLocation, 3, gl.FLOAT, false, 0, 0)
     }
@@ -97,7 +59,7 @@ export class Mesh {
     if (0 <= normalLocation) {
       this.normalBuffer = gl.createBuffer()!
       gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, this.getNormals(), gl.STATIC_DRAW)
+      gl.bufferData(gl.ARRAY_BUFFER, this.geometry.getNormals(transformedVertices), gl.STATIC_DRAW)
       gl.enableVertexAttribArray(normalLocation)
       gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0)
     }
@@ -106,14 +68,14 @@ export class Mesh {
       const textureCoordsLocation = scene.getVertexTextureCoordsAttribLocation(renderer)
       this.textureCoordsBuffer = gl.createBuffer()!
       gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordsBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, this.getTextureCoords(), gl.STATIC_DRAW)
+      gl.bufferData(gl.ARRAY_BUFFER, this.geometry.getTextureCoords(), gl.STATIC_DRAW)
       gl.enableVertexAttribArray(textureCoordsLocation)
       gl.vertexAttribPointer(textureCoordsLocation, 2, gl.FLOAT, false, 0, 0)
     }
 
     this.indicesBuffer = gl.createBuffer()!
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer)
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.getIndices(), gl.STATIC_DRAW)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.geometry.getIndices(this.material.wireframe), gl.STATIC_DRAW)
   }
 
   drawGL(gl: WebGL2RenderingContext) {

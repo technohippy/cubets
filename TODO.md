@@ -2,12 +2,14 @@
 
 ## Enhancement
 
+- add design doc
+- learn typescript
+- group geometries
 - load 3d objects (.json)
 - Skybox
-- group geometries
 - picker
-- particle system
 - BumpMap
+- particle system
 - **make tiny applications with cubets**
 - texture properties
 - multi textures for one mesh
@@ -33,28 +35,13 @@
 
 ## Refactoring
 
+- renderMesh signature
 - performance
   - 特にpostprocessingがガクガクする
 - glmatrix
   - //@ts-ignoreも
 - sourcemap
 - reduce draw calls
-
-```
-    this.attributes = {};
-    const attributesCount = gl.getProgramParameter(this.program, gl.ACTIVE_ATTRIBUTES);
-    for (let i = 0; i < attributesCount; i++) {
-      const attrib = gl.getActiveAttrib(this.program, i);
-      this.attributes[attrib.name] = gl.getAttribLocation(this.program, attrib.name);
-    }
-
-    this.uniforms = {};
-    const uniformsCount = gl.getProgramParameter(this.program, gl.ACTIVE_UNIFORMS);
-    for (let i = 0; i < uniformsCount; i++) {
-      const uniform = gl.getActiveUniform(this.program, i);
-      this.uniforms[uniform.name] = gl.getUniformLocation(this.program, uniform.name);
-    }
-```
 
 # DONE
 

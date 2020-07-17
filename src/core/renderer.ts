@@ -1,8 +1,9 @@
 import { Scene } from "./scene.js"
-import { Camera } from "./camera.js"
+import { Camera, FilteredCamera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
+import { Filter } from "./filter.js"
 
 export class Renderer {
   container: HTMLCanvasElement
@@ -74,7 +75,7 @@ export class Renderer {
     this.gl.useProgram(this.program!)
   }
 
-  render(scene: Scene, camera?: Camera) {
+  render(scene: Scene, camera: FilteredCamera) {
     this.use()
     this.clear(scene.clearColor, camera)
     scene.eachMesh(mesh => {
@@ -83,7 +84,7 @@ export class Renderer {
     })
   }
 
-  clear(clearColor:RGBAColor=RGBAColor.Black, camera?: Camera) {
+  clear(clearColor:RGBAColor=RGBAColor.Black, camera: FilteredCamera) {
     this.viewport.apply(this.gl)
     this.gl.clearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a)
     this.gl.clearDepth(1.0)
@@ -91,19 +92,18 @@ export class Renderer {
     this.gl.enable(this.gl.DEPTH_TEST)
     this.gl.depthFunc(this.gl.LEQUAL)
 
-    if (camera) {
-      camera.filters.forEach(f => {
-        f.resetFrameBuffer()
-      })
-    }
+    camera.resetFilters()
   }
 
   setupVAO(scene: Scene, mesh: Mesh) {
-    const vao = this.gl.createVertexArray()
-    if (vao === null) {
-      throw "fail to create VAO"
+    if (!this.vao) {
+      const vao = this.gl.createVertexArray()
+      if (vao === null) {
+        throw "fail to create VAO"
+      }
+      this.vao = vao!
     }
-    this.vao = vao!
+
     this.gl.bindVertexArray(this.vao)
 
     mesh.setupGLBuffers(this, scene)
@@ -114,25 +114,17 @@ export class Renderer {
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null)
   }
 
-  renderMesh(scene: Scene, mesh: Mesh, camera?: Camera) {
-    // if camera is null, the method is called for filter
-
-    camera?.setupGLMatrixes(this, scene)
+  renderMesh(scene: Scene, mesh: Mesh, camera: FilteredCamera) {
+    camera.setupGLMatrixes(this, scene)
     scene.lights.setupGLVars(this)
     mesh.material.setupGLVars(this)
 
     try {
       this.gl.bindVertexArray(this.vao!)
 
-      if (camera) {
-        // normal scene
-        camera.filters.apply(this, () => {
-          mesh.drawGL(this.gl)
-        })
-      } else {
-        // filter
+      camera.applyFilters(this, () => {
         mesh.drawGL(this.gl)
-      }
+      })
       this.gl.bindVertexArray(null)
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null)
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null)

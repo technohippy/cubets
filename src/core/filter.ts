@@ -3,6 +3,7 @@ import { Scene } from "./scene.js"
 import { Material } from "./material.js"
 import { PlaneGeometry } from "../geometry/planegeometry.js";
 import { Mesh } from "../core/mesh.js";
+import { FilteredCamera } from "./camera.js";
 
 export abstract class Filter {
   scene: Scene
@@ -79,7 +80,22 @@ export abstract class Filter {
   }
 
   draw() {
-    this.renderer!.render(this.scene)
+    this.renderer!.render(this.scene, new FilterCamera())
+  }
+}
+
+// do almost nothing
+class FilterCamera implements FilteredCamera {
+  resetFilters() {
+    // do nothing
+  }
+
+  applyFilters(renderer:Renderer, fn:()=>void) {
+    fn()
+  }
+  
+  setupGLMatrixes(renderer:Renderer, scene:Scene) {
+    // do nothing
   }
 }
 
