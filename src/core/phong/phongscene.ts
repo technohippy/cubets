@@ -77,12 +77,16 @@ export class PhongScene extends Scene {
     if (this.hasTexture()) {
       names.push("uSampler")
     }
+    if (this.hasCubeTexture()) {
+      names.push("uCubeSampler")
+    }
     return names
   }
 
   getVertexShader() {
     return `#version 300 es
       ${this.hasTexture() ? "#define TEXTURE" : ""}
+      ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
       precision mediump float;
 
       const int numLights = ${this.lights.length};
@@ -110,6 +114,10 @@ export class PhongScene extends Scene {
       out vec2 vTextureCoords;
       #endif
 
+      #ifdef CUBETEXTURE
+      out vec3 vCubeTextureCoords;
+      #endif
+
       void main(void) {
         vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
@@ -128,6 +136,10 @@ export class PhongScene extends Scene {
         #ifdef TEXTURE
         vTextureCoords = aVertexTextureCoords;
         #endif
+        
+        #ifdef CUBETEXTURE
+        vCubeTextureCoords = aVertexPosition;
+        #endif
 
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
@@ -137,6 +149,7 @@ export class PhongScene extends Scene {
   getFragmentShader() {
     return `#version 300 es
       ${this.hasTexture() ? "#define TEXTURE" : ""}
+      ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
       precision mediump float;
 
       const int numLights = ${this.lights.length};
@@ -148,7 +161,7 @@ export class PhongScene extends Scene {
       #endif
 
       #ifdef CUBETEXTURE
-      uniform samplerCube uSampler;
+      uniform samplerCube uCubeSampler;
       #endif
 
       // flags
@@ -225,7 +238,8 @@ export class PhongScene extends Scene {
         #endif
 
         #ifdef CUBETEXTURE
-        fragColor = fragColor * texture(uSampler, vCubeTextureCoords);
+        //fragColor = fragColor * texture(uCubeSampler, vCubeTextureCoords);
+        fragColor = texture(uCubeSampler, vCubeTextureCoords);
         #endif
       }
     `

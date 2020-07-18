@@ -55,10 +55,8 @@ export class CubeTexture implements Texture {
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images[3] as (HTMLImageElement | HTMLCanvasElement | HTMLVideoElement))
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images[4] as (HTMLImageElement | HTMLCanvasElement | HTMLVideoElement))
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images[5] as (HTMLImageElement | HTMLCanvasElement | HTMLVideoElement))
-    //gl.bindTexture(gl.TEXTURE_CUBE_MAP, null)
 
     gl.activeTexture(gl.TEXTURE0)
-    //gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture)
     gl.uniform1i(location, 0)
   }
 }

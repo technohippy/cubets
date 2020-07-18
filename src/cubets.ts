@@ -1,7 +1,5 @@
 import { PhongScene } from "./core/phong/phongscene.js"
-import { Camera } from "./core/camera.js"
 import { Renderer } from "./core/renderer.js"
-import { Light } from "./core/light.js"
 import { PhongDirectionalLight } from "./core/phong/phongdirectionallight.js"
 import { PhongPositionalLight } from "./core/phong/phongpositionallight.js"
 import { PhongSpotLight } from "./core/phong/phongspotlight.js"
@@ -34,31 +32,36 @@ import { RGBAColor } from "./math/rgbacolor.js"
 export default {
   Scene: PhongScene,
   PhongScene: PhongScene,
-  Camera: Camera,
+
+  Material: Material,
+  Mesh: Mesh,
+  Renderer: Renderer,
+
   PerspectiveCamera: PerspectiveCamera, 
   OrthogonalCamera: OrthogonalCamera,
-  Light: Light,
+  OrbitCameraControl: OrbitCameraControl,
+
   PhongPositionalLight: PhongPositionalLight,
   PhongDirectionalLight: PhongDirectionalLight,
   PhongSpotLight: PhongSpotLight,
+
   PlaneGeometry: PlaneGeometry,
   GroundGeometry: GroundGeometry,
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,
+
   GrayscaleFilter: GrayscaleFilter,
   InvertFilter: InvertFilter,
   BlurFilter: BlurFilter,
-  Material: Material,
-  Mesh: Mesh,
-  Renderer: Renderer,
-  OrbitCameraControl: OrbitCameraControl,
+
+  Viewport: Viewport,
+  Texture: Texture,
+  CubeTexture: CubeTexture,
+
   Vec2: Vec2,
   Vec3: Vec3,
   Quat: Quat,
   RGBAColor: RGBAColor,
   Color: RGBAColor,
-  Viewport: Viewport,
-  Texture: Texture,
-  CubeTexture: CubeTexture,
 }

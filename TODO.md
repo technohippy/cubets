@@ -37,7 +37,7 @@
 - rollup.jsで一ファイルに纏める
 - introduce interfaces
 - performance
-  - 特にpostprocessingがガクガクする
+  - 特にpostprocessingを重ねると劣化
 - glmatrix
   - //@ts-ignoreも
 - sourcemap

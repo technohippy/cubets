@@ -4,6 +4,7 @@ import { Lights } from './lights.js'
 import { Renderer } from './renderer.js'
 import { Texture } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
+import { CubeTexture } from './cubetexture.js'
 
 export abstract class Scene {
   name?: string
@@ -55,7 +56,27 @@ export abstract class Scene {
   }
 
   hasTexture(): boolean {
-    return 0 < this.collectTextures().length
+    const textures = this.collectTextures()
+    for (let i = 0; i < textures.length; i++) {
+      const texture = textures[i]
+      if (texture instanceof CubeTexture) {
+        // ignore
+      } else if (texture instanceof Texture) {
+        return true
+      }
+    }
+    return false
+  }
+
+  hasCubeTexture(): boolean {
+    const textures = this.collectTextures()
+    for (let i = 0; i < textures.length; i++) {
+      const texture = textures[i]
+      if (texture instanceof CubeTexture) {
+        return true
+      }
+    }
+    return false
   }
 
   async loadAllTextures(): Promise<void[]> {

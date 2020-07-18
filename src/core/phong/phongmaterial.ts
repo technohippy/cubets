@@ -1,6 +1,7 @@
 import { Material } from "../material.js";
 import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
+import { CubeTexture } from "../cubetexture.js";
 
 export class PhongMaterial extends Material {
   diffuseColor: RGBAColor
@@ -37,7 +38,8 @@ export class PhongMaterial extends Material {
     gl.uniform1f(shininessLocation, this.shininess)
 
     if (this.texture) {
-      const samplerLocation = renderer.getUniformLocation("uSampler")
+      const samplerName = this.texture instanceof CubeTexture ? "uCubeSampler" : "uSampler"
+      const samplerLocation = renderer.getUniformLocation(samplerName)
       this.texture.setupGLTexture(gl, samplerLocation)
     }
   }

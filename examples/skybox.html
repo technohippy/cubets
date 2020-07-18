@@ -27,12 +27,11 @@
 
       const scene = new Cubets.Scene()
 
-      const light = new Cubets.Scene.Light(
-        new Cubets.Vec3(0, 0, -1),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.8)
-      )
-      light.shouldFollowCamera = true
+     const light = new Cubets.PhongPositionalLight(
+        new Cubets.Vec3(),
+        new Cubets.Color(1, 1, 1),
+        new Cubets.Color(1, 1, 1)
+     )
 
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       skyboxMaterial.texture = new Cubets.CubeTexture(
@@ -44,16 +43,15 @@
         "./images/skybox/DaylightBox/DaylightBox_Front.png",
       )
       const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry(10, 10, 10),
+        new Cubets.CubeGeometry(1000, 1000, 1000),
         skyboxMaterial,
       )
 
       scene.add(mesh)
       scene.add(light)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
-      //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
-      camera.position.z = 20
+      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)
+      camera.position.z = 1
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
     </script>
