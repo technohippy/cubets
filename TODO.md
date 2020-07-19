@@ -4,7 +4,6 @@
 
 - group geometries
 - load 3d objects (.json)
-- Skybox
 - picker
 - BumpMap
 - particle system
@@ -27,10 +26,15 @@
 - add Gouraud Scene (or other scene/shader)
 - shader toy
 - morphing
+- reflection environment (using CubeMap)
 
 ## Bugs
 
 - check spotlight direction
+- ライトがないとエラーになる
+- CubeMapを鏡面反射に利用できない
+  - ライティングを有効にするかどうかのUniformを追加
+  - texturecoordsがおかしい
 
 ## Refactoring
 
@@ -59,6 +63,7 @@
 
 ## Enhancement
 
+- Skybox
 - postprocessing
 - add plane geometry
 - point light

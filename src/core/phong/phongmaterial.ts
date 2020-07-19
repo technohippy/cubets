@@ -38,9 +38,14 @@ export class PhongMaterial extends Material {
     gl.uniform1f(shininessLocation, this.shininess)
 
     if (this.texture) {
-      const samplerName = this.texture instanceof CubeTexture ? "uCubeSampler" : "uSampler"
-      const samplerLocation = renderer.getUniformLocation(samplerName)
-      this.texture.setupGLTexture(gl, samplerLocation)
+      if (this.texture instanceof CubeTexture) {
+        const skyboxLocation = renderer.getUniformLocation("uSkybox")
+        const samplerLocation = renderer.getUniformLocation("uCubeSampler")
+        this.texture.setupGLTexture(gl, samplerLocation, skyboxLocation)
+      } else {
+        const samplerLocation = renderer.getUniformLocation("uSampler")
+        this.texture.setupGLTexture(gl, samplerLocation)
+      }
     }
   }
 }

@@ -4,6 +4,8 @@ export class CubeTexture implements Texture {
   image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
   images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)[]
 
+  isSkybox = false
+
   constructor(
     imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
     imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
@@ -35,7 +37,7 @@ export class CubeTexture implements Texture {
     )
   }
 
-  setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation) {
+  setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation, skyboxLocation?:WebGLUniformLocation) {
     this.images.forEach((image, i) => {
       if (typeof image === "string") {
         const img = new Image()
@@ -43,6 +45,11 @@ export class CubeTexture implements Texture {
         this.images[i] = img
       }
     })
+
+    if (skyboxLocation) {
+      console.log(skyboxLocation, this.isSkybox ? 1 : 0)
+      gl.uniform1i(skyboxLocation, this.isSkybox ? 1 : 0)
+    }
 
     const cubeTexture = gl.createTexture()!
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture)

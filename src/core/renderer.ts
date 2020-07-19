@@ -49,6 +49,7 @@ export class Renderer {
     this.gl.attachShader(this.program, fs)
     this.gl.linkProgram(this.program)
     if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+      console.error(this.gl.getProgramInfoLog(this.program))
       throw("fail to initialize shaders")
     }
   }

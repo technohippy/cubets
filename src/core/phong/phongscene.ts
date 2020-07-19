@@ -79,15 +79,19 @@ export class PhongScene extends Scene {
     }
     if (this.hasCubeTexture()) {
       names.push("uCubeSampler")
+      names.push("uSkybox")
     }
     return names
   }
 
   getVertexShader() {
     return `#version 300 es
+
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
+
       precision mediump float;
+      precision mediump int;
 
       const int numLights = ${this.lights.length};
 
@@ -104,6 +108,10 @@ export class PhongScene extends Scene {
 
       #ifdef TEXTURE
       in vec2 aVertexTextureCoords;
+      #endif
+
+      #ifdef CUBETEXTURE
+      uniform int uSkybox;
       #endif
 
       out vec3 vNormal[numLights];
@@ -138,7 +146,11 @@ export class PhongScene extends Scene {
         #endif
         
         #ifdef CUBETEXTURE
-        vCubeTextureCoords = aVertexPosition;
+        if (0 < uSkybox) {
+          vCubeTextureCoords = aVertexPosition;
+        } else {
+          vCubeTextureCoords = vNormal[0];
+        }
         #endif
 
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
@@ -148,9 +160,12 @@ export class PhongScene extends Scene {
 
   getFragmentShader() {
     return `#version 300 es
+
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
+
       precision mediump float;
+      precision mediump int;
 
       const int numLights = ${this.lights.length};
 
@@ -162,6 +177,7 @@ export class PhongScene extends Scene {
 
       #ifdef CUBETEXTURE
       uniform samplerCube uCubeSampler;
+      uniform int uSkybox;
       #endif
 
       // flags
@@ -238,8 +254,11 @@ export class PhongScene extends Scene {
         #endif
 
         #ifdef CUBETEXTURE
-        //fragColor = fragColor * texture(uCubeSampler, vCubeTextureCoords);
-        fragColor = texture(uCubeSampler, vCubeTextureCoords);
+        if (0 < uSkybox) {
+          fragColor = texture(uCubeSampler, vCubeTextureCoords);
+        } else {
+          fragColor = fragColor * texture(uCubeSampler, -reflect(vEyeVector, vNormal[0]));
+        }
         #endif
       }
     `
