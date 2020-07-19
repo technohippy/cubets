@@ -123,7 +123,7 @@ export class PhongScene extends Scene {
       #endif
 
       #ifdef CUBETEXTURE
-      out vec3 vCubeTextureCoords;
+      out vec3 vSkyboxTextureCoords;
       #endif
 
       void main(void) {
@@ -147,9 +147,7 @@ export class PhongScene extends Scene {
         
         #ifdef CUBETEXTURE
         if (0 < uSkybox) {
-          vCubeTextureCoords = aVertexPosition;
-        } else {
-          vCubeTextureCoords = vNormal[0];
+          vSkyboxTextureCoords = aVertexPosition;
         }
         #endif
 
@@ -207,7 +205,7 @@ export class PhongScene extends Scene {
       #endif
 
       #ifdef CUBETEXTURE
-      in vec3 vCubeTextureCoords;
+      in vec3 vSkyboxTextureCoords;
       #endif
 
       out vec4 fragColor;
@@ -255,7 +253,7 @@ export class PhongScene extends Scene {
 
         #ifdef CUBETEXTURE
         if (0 < uSkybox) {
-          fragColor = texture(uCubeSampler, vCubeTextureCoords);
+          fragColor = texture(uCubeSampler, vSkyboxTextureCoords);
         } else {
           fragColor = fragColor * texture(uCubeSampler, -reflect(vEyeVector, vNormal[0]));
         }

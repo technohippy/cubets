@@ -47,7 +47,6 @@ export class CubeTexture implements Texture {
     })
 
     if (skyboxLocation) {
-      console.log(skyboxLocation, this.isSkybox ? 1 : 0)
       gl.uniform1i(skyboxLocation, this.isSkybox ? 1 : 0)
     }
 
