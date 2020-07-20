@@ -53,7 +53,8 @@
       const reflectionMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       reflectionMaterial.texture = new Cubets.CubeTexture(...cubeImages)
       const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry(0.5, 0.5, 0.5),
+        //new Cubets.CubeGeometry(0.5, 0.5, 0.5),
+        new Cubets.SphereGeometry(0.3),
         reflectionMaterial
       )
       mesh.rotation = Cubets.Quat.fromEuler(30, 20, 0)

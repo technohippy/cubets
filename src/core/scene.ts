@@ -5,12 +5,14 @@ import { Renderer } from './renderer.js'
 import { Texture } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 import { CubeTexture } from './cubetexture.js'
+import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
 
 export abstract class Scene {
   name?: string
   clearColor = RGBAColor.Black
 
   meshes: Mesh[] = []
+  reflectionMeshes: Mesh[] = []
   lights = new Lights()
 
   #textures?: Texture[]
@@ -24,7 +26,12 @@ export abstract class Scene {
   }
 
   addMesh(mesh: Mesh) {
-    this.meshes.push(mesh)
+    // TODO: PhongReflectionMaterial が漏れているのでどうにかする
+    if (mesh.material instanceof PhongReflectionMaterial) {
+      this.reflectionMeshes.push(mesh)
+    } else {
+      this.meshes.push(mesh)
+    }
   }
 
   addLight(light: Light) {
@@ -38,6 +45,7 @@ export abstract class Scene {
 
   eachMesh(fn: (obj: Mesh) => void) {
     this.meshes.forEach(fn)
+    this.reflectionMeshes.forEach(fn)
   }
 
   eachLight(fn: (obj: Light) => void) {

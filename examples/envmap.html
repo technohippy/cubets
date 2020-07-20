@@ -33,6 +33,12 @@
         new Cubets.Color(0.8, 0.8, 0.8)
       )
 
+      const light2 = new Cubets.PhongDirectionalLight(
+        new Cubets.Vec3(-0.5, 0.2, 1.0),
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0.8, 0.8, 0.8)
+      )
+
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       skyboxMaterial.texture = new Cubets.CubeTexture(
         "./images/skybox/DaylightBox/DaylightBox_Left.png",
@@ -48,21 +54,34 @@
         skyboxMaterial,
       )
 
+      const c = document.createElement("canvas") 
+      c.width = 256
+      c.height = 256
+      const envMaterial = new Cubets.PhongReflectionMaterial(
+        Cubets.Color.White,
+        Cubets.Color.White,
+        Cubets.Color.White
+      )
+      envMaterial.reflectionScene = scene
+      envMaterial.reflectionCamera = new Cubets.PerspectiveCamera(new Cubets.Viewport(c), 90, 0.1, 2000)
       const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry(0.5, 0.5, 0.5),
         new Cubets.Scene.Material(),
+        //envMaterial,
       )
       cube.rotation = Cubets.Quat.fromEuler(30, 20, 0)
 
       const sphere = new Cubets.Mesh(
         new Cubets.SphereGeometry(0.3),
-        new Cubets.Scene.Material(),
+        //new Cubets.Scene.Material(),
+        envMaterial,
       )
       sphere.position.x = 1
 
       const cylinder = new Cubets.Mesh(
         new Cubets.CylinderGeometry(0.3, 0.5),
         new Cubets.Scene.Material(),
+        //envMaterial,
       )
       cylinder.position.x = -1
 
@@ -71,6 +90,7 @@
       scene.add(sphere)
       scene.add(cylinder)
       scene.add(light)
+      scene.add(light2)
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)
       camera.position.z = 1

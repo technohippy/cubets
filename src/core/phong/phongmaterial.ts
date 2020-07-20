@@ -2,6 +2,7 @@ import { Material } from "../material.js";
 import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
 import { CubeTexture } from "../cubetexture.js";
+import { Mesh } from "../mesh.js";
 
 export class PhongMaterial extends Material {
   diffuseColor: RGBAColor
@@ -22,7 +23,7 @@ export class PhongMaterial extends Material {
     this.shininess = shininess
   }
 
-  setupGLVars(renderer:Renderer) {
+  setupGLVars(renderer:Renderer, mesh:Mesh) {
     const gl = renderer.gl
     const wireframeModeLocation = renderer.getUniformLocation("uWireframeMode")
     const normalModeLocation = renderer.getUniformLocation("uNormalMode")
@@ -38,25 +39,19 @@ export class PhongMaterial extends Material {
     gl.uniform1f(shininessLocation, this.shininess)
 
     // texture
-    let ignoreTextureLocation: WebGLUniformLocation | null = null
-    try {
-      ignoreTextureLocation = renderer.getUniformLocation("uIgnoreTexture")
-    } catch (_) {} // TODO
-    let ignoreCubeTextureLocation: WebGLUniformLocation | null = null
-    try {
-      ignoreCubeTextureLocation = renderer.getUniformLocation("uIgnoreCubeTexture")
-    } catch (_) {} // TODO
+    let ignoreTextureLocation = renderer.getUniformLocation("uIgnoreTexture", true)
+    let ignoreCubeTextureLocation = renderer.getUniformLocation("uIgnoreCubeTexture", true)
     if (this.texture) {
       if (this.texture instanceof CubeTexture) {
         const skyboxLocation = renderer.getUniformLocation("uSkybox")
         const samplerLocation = renderer.getUniformLocation("uCubeSampler")
-        this.texture.setupGLTexture(gl, samplerLocation, skyboxLocation)
+        this.texture.setupGLTexture(gl, samplerLocation!, skyboxLocation!)
 
         if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 1)
         if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 0)
       } else {
         const samplerLocation = renderer.getUniformLocation("uSampler")
-        this.texture.setupGLTexture(gl, samplerLocation)
+        this.texture.setupGLTexture(gl, samplerLocation!)
 
         if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 0)
         if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 1)

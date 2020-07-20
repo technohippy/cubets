@@ -8,6 +8,7 @@ import { Viewport } from "./viewport.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { PhongReflectionMaterial } from "./phong/phongreflectionmaterial.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -47,6 +48,10 @@ export abstract class Camera implements FilteredCamera {
   removeControl(control: CameraControl) {
     this.controls.splice(this.controls.indexOf(control), 1)
     control.detachEvents()
+  }
+
+  lookAt(position:Vec3) {
+
   }
 
   followTarget(target:Vec3) {
@@ -136,6 +141,12 @@ export abstract class Camera implements FilteredCamera {
 
     this.setupProjectionMatrix()
     this.setupModelViewMatrix()
+
+    // TODO: PhongReflectionMaterialが漏れているのでどうにかする
+    scene.reflectionMeshes.forEach(mesh => {
+      const reflectionMaterial = mesh.material as PhongReflectionMaterial
+      reflectionMaterial.prepareCubeTexture(this.renderer, mesh)
+    })
 
     this.renderer.render(scene, this)
   }
