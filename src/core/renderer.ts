@@ -1,9 +1,8 @@
 import { Scene } from "./scene.js"
-import { Camera, FilteredCamera } from "./camera.js"
+import { FilteredCamera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
-import { Filter } from "./filter.js"
 
 export class Renderer {
   container: HTMLCanvasElement

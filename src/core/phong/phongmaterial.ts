@@ -37,15 +37,33 @@ export class PhongMaterial extends Material {
     gl.uniform4fv(materialSpecularLocation, this.specularColor.toArray())
     gl.uniform1f(shininessLocation, this.shininess)
 
+    // texture
+    let ignoreTextureLocation: WebGLUniformLocation | null = null
+    try {
+      ignoreTextureLocation = renderer.getUniformLocation("uIgnoreTexture")
+    } catch (_) {} // TODO
+    let ignoreCubeTextureLocation: WebGLUniformLocation | null = null
+    try {
+      ignoreCubeTextureLocation = renderer.getUniformLocation("uIgnoreCubeTexture")
+    } catch (_) {} // TODO
     if (this.texture) {
       if (this.texture instanceof CubeTexture) {
         const skyboxLocation = renderer.getUniformLocation("uSkybox")
         const samplerLocation = renderer.getUniformLocation("uCubeSampler")
         this.texture.setupGLTexture(gl, samplerLocation, skyboxLocation)
+
+        if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 1)
+        if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 0)
       } else {
         const samplerLocation = renderer.getUniformLocation("uSampler")
         this.texture.setupGLTexture(gl, samplerLocation)
+
+        if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 0)
+        if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 1)
       }
+    } else {
+      if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 1)
+      if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 1)
     }
   }
 }

@@ -46,10 +46,6 @@ export class CubeTexture implements Texture {
       }
     })
 
-    if (skyboxLocation) {
-      gl.uniform1i(skyboxLocation, this.isSkybox ? 1 : 0)
-    }
-
     const cubeTexture = gl.createTexture()!
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -64,5 +60,9 @@ export class CubeTexture implements Texture {
 
     gl.activeTexture(gl.TEXTURE0)
     gl.uniform1i(location, 0)
+
+    if (skyboxLocation) {
+      gl.uniform1i(skyboxLocation, this.isSkybox ? 1 : 0)
+    }
   }
 }

@@ -76,9 +76,11 @@ export class PhongScene extends Scene {
     ]
     if (this.hasTexture()) {
       names.push("uSampler")
+      names.push("uIgnoreTexture")
     }
     if (this.hasCubeTexture()) {
       names.push("uCubeSampler")
+      names.push("uIgnoreCubeTexture")
       names.push("uSkybox")
     }
     return names
@@ -171,10 +173,12 @@ export class PhongScene extends Scene {
 
       #ifdef TEXTURE
       uniform sampler2D uSampler;
+      uniform int uIgnoreTexture;
       #endif
 
       #ifdef CUBETEXTURE
       uniform samplerCube uCubeSampler;
+      uniform int uIgnoreCubeTexture;
       uniform int uSkybox;
       #endif
 
@@ -219,6 +223,12 @@ export class PhongScene extends Scene {
           fragColor = uMaterialAmbient;
           return;
         }
+        #ifdef CUBETEXTURE
+        if (uIgnoreCubeTexture == 0 && 0 < uSkybox) {
+          fragColor = texture(uCubeSampler, vSkyboxTextureCoords);
+          return;
+        }
+        #endif
 
         fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
@@ -248,13 +258,13 @@ export class PhongScene extends Scene {
         }
 
         #ifdef TEXTURE
-        fragColor = fragColor * texture(uSampler, vTextureCoords);
+        if (uIgnoreTexture == 0) {
+          fragColor = fragColor * texture(uSampler, vTextureCoords);
+        }
         #endif
 
         #ifdef CUBETEXTURE
-        if (0 < uSkybox) {
-          fragColor = texture(uCubeSampler, vSkyboxTextureCoords);
-        } else {
+        if (uIgnoreCubeTexture == 0) {
           fragColor = fragColor * texture(uCubeSampler, -reflect(vEyeVector, vNormal[0]));
         }
         #endif

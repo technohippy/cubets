@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cubets: Skybox</title>
+    <title>Cubets: Environment Map</title>
     <style>
       canvas {
         border:1px solid gray;
@@ -29,37 +29,47 @@
 
       const light = new Cubets.PhongDirectionalLight(
         new Cubets.Vec3(0.5, -0.2, -1.0),
-        new Cubets.Color(1, 1, 1),
-        new Cubets.Color(1, 1, 1)
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0.8, 0.8, 0.8)
       )
 
-      const cubeImages = [
+      const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
+      skyboxMaterial.texture = new Cubets.CubeTexture(
         "./images/skybox/DaylightBox/DaylightBox_Left.png",
         "./images/skybox/DaylightBox/DaylightBox_Right.png",
         "./images/skybox/DaylightBox/DaylightBox_Bottom.png",
         "./images/skybox/DaylightBox/DaylightBox_Top.png",
         "./images/skybox/DaylightBox/DaylightBox_Back.png",
         "./images/skybox/DaylightBox/DaylightBox_Front.png",
-      ]
-
-      const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
-      skyboxMaterial.texture = new Cubets.CubeTexture(...cubeImages)
+      )
       skyboxMaterial.texture.isSkybox = true
       const skyMesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(1000, 1000, 1000),
         skyboxMaterial,
       )
 
-      const reflectionMaterial = new Cubets.Scene.Material(Cubets.Color.White)
-      reflectionMaterial.texture = new Cubets.CubeTexture(...cubeImages)
-      const mesh = new Cubets.Mesh(
+      const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry(0.5, 0.5, 0.5),
-        reflectionMaterial
+        new Cubets.Scene.Material(),
       )
-      mesh.rotation = Cubets.Quat.fromEuler(30, 20, 0)
+      cube.rotation = Cubets.Quat.fromEuler(30, 20, 0)
+
+      const sphere = new Cubets.Mesh(
+        new Cubets.SphereGeometry(0.3),
+        new Cubets.Scene.Material(),
+      )
+      sphere.position.x = 1
+
+      const cylinder = new Cubets.Mesh(
+        new Cubets.CylinderGeometry(0.3, 0.5),
+        new Cubets.Scene.Material(),
+      )
+      cylinder.position.x = -1
 
       scene.add(skyMesh)
-      scene.add(mesh)
+      scene.add(cube)
+      scene.add(sphere)
+      scene.add(cylinder)
       scene.add(light)
 
       const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)

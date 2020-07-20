@@ -5,6 +5,8 @@ import { Vec3 } from "../math/vec3.js"
 import { Quat } from "../math/quat.js"
 import { Scene } from "./scene.js";
 import { Renderer } from "./renderer.js";
+import { Texture } from "./texture.js";
+import { CubeTexture } from "./cubetexture.js";
 
 export class Mesh {
   geometry: Geometry
@@ -38,6 +40,14 @@ export class Mesh {
 
   resetTransform() {
     this.transforms.length = 0
+  }
+
+  hasTexture(): boolean {
+    return this.material.texture instanceof Texture && !this.hasCubeTexture()
+  }
+
+  hasCubeTexture(): boolean {
+    return this.material.texture instanceof CubeTexture
   }
 
   setupGLBuffers(renderer:Renderer, scene:Scene) {
