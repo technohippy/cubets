@@ -100,7 +100,6 @@ export abstract class Scene {
 
   abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
   abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
-  abstract getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
   abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
 
   abstract getAttributeNames(): string[]

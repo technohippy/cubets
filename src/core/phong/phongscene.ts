@@ -27,10 +27,6 @@ export class PhongScene extends Scene {
     return renderer.getUniformLocation("uModelViewMatrix")
   }
 
-  getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null{
-    return renderer.getUniformLocation("uCameraMatrix")
-  }
-
   getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
     return renderer.getUniformLocation("uNormalMatrix")
   }
@@ -61,7 +57,6 @@ export class PhongScene extends Scene {
   getUniformNames(): string[] {
     const names = [
       "uModelViewMatrix",
-      "uCameraMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
       "uWireframeMode",
@@ -103,7 +98,6 @@ export class PhongScene extends Scene {
       const int numLights = ${this.lights.length};
 
       uniform mat4 uModelViewMatrix;
-      uniform mat4 uCameraMatrix; // inverted modelview matrix
       uniform mat4 uProjectionMatrix;
       uniform mat4 uNormalMatrix;
 
@@ -178,7 +172,6 @@ export class PhongScene extends Scene {
       const int numLights = ${this.lights.length};
 
       uniform mat4 uModelViewMatrix;
-      uniform mat4 uCameraMatrix; // inverted modelview matrix
 
       #ifdef TEXTURE
       uniform sampler2D uSampler;
@@ -276,7 +269,7 @@ export class PhongScene extends Scene {
         #ifdef CUBETEXTURE
         if (uIgnoreCubeTexture == 0) {
           vec3 ref = reflect(-vEyeVector, vNormal);
-          vec3 coords = (uCameraMatrix * vec4(ref, 1.0)).xyz;
+          vec3 coords = (inverse(uModelViewMatrix) * vec4(ref, 1.0)).xyz;
           fragColor = fragColor * texture(uCubeSampler, coords);
         }
         #endif

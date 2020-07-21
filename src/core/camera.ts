@@ -23,7 +23,6 @@ export abstract class Camera implements FilteredCamera {
   filters = new FilterChain()
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
-  cameraMatrix: number[] = mat4.create() // inverted modelViewMatrix
   normalMatrix: number[] = mat4.create()
 
   controls:CameraControl[] = []
@@ -84,10 +83,8 @@ export abstract class Camera implements FilteredCamera {
     const gl = renderer.gl
     const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation(renderer)
     const modelViewMatrixLocation = scene.getModelViewMatrixUniformLocation(renderer)
-    const cameraMatrixLocation = scene.getCameraMatrixUniformLocation(renderer)
     const normalMatrixLocation = scene.getNormalMatrixUniformLocation(renderer)
     gl.uniformMatrix4fv(modelViewMatrixLocation, false, this.modelViewMatrix)
-    gl.uniformMatrix4fv(cameraMatrixLocation, false, this.cameraMatrix)
     gl.uniformMatrix4fv(projectionMatrixLocation, false, this.projectionMatrix)
     gl.uniformMatrix4fv(normalMatrixLocation, false, this.normalMatrix)
   }
@@ -118,11 +115,11 @@ export abstract class Camera implements FilteredCamera {
       mat4.fromQuat(rotationMat, this.rotation.toArray())
     }
 
-    this.cameraMatrix = mat4.create()
-    mat4.multiply(this.cameraMatrix, this.cameraMatrix, translationMat)
-    mat4.multiply(this.cameraMatrix, this.cameraMatrix, rotationMat)
+    const cameraMatrix = mat4.create()
+    mat4.multiply(cameraMatrix, cameraMatrix, translationMat)
+    mat4.multiply(cameraMatrix, cameraMatrix, rotationMat)
 
-    mat4.invert(this.modelViewMatrix, this.cameraMatrix)
+    mat4.invert(this.modelViewMatrix, cameraMatrix)
 
     // K = (M^-1)^T
     // K:normal matrix

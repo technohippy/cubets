@@ -55,7 +55,7 @@
       scene.add(light)
       scene.add(light2)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 100)
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/3, 0.1, 100)
       camera.position.z = 20
       camera.start(scene)
 
@@ -65,14 +65,14 @@
       camera2.start(scene)
 
       /*
-      const viewport3 = new Cubets.Viewport("cubets3", new Cubets.Vec2(0, 0), new Cubets.Vec2(0.5, 1))
-      const camera3 = new Cubets.PerspectiveCamera(viewport3, 45, 0.1, 100)
+      const viewport3 = new Cubets.Viewport(new Cubets.Vec2(0, 0), new Cubets.Vec2(0.5, 1), "cubets3")
+      const camera3 = new Cubets.PerspectiveCamera(viewport3, Math.PI/4, 0.1, 100)
       camera3.position.x = 20
       camera3.target = new Cubets.Vec3()
       camera3.start(scene)
       */
 
-      const viewport4 = new Cubets.Viewport("cubets3", new Cubets.Vec2(0.5, 0), new Cubets.Vec2(0.5, 1))
+      const viewport4 = new Cubets.Viewport(new Cubets.Vec2(0.5, 0), new Cubets.Vec2(0.5, 1), "cubets3")
       const camera4 = new Cubets.OrthogonalCamera(viewport4, 40, -50, 50)
       camera4.position.x = -20
       camera4.target = new Cubets.Vec3()

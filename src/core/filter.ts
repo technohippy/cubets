@@ -178,23 +178,15 @@ export class FilterScene extends Scene {
   }
 
   getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
-    // TODO
-    return renderer.getUniformLocation("nerver called")
+    return renderer.getUniformLocation("nerver called") // TODO
   }
 
   getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
-    // TODO
-    return renderer.getUniformLocation("nerver called")
-  }
-
-  getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
-    // TODO
-    return renderer.getUniformLocation("nerver called")
+    return renderer.getUniformLocation("nerver called") // TODO
   }
 
   getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
-    // TODO
-    return renderer.getUniformLocation("nerver called")
+    return renderer.getUniformLocation("nerver called") // TODO
   }
 
   // overridable

@@ -85,7 +85,7 @@
         })
       })
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 1000)
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/3, 0.1, 1000)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 25
       camera.addControl(new Cubets.OrbitCameraControl())

@@ -57,13 +57,13 @@
         new Cubets.SphereGeometry(0.3),
         reflectionMaterial
       )
-      mesh.rotation = Cubets.Quat.fromEuler(30, 20, 0)
+      mesh.rotation = Cubets.Quat.fromEulerDegrees(30, 20, 0)
 
       scene.add(skyMesh)
       scene.add(mesh)
       scene.add(light)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 2000)
       camera.position.z = 1
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)

@@ -1,9 +1,7 @@
-import { Material } from "../material.js";
 import { Mesh } from "../mesh.js";
 import { Renderer } from "../renderer.js";
 import { Scene } from "../scene.js";
 import { Camera } from "../camera.js";
-import { Quat } from "../../math/quat.js";
 import { PhongMaterial } from "./phongmaterial.js";
 import { CubeTexture } from "../cubetexture.js";
 import { Vec3 } from "../../math/vec3.js";

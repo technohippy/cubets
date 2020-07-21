@@ -36,12 +36,12 @@
         new Cubets.CubeGeometry(10, 10, 10),
         new Cubets.Scene.Material(),
       )
-      mesh.rotation = Cubets.Quat.fromEuler(30, 30, 45)
+      mesh.rotation = Cubets.Quat.fromEulerDegrees(30, 30, 45)
 
       scene.add(mesh)
       scene.add(light)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 1000)
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 1000)
       //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 20
       camera.position.y = 10

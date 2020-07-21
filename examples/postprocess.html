@@ -44,31 +44,31 @@
         new Cubets.Scene.Material(new Cubets.Color(0.1, 0.5, 1.0)),
       )
       mesh2.position = new Cubets.Vec3(-6, 0, 4)
-      mesh2.rotation = Cubets.Quat.fromEuler(0, 0, 45)
+      mesh2.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 45)
 
       scene.add(mesh)
       scene.add(mesh2)
       scene.add(light)
 
-      const camera1 = new Cubets.PerspectiveCamera("cubets1", 45, 0.1, 100)
+      const camera1 = new Cubets.PerspectiveCamera("cubets1", Math.PI/3, 0.1, 100)
       camera1.position.z = 20
       camera1.start(scene)
 
       const blur = new Cubets.BlurFilter()
-      const camera2 = new Cubets.PerspectiveCamera("cubets2", 45, 0.1, 100)
+      const camera2 = new Cubets.PerspectiveCamera("cubets2", Math.PI/3, 0.1, 100)
       camera2.position.z = 20
       camera2.addFilter(blur)
       camera2.start(scene)
 
       const invert = new Cubets.InvertFilter()
-      const camera3 = new Cubets.PerspectiveCamera("cubets3", 45, 0.1, 100)
+      const camera3 = new Cubets.PerspectiveCamera("cubets3", Math.PI/3, 0.1, 100)
       camera3.position.z = 20
       camera3.addFilter(invert)
       camera3.start(scene)
 
       const blur2 = new Cubets.BlurFilter()
       const invert2 = new Cubets.InvertFilter()
-      const camera4 = new Cubets.PerspectiveCamera("cubets4", 45, 0.1, 100)
+      const camera4 = new Cubets.PerspectiveCamera("cubets4", Math.PI/3, 0.1, 100)
       camera4.position.z = 20
       camera4.addFilter(blur2)
       camera4.addFilter(invert2)

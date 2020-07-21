@@ -30,15 +30,17 @@
       const scene = new Cubets.Scene()
 
       const light = new Cubets.PhongDirectionalLight(
-        new Cubets.Vec3(0.5, -0.2, -1.0),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.8)
+        new Cubets.Vec3(0.1, -1.0, -0.4),
+        Cubets.Color.Black,
+        Cubets.Color.White,
+        Cubets.Color.White
       )
 
       const light2 = new Cubets.PhongDirectionalLight(
-        new Cubets.Vec3(-0.5, 0.2, 1.0),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.8)
+        new Cubets.Vec3(-0.2, 1.0, 0.2),
+        Cubets.Color.Gray,
+        Cubets.Color.Gray,
+        Cubets.Color.Black
       )
 
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
@@ -74,12 +76,14 @@
         new Cubets.Scene.Material(),
       )
       sphere.position.x = 1
+      sphere.position.y = 0.5
 
       const cylinder = new Cubets.Mesh(
         new Cubets.CylinderGeometry(0.3, 0.5),
         new Cubets.Scene.Material(),
       )
       cylinder.position.x = -1
+      cylinder.position.y = 0.5
 
       scene.add(skyMesh)
       scene.add(cube)
@@ -88,16 +92,16 @@
       scene.add(light)
       scene.add(light2)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/3, 0.1, 2000)
       camera.position.z = 1
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
 
       let counter = 0
       setInterval(() => {
-        cube.rotation = Cubets.Quat.fromEuler(3 * counter, 2 * counter, counter)
+        cube.rotation = Cubets.Quat.fromEulerDegrees(3 * counter, 2 * counter, counter)
         counter++
-      }, 10)
+      }, 5)
     </script>
   </body>
 </html>

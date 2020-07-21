@@ -30,11 +30,9 @@
 
 ## Bugs
 
+- 動的環境マップが複数あると一つ真っ白
 - check spotlight direction
 - ライトがないとエラーになる
-- CubeMapを鏡面反射に利用できない
-  - ライティングを有効にするかどうかのUniformを追加
-  - texturecoordsがおかしい
 
 ## Refactoring
 
@@ -43,6 +41,7 @@
 - introduce interfaces
 - performance
   - 特にpostprocessingを重ねると劣化
+  - 動的環境マップもひどい
 - glmatrix
   - //@ts-ignoreも
 - sourcemap
@@ -81,6 +80,9 @@
 
 ## Bug Fix
 
+- CubeMapを鏡面反射に利用できない
+  - ライティングを有効にするかどうかのUniformを追加
+  - texturecoordsがおかしい
 - Wireframe mode
   - クリックすると回転する？
 - 光源の位置が直方体と球で違って見える
