@@ -23,6 +23,8 @@ export class PhongMaterial extends Material {
     this.shininess = shininess
   }
 
+  prepare(renderer:Renderer, mesh:Mesh) {}
+
   setupGLVars(renderer:Renderer, mesh:Mesh) {
     const gl = renderer.gl
     const wireframeModeLocation = renderer.getUniformLocation("uWireframeMode")

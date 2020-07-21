@@ -24,6 +24,14 @@ export class Renderer {
     return new Renderer(this.viewport)
   }
 
+  copyGLCachesFrom(renderer:Renderer) {
+    this.gl = renderer.gl
+    this.vao = renderer.vao
+    this.program = renderer.program
+    this.attributeLocations = renderer.attributeLocations
+    this.uniformLocations = renderer.uniformLocations
+  }
+
   getAspectRatio(): number {
     return this.viewport.getAspectRatio()
   }

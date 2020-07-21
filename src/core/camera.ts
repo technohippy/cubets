@@ -5,11 +5,11 @@ import { Vec3 } from "../math/vec3.js";
 import { Quat } from "../math/quat.js";
 import { CameraControl } from "../control/cameracontrol.js";
 import { Viewport } from "./viewport.js";
+import { Vec2 } from "../math/vec2.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
-import { PhongReflectionMaterial } from "./phong/phongreflectionmaterial.js";
-import { Vec2 } from "../math/vec2.js";
+import { Mesh } from "./mesh.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -139,10 +139,10 @@ export abstract class Camera implements FilteredCamera {
     this.setupProjectionMatrix()
     this.setupModelViewMatrix()
 
-    // TODO: PhongReflectionMaterialが漏れているのでどうにかする
-    scene.reflectionMeshes.forEach(mesh => {
-      const reflectionMaterial = mesh.material as PhongReflectionMaterial
-      reflectionMaterial.prepareCubeTexture(this.renderer, mesh)
+    scene.eachMesh(mesh => {
+      if (!mesh.material.skipPrepare) {
+        mesh.material.prepare(this.renderer, mesh)
+      }
     })
 
     this.renderer.render(scene, this)

@@ -18,7 +18,7 @@ export class Quat {
   }
 
   static fromEuler(x:number, y:number, z:number): Quat {
-    return this.fromEulerDegrees(quat.create(), x/Math.PI*180, y/Math.PI*180, z/Math.PI*180)
+    return this.fromEulerDegrees(x/Math.PI*180, y/Math.PI*180, z/Math.PI*180)
   }
 
   static fromEulerDegrees(x:number, y:number, z:number): Quat {

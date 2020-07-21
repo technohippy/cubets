@@ -136,6 +136,8 @@ export class FilterChain {
 export class FilterMaterial extends Material {
   filter?:Filter
 
+  prepare(renderer:Renderer, mesh:Mesh) { }
+  
   setupGLVars(renderer:Renderer) {
     if (!this.filter) throw "no filter"
     if (!this.filter.inputTexture)  throw "no inputTexture"

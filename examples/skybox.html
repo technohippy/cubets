@@ -29,8 +29,8 @@
 
       const light = new Cubets.PhongDirectionalLight(
         new Cubets.Vec3(0.5, -0.2, -1.0),
-        new Cubets.Color(1, 1, 1),
-        new Cubets.Color(1, 1, 1)
+        new Cubets.Color(0.8, 0.8, 1.0),
+        new Cubets.Color(0.5, 0.5, 1.0)
       )
 
       const cubeImages = [
@@ -53,11 +53,9 @@
       const reflectionMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       reflectionMaterial.texture = new Cubets.CubeTexture(...cubeImages)
       const mesh = new Cubets.Mesh(
-        //new Cubets.CubeGeometry(0.5, 0.5, 0.5),
         new Cubets.SphereGeometry(0.3),
         reflectionMaterial
       )
-      mesh.rotation = Cubets.Quat.fromEulerDegrees(30, 20, 0)
 
       scene.add(skyMesh)
       scene.add(mesh)
