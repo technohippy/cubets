@@ -23,10 +23,10 @@ export abstract class PhongLight extends Light {
     const lightAmbientLocation = renderer.getUniformLocation("uLightAmbient")
     const lightDiffuseLocation = renderer.getUniformLocation("uLightDiffuse")
     const lightSpecularLocation = renderer.getUniformLocation("uLightSpecular")
-    ret.push({type:"1i", loc:lightFollowCameraModeLocation, value:this.shouldFollowCamera ? 1 : 0})
-    ret.push({type:"4f", loc:lightAmbientLocation, value:this.ambientColor.toArray()})
-    ret.push({type:"4f", loc:lightDiffuseLocation, value:this.diffuseColor.toArray()})
-    ret.push({type:"4f", loc:lightSpecularLocation, value:this.specularColor.toArray()})
+    ret.push({type:"1i", loc:lightFollowCameraModeLocation!, value:this.shouldFollowCamera ? 1 : 0})
+    ret.push({type:"4f", loc:lightAmbientLocation!, value:this.ambientColor.toArray()})
+    ret.push({type:"4f", loc:lightDiffuseLocation!, value:this.diffuseColor.toArray()})
+    ret.push({type:"4f", loc:lightSpecularLocation!, value:this.specularColor.toArray()})
     return ret
   }
 }

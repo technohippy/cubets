@@ -177,17 +177,22 @@ export class FilterScene extends Scene {
     return renderer.getAttributeLocation("aVertexTextureCoords")
   }
 
-  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }
 
-  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }
 
-  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
+    // TODO
+    return renderer.getUniformLocation("nerver called")
+  }
+
+  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }

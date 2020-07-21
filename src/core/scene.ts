@@ -98,9 +98,10 @@ export abstract class Scene {
   abstract getVertexNormalAttribLocation(renderer:Renderer): number
   abstract getVertexTextureCoordsAttribLocation(renderer:Renderer): number
 
-  abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
-  abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
-  abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation
+  abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
+  abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
+  abstract getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
+  abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
 
   abstract getAttributeNames(): string[]
 

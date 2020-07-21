@@ -19,15 +19,19 @@ export class PhongScene extends Scene {
     return renderer.getAttributeLocation("aVertexTextureCoords")
   }
 
-  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
     return renderer.getUniformLocation("uProjectionMatrix")
   }
 
-  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null{
     return renderer.getUniformLocation("uModelViewMatrix")
   }
 
-  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null{
+    return renderer.getUniformLocation("uCameraMatrix")
+  }
+
+  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
     return renderer.getUniformLocation("uNormalMatrix")
   }
 
@@ -57,6 +61,7 @@ export class PhongScene extends Scene {
   getUniformNames(): string[] {
     const names = [
       "uModelViewMatrix",
+      "uCameraMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
       "uWireframeMode",
@@ -98,6 +103,7 @@ export class PhongScene extends Scene {
       const int numLights = ${this.lights.length};
 
       uniform mat4 uModelViewMatrix;
+      uniform mat4 uCameraMatrix; // inverted modelview matrix
       uniform mat4 uProjectionMatrix;
       uniform mat4 uNormalMatrix;
 
@@ -116,8 +122,9 @@ export class PhongScene extends Scene {
       uniform int uSkybox;
       #endif
 
-      out vec3 vNormal[numLights];
+      out vec3 vNormal;
       out vec3 vEyeVector;
+      out vec3 vLightNormal[numLights];
       out vec3 vLightVector[numLights];
 
       #ifdef TEXTURE
@@ -132,14 +139,15 @@ export class PhongScene extends Scene {
         vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
         vEyeVector = -vec3(vertex.xyz);
+        vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
         for (int i = 0; i < numLights; i++) {
-          vNormal[i] = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
           if (0 < uPositionalLight[i]) {
             vec4 lightPosition = uModelViewMatrix * vec4(uLightPosition[i], 1.0);
             vLightVector[i] = vertex.xyz - lightPosition.xyz;
-            vNormal[i] = vNormal[i] - uLightDirection[i];
+            vLightNormal[i] = vNormal - uLightDirection[i];
           } else {
             vLightVector[i] = (vec4(uLightDirection[i], 1.0) * inverse(uModelViewMatrix)).xyz;
+            vLightNormal[i] = vNormal;
           }
         }
 
@@ -170,6 +178,7 @@ export class PhongScene extends Scene {
       const int numLights = ${this.lights.length};
 
       uniform mat4 uModelViewMatrix;
+      uniform mat4 uCameraMatrix; // inverted modelview matrix
 
       #ifdef TEXTURE
       uniform sampler2D uSampler;
@@ -200,8 +209,9 @@ export class PhongScene extends Scene {
       uniform vec4 uMaterialDiffuse;
       uniform vec4 uMaterialSpecular;
 
-      in vec3 vNormal[numLights];
+      in vec3 vNormal;
       in vec3 vEyeVector;
+      in vec3 vLightNormal[numLights];
       in vec3 vLightVector[numLights];
 
       #ifdef TEXTURE
@@ -216,7 +226,7 @@ export class PhongScene extends Scene {
 
       void main(void) {
         if (0 < uNormalMode) {
-          fragColor = vec4(vNormal[0], 1);
+          fragColor = vec4(vLightNormal[0], 1);
           return;
         }
         if (0 < uWireframeMode) {
@@ -239,7 +249,7 @@ export class PhongScene extends Scene {
           } else {
             L = normalize(vLightVector[i]);
           }
-          vec3 N = normalize(vNormal[i]);
+          vec3 N = normalize(vLightNormal[i]);
           float lambertTerm = dot(N, -L);
           vec4 Ia = uLightAmbient[i] * uMaterialAmbient;
           vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);
@@ -265,7 +275,9 @@ export class PhongScene extends Scene {
 
         #ifdef CUBETEXTURE
         if (uIgnoreCubeTexture == 0) {
-          fragColor = fragColor * texture(uCubeSampler, -reflect(vEyeVector, vNormal[0]));
+          vec3 ref = reflect(-vEyeVector, vNormal);
+          vec3 coords = (uCameraMatrix * vec4(ref, 1.0)).xyz;
+          fragColor = fragColor * texture(uCubeSampler, coords);
         }
         #endif
       }

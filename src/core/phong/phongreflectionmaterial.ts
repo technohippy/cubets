@@ -15,20 +15,12 @@ export class PhongReflectionMaterial extends PhongMaterial {
   prepareCubeTexture(renderer:Renderer, mesh:Mesh) {
     if (!this.reflectionCamera || !this.reflectionScene) throw("camera and scene must be set.")
 
-    const up = Quat.fromEuler(90, 0, 0)
-    const down = Quat.fromEuler(-90, 0, 0)
-    const front = Quat.fromEuler(0, 0, 0)
-    const back = Quat.fromEuler(0, 180, 0)
-    const left = Quat.fromEuler(0, -90, 0)
-    const right = Quat.fromEuler(0, 90, 0)
-    /*
-    const px = mesh.position.clone(); px.x += 1
     const nx = mesh.position.clone(); nx.x -= 1
-    const py = mesh.position.clone(); py.y += 1
+    const px = mesh.position.clone(); px.x += 1
     const ny = mesh.position.clone(); ny.y -= 1 
-    const pz = mesh.position.clone(); pz.z += 1
+    const py = mesh.position.clone(); py.y += 1
     const nz = mesh.position.clone(); nz.z -= 1
-    */
+    const pz = mesh.position.clone(); pz.z += 1
 
     const gl = renderer.gl
     this.reflectionCamera.renderer = renderer
@@ -36,15 +28,6 @@ export class PhongReflectionMaterial extends PhongMaterial {
 
     // setup cubetexture
     const {frameBuffer, cubeTexture} = this.createFrameBuffer(renderer.gl)
-    const cubeMapParams: [Quat, GLenum][] = [
-      [left, gl.TEXTURE_CUBE_MAP_NEGATIVE_X],
-      [right, gl.TEXTURE_CUBE_MAP_POSITIVE_X],
-      [down, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y],
-      [up, gl.TEXTURE_CUBE_MAP_POSITIVE_Y],
-      [back, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z],
-      [front, gl.TEXTURE_CUBE_MAP_POSITIVE_Z]
-    ];
-    /*
     const cubeMapParams: [Vec3, GLenum][] = [
       [nx, gl.TEXTURE_CUBE_MAP_NEGATIVE_X],
       [px, gl.TEXTURE_CUBE_MAP_POSITIVE_X],
@@ -53,28 +36,24 @@ export class PhongReflectionMaterial extends PhongMaterial {
       [nz, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z],
       [pz, gl.TEXTURE_CUBE_MAP_POSITIVE_Z]
     ]
-    */
 
-    const reflectionMeshes = this.reflectionScene.reflectionMeshes
-    this.reflectionScene.reflectionMeshes = []
+    const reflectionMeshes = this.reflectionScene.reflectionMeshes // TODO: ここ強引なのでなんとかする
+    this.reflectionScene.reflectionMeshes = [] // TODO: ここ強引なのでなんとかする
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-    cubeMapParams.forEach(([rotation, cubeMapDirection]) => {
-    //cubeMapParams.forEach(([target, cubeMapDirection]) => {
+    cubeMapParams.forEach(([target, cubeMapDirection]) => {
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, cubeMapDirection, cubeTexture, 0)
-      this.reflectionCamera!.rotation = rotation 
-      //this.reflectionCamera!.target = target
+      this.reflectionCamera!.followTarget(target)
       this.reflectionCamera!.draw(this.reflectionScene!)
     })
-    this.reflectionScene.reflectionMeshes = reflectionMeshes
+    this.reflectionScene.reflectionMeshes = reflectionMeshes // TODO: ここ強引なのでなんとかする
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
 
-    const texture = new CubeTexture("d", "u", "m", "m", "y", "!")
+    const texture = new CubeTexture("d", "u", "m", "m", "y", "!") // TODO: ここ強引なのでなんとかする 
     texture.cubeTexture = cubeTexture
     this.texture = texture
   }
 
   setupGLVars(renderer:Renderer, mesh:Mesh) {
-    //this.prepareCubeTexture(renderer, mesh)
     super.setupGLVars(renderer, mesh)
     this.texture = undefined
   }

@@ -20,7 +20,9 @@
   <body>
     <canvas id="cubets" width="600" height="400"></canvas>
     <div id="code"></div><script>loadCode()</script>
+    <!--
     <a href="https://opengameart.org/content/sky-box-sunny-day">https://opengameart.org/content/sky-box-sunny-day</a>
+    -->
 
     <script type="module">
       import Cubets from "../dist/cubets.js"
@@ -41,12 +43,12 @@
 
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
       skyboxMaterial.texture = new Cubets.CubeTexture(
-        "./images/skybox/DaylightBox/DaylightBox_Left.png",
-        "./images/skybox/DaylightBox/DaylightBox_Right.png",
-        "./images/skybox/DaylightBox/DaylightBox_Bottom.png",
-        "./images/skybox/DaylightBox/DaylightBox_Top.png",
-        "./images/skybox/DaylightBox/DaylightBox_Back.png",
-        "./images/skybox/DaylightBox/DaylightBox_Front.png",
+        "./images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+        "./images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+        "./images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+        "./images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+        "./images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+        "./images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
       )
       skyboxMaterial.texture.isSkybox = true
       const skyMesh = new Cubets.Mesh(
