@@ -10,6 +10,8 @@ export class Renderer {
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
 
+  aspectRatio?: number  // TODO:どうにか
+
   program?: WebGLProgram
   attributeLocations = new Map<string, number>()
   uniformLocations = new Map<string, WebGLUniformLocation>()
@@ -25,7 +27,7 @@ export class Renderer {
   }
 
   getAspectRatio(): number {
-    return this.viewport.getAspectRatio()
+    return this.aspectRatio ?? this.viewport.getAspectRatio()
   }
 
   prepareProgram(scene: Scene) {

@@ -18,7 +18,10 @@
     <script src="js/utils.js"></script>
   </head>
   <body>
+    <!--
     <canvas id="cubets" width="600" height="400"></canvas>
+    -->
+    <canvas id="cubets" width="256" height="256"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <!--
     <a href="https://opengameart.org/content/sky-box-sunny-day">https://opengameart.org/content/sky-box-sunny-day</a>
@@ -56,29 +59,28 @@
         skyboxMaterial,
       )
 
-      const c = document.createElement("canvas") 
-      c.width = 256
-      c.height = 256
       const envMaterial = new Cubets.PhongReflectionMaterial(
         Cubets.Color.White,
         Cubets.Color.White,
         Cubets.Color.White
       )
       envMaterial.reflectionScene = scene
-      envMaterial.reflectionCamera = new Cubets.PerspectiveCamera(new Cubets.Viewport(c), 90, 0.1, 2000)
+      const c = document.createElement("canvas"); c.width = 256; c.height =256 
+      const viewport = new Cubets.Viewport(c)
+      envMaterial.reflectionCamera = new Cubets.PerspectiveCamera(viewport, 90, 0.001, 2000)
       const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry(0.5, 0.5, 0.5),
-        new Cubets.Scene.Material(),
-        //envMaterial,
+        //new Cubets.Scene.Material(),
+        envMaterial,
       )
-      cube.rotation = Cubets.Quat.fromEuler(30, 20, 0)
+      //cube.rotation = Cubets.Quat.fromEuler(30, 20, 0)
 
       const sphere = new Cubets.Mesh(
         new Cubets.SphereGeometry(0.3),
         //new Cubets.Scene.Material(),
         envMaterial,
       )
-      sphere.position.x = 1
+      //sphere.position.x = 1
 
       const cylinder = new Cubets.Mesh(
         new Cubets.CylinderGeometry(0.3, 0.5),
@@ -88,14 +90,15 @@
       cylinder.position.x = -1
 
       scene.add(skyMesh)
-      scene.add(cube)
+      //scene.add(cube)
       scene.add(sphere)
-      scene.add(cylinder)
+      //scene.add(cylinder)
       scene.add(light)
       scene.add(light2)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", 45, 0.1, 2000)
-      camera.position.z = 1
+      const camera = new Cubets.PerspectiveCamera("cubets", 90, 0.1, 2000)
+      camera.position.z = -0.3
+      //camera.position.x = 0.3
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
     </script>

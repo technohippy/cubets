@@ -28,6 +28,7 @@ export abstract class Camera implements FilteredCamera {
   controls:CameraControl[] = []
   position = new Vec3()
   rotation = new Quat()
+  up = new Vec3(0, 1, 0)
   target?: Vec3
   #starting = false
 
@@ -99,9 +100,8 @@ export abstract class Camera implements FilteredCamera {
     if (this.target) {
       // ignore this.rotation
       // https://webglfundamentals.org/webgl/lessons/ja/webgl-3d-camera.html
-      const up = [0, 1, 0]
       const zAxis = vec3.subtract(vec3.create(), this.position.toArray(), this.target.toArray())
-      const xAxis = vec3.cross(vec3.create(), up, zAxis)
+      const xAxis = vec3.cross(vec3.create(), this.up.toArray(), zAxis)
       const yAxis = vec3.cross(vec3.create(), zAxis, xAxis)
       vec3.normalize(xAxis, xAxis)
       vec3.normalize(yAxis, yAxis)
