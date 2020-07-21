@@ -23,12 +23,15 @@ export class PhongReflectionMaterial extends PhongMaterial {
     const targetPz = mesh.position.clone().add(new Vec3(0, 0, 1))
 
     const gl = renderer.gl
-    this.reflectionCamera.renderer = renderer
-    this.reflectionCamera.renderer.aspectRatio = 1 // TODO: どうにか
-    this.reflectionCamera.position = mesh.position;
+    this.reflectionCamera.renderer.gl = renderer.gl
+    this.reflectionCamera.renderer.vao = renderer.vao
+    this.reflectionCamera.renderer.program = renderer.program
+    this.reflectionCamera.renderer.attributeLocations = renderer.attributeLocations
+    this.reflectionCamera.renderer.uniformLocations = renderer.uniformLocations
+    this.reflectionCamera.position = mesh.position
 
     // setup cubetexture
-    const {frameBuffer, cubeTexture} = this.createFrameBuffer(renderer.gl)
+    const {frameBuffer, cubeTexture} = this.createFrameBuffer(renderer.gl, this.reflectionCamera.renderer.viewport.size.x)
     const cubeMapParams: [GLenum, Vec3, Vec3][] = [
       [gl.TEXTURE_CUBE_MAP_NEGATIVE_X, targetNx, new Vec3(0, -1, 0)],
       [gl.TEXTURE_CUBE_MAP_POSITIVE_X, targetPx, new Vec3(0, -1, 0)],
@@ -48,7 +51,6 @@ export class PhongReflectionMaterial extends PhongMaterial {
       this.reflectionCamera!.draw(this.reflectionScene!)
     })
     this.reflectionScene.reflectionMeshes = reflectionMeshes // TODO: ここ強引なのでなんとかする
-    this.reflectionCamera.renderer.aspectRatio = undefined
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
 
     const texture = new CubeTexture("d", "u", "m", "m", "y", "!") // TODO: ここ強引なのでなんとかする 

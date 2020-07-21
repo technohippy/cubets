@@ -12,7 +12,7 @@ class BlurMaterial extends FilterMaterial {
     super.setupGLVars(renderer)
 
     const gl = renderer.gl
-    const { width, height } = renderer.container
+    const { width, height } = renderer.container!
     const inverseTexturSizeLocation = renderer.getUniformLocation("uInverseTextureSize")
     gl.uniform2f(inverseTexturSizeLocation, 1/width, 1/height)
   }

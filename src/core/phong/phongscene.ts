@@ -277,8 +277,7 @@ export class PhongScene extends Scene {
         if (uIgnoreCubeTexture == 0) {
           vec3 ref = reflect(-vEyeVector, vNormal);
           vec3 coords = (uCameraMatrix * vec4(ref, 1.0)).xyz;
-          //fragColor = fragColor * texture(uCubeSampler, coords);
-          fragColor = texture(uCubeSampler, coords);
+          fragColor = fragColor * texture(uCubeSampler, coords);
         }
         #endif
       }

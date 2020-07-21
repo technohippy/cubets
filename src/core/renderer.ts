@@ -5,12 +5,10 @@ import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 
 export class Renderer {
-  container: HTMLCanvasElement
+  container?: HTMLCanvasElement
   viewport: Viewport
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
-
-  aspectRatio?: number  // TODO:どうにか
 
   program?: WebGLProgram
   attributeLocations = new Map<string, number>()
@@ -18,7 +16,7 @@ export class Renderer {
 
   constructor(viewport:Viewport) {
     this.container = viewport.container
-    this.gl = this.container.getContext("webgl2") as WebGL2RenderingContext
+    this.gl = this.container?.getContext("webgl2") as WebGL2RenderingContext
     this.viewport = viewport
   }
 
@@ -27,7 +25,7 @@ export class Renderer {
   }
 
   getAspectRatio(): number {
-    return this.aspectRatio ?? this.viewport.getAspectRatio()
+    return this.viewport.getAspectRatio()
   }
 
   prepareProgram(scene: Scene) {

@@ -9,6 +9,7 @@ import { Viewport } from "./viewport.js";
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
 import { PhongReflectionMaterial } from "./phong/phongreflectionmaterial.js";
+import { Vec2 } from "../math/vec2.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -34,7 +35,7 @@ export abstract class Camera implements FilteredCamera {
 
   constructor(viewport: Viewport | string) {
     if (typeof viewport === "string") {
-      viewport = new Viewport(viewport)
+      viewport = new Viewport(new Vec2(), new Vec2(1, 1), viewport)
     }
     this.renderer = new Renderer(viewport)
   }
