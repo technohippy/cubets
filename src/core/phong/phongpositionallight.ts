@@ -18,10 +18,10 @@ export class PhongPositionalLight extends PhongLight {
     const positionalLightLocation = renderer.getUniformLocation("uPositionalLight")
     const lightPositionLocation = renderer.getUniformLocation("uLightPosition")
     const lightDirectionLocation = renderer.getUniformLocation("uLightDirection")
-    ret.push({type:"1f", loc:cutoffLocation, value:1})
-    ret.push({type:"1i", loc:positionalLightLocation, value:1})
-    ret.push({type:"3f", loc:lightPositionLocation, value:this.position.toArray()})
-    ret.push({type:"3f", loc:lightDirectionLocation, value:[0, 0, 0]})
+    ret.push({type:"1f", loc:cutoffLocation!, value:1})
+    ret.push({type:"1i", loc:positionalLightLocation!, value:1})
+    ret.push({type:"3f", loc:lightPositionLocation!, value:this.position.toArray()})
+    ret.push({type:"3f", loc:lightDirectionLocation!, value:[0, 0, 0]})
     return ret
   }
 }

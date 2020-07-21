@@ -38,7 +38,7 @@ export abstract class Filter {
     this.renderer.setupLocations(this.scene)
 
     const gl = this.renderer.gl
-    const { width, height } = this.renderer.container
+    const { width, height } = this.renderer.container!
 
     this.inputTexture = gl.createTexture()!
     gl.bindTexture(gl.TEXTURE_2D, this.inputTexture)
@@ -67,7 +67,7 @@ export abstract class Filter {
   resetFrameBuffer() {
     if (!this.renderer) return
     const gl = this.renderer.gl
-    const { width, height } = this.renderer.container
+    const { width, height } = this.renderer.container!
 
     gl.bindTexture(gl.TEXTURE_2D, this.inputTexture!);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -177,17 +177,22 @@ export class FilterScene extends Scene {
     return renderer.getAttributeLocation("aVertexTextureCoords")
   }
 
-  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }
 
-  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }
 
-  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation {
+  getCameraMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
+    // TODO
+    return renderer.getUniformLocation("nerver called")
+  }
+
+  getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
     // TODO
     return renderer.getUniformLocation("nerver called")
   }

@@ -8,6 +8,8 @@ import { Viewport } from "./viewport.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { PhongReflectionMaterial } from "./phong/phongreflectionmaterial.js";
+import { Vec2 } from "../math/vec2.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -21,17 +23,19 @@ export abstract class Camera implements FilteredCamera {
   filters = new FilterChain()
   projectionMatrix: number[] = mat4.create()
   modelViewMatrix: number[] = mat4.create()
+  cameraMatrix: number[] = mat4.create() // inverted modelViewMatrix
   normalMatrix: number[] = mat4.create()
 
   controls:CameraControl[] = []
   position = new Vec3()
   rotation = new Quat()
+  up = new Vec3(0, 1, 0)
   target?: Vec3
   #starting = false
 
   constructor(viewport: Viewport | string) {
     if (typeof viewport === "string") {
-      viewport = new Viewport(viewport)
+      viewport = new Viewport(new Vec2(), new Vec2(1, 1), viewport)
     }
     this.renderer = new Renderer(viewport)
   }
@@ -80,8 +84,10 @@ export abstract class Camera implements FilteredCamera {
     const gl = renderer.gl
     const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation(renderer)
     const modelViewMatrixLocation = scene.getModelViewMatrixUniformLocation(renderer)
+    const cameraMatrixLocation = scene.getCameraMatrixUniformLocation(renderer)
     const normalMatrixLocation = scene.getNormalMatrixUniformLocation(renderer)
     gl.uniformMatrix4fv(modelViewMatrixLocation, false, this.modelViewMatrix)
+    gl.uniformMatrix4fv(cameraMatrixLocation, false, this.cameraMatrix)
     gl.uniformMatrix4fv(projectionMatrixLocation, false, this.projectionMatrix)
     gl.uniformMatrix4fv(normalMatrixLocation, false, this.normalMatrix)
   }
@@ -95,9 +101,8 @@ export abstract class Camera implements FilteredCamera {
     if (this.target) {
       // ignore this.rotation
       // https://webglfundamentals.org/webgl/lessons/ja/webgl-3d-camera.html
-      const up = [0, 1, 0]
       const zAxis = vec3.subtract(vec3.create(), this.position.toArray(), this.target.toArray())
-      const xAxis = vec3.cross(vec3.create(), up, zAxis)
+      const xAxis = vec3.cross(vec3.create(), this.up.toArray(), zAxis)
       const yAxis = vec3.cross(vec3.create(), zAxis, xAxis)
       vec3.normalize(xAxis, xAxis)
       vec3.normalize(yAxis, yAxis)
@@ -113,11 +118,11 @@ export abstract class Camera implements FilteredCamera {
       mat4.fromQuat(rotationMat, this.rotation.toArray())
     }
 
-    const cameraMat = mat4.create()
-    mat4.multiply(cameraMat, cameraMat, translationMat)
-    mat4.multiply(cameraMat, cameraMat, rotationMat)
+    this.cameraMatrix = mat4.create()
+    mat4.multiply(this.cameraMatrix, this.cameraMatrix, translationMat)
+    mat4.multiply(this.cameraMatrix, this.cameraMatrix, rotationMat)
 
-    mat4.invert(this.modelViewMatrix, cameraMat)
+    mat4.invert(this.modelViewMatrix, this.cameraMatrix)
 
     // K = (M^-1)^T
     // K:normal matrix
@@ -136,6 +141,12 @@ export abstract class Camera implements FilteredCamera {
 
     this.setupProjectionMatrix()
     this.setupModelViewMatrix()
+
+    // TODO: PhongReflectionMaterialが漏れているのでどうにかする
+    scene.reflectionMeshes.forEach(mesh => {
+      const reflectionMaterial = mesh.material as PhongReflectionMaterial
+      reflectionMaterial.prepareCubeTexture(this.renderer, mesh)
+    })
 
     this.renderer.render(scene, this)
   }

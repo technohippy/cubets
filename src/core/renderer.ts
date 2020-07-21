@@ -5,7 +5,7 @@ import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 
 export class Renderer {
-  container: HTMLCanvasElement
+  container?: HTMLCanvasElement
   viewport: Viewport
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
@@ -16,7 +16,7 @@ export class Renderer {
 
   constructor(viewport:Viewport) {
     this.container = viewport.container
-    this.gl = this.container.getContext("webgl2") as WebGL2RenderingContext
+    this.gl = this.container?.getContext("webgl2") as WebGL2RenderingContext
     this.viewport = viewport
   }
 
@@ -79,6 +79,8 @@ export class Renderer {
     this.use()
     this.clear(scene.clearColor, camera)
     scene.eachMesh(mesh => {
+      if (mesh.skipRender) return
+
       this.setupVAO(scene, mesh)
       this.renderMesh(scene, mesh, camera)
     })
@@ -117,7 +119,7 @@ export class Renderer {
   renderMesh(scene: Scene, mesh: Mesh, camera: FilteredCamera) {
     camera.setupGLMatrixes(this, scene)
     scene.lights.setupGLVars(this)
-    mesh.material.setupGLVars(this)
+    mesh.material.setupGLVars(this, mesh)
 
     try {
       this.gl.bindVertexArray(this.vao!)
@@ -128,22 +130,24 @@ export class Renderer {
       this.gl.bindVertexArray(null)
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null)
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null)
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      console.error(err)
     }
   }
 
-  getAttributeLocation(name: string): number {
+  getAttributeLocation(name: string, ignoreError: boolean = false): number {
     const loc = this.attributeLocations.get(name)
     if (loc === undefined) {
+      if (ignoreError) return -1
       throw `attribute not found: ${name}`
     }
     return loc!
   }
 
-  getUniformLocation(name: string): WebGLUniformLocation {
+  getUniformLocation(name: string, ignoreError: boolean = false): WebGLUniformLocation | null {
     const loc = this.uniformLocations.get(name)
     if (loc === undefined) {
+      if (ignoreError) return null
       throw `uniform not found: ${name}`
     }
     return loc as WebGLUniformLocation

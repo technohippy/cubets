@@ -9,6 +9,8 @@ import { Texture } from "./texture.js";
 import { CubeTexture } from "./cubetexture.js";
 
 export class Mesh {
+  skipRender = false
+
   geometry: Geometry
   material: Material
 

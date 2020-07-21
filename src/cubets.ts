@@ -4,6 +4,7 @@ import { PhongDirectionalLight } from "./core/phong/phongdirectionallight.js"
 import { PhongPositionalLight } from "./core/phong/phongpositionallight.js"
 import { PhongSpotLight } from "./core/phong/phongspotlight.js"
 import { Material } from "./core/material.js"
+import { PhongReflectionMaterial } from "./core/phong/phongreflectionmaterial.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
 import { Texture } from "./core/texture.js"
@@ -34,6 +35,7 @@ export default {
   PhongScene: PhongScene,
 
   Material: Material,
+  PhongReflectionMaterial: PhongReflectionMaterial,
   Mesh: Mesh,
   Renderer: Renderer,
 
