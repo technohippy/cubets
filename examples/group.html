@@ -24,27 +24,27 @@
       import Cubets from "../dist/cubets.js"
 
       const mesh1 = new Cubets.Mesh(
-        new Cubets.CubeGeometry(1, 6, 1),
-        new Cubets.Scene.Material()
+        new Cubets.CubeGeometry(1, 4, 1),
+        new Cubets.Scene.Material(Cubets.Color.Red)
       )
-      mesh1.center = new Cubets.Vec3(0, 3, 0)
+      mesh1.basePosition = new Cubets.Vec3(0, 2, 0)
 
       const mesh2 = new Cubets.Mesh(
         new Cubets.CubeGeometry(1, 6, 1),
-        new Cubets.Scene.Material()
+        new Cubets.Scene.Material(Cubets.Color.Green)
       )
-      mesh2.center = new Cubets.Vec3(0, 3, 0)
+      mesh2.basePosition = new Cubets.Vec3(0, 3, 0)
 
       const mesh3 = new Cubets.Mesh(
-        new Cubets.CubeGeometry(1, 6, 1),
-        new Cubets.Scene.Material()
+        new Cubets.CubeGeometry(1, 8, 1),
+        new Cubets.Scene.Material(Cubets.Color.Blue)
       )
-      mesh3.center = new Cubets.Vec3(0, 3, 0)
+      mesh3.basePosition = new Cubets.Vec3(0, 4, 0)
 
-      mesh1.add(mesh2, new Cubets.Vec3(0, -3, 0))
+      mesh1.add(mesh2, new Cubets.Vec3(0, -2, 0))
       mesh2.add(mesh3, new Cubets.Vec3(0, -3, 0))
 
-      mesh1.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 90)
+      mesh1.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 45)
       mesh2.rotation = Cubets.Quat.fromEulerDegrees(0, 0, -90)
       mesh3.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 90)
 
@@ -64,11 +64,10 @@
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
 
-      /*
       setInterval(() => {
-        mesh1.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+        mesh1.rotate(Math.PI/300, new Cubets.Vec3(0,1,0))
+        mesh2.rotate(Math.PI/200, new Cubets.Vec3(1,0,1))
       }, 10)
-      */
     </script>
   </body>
 </html>

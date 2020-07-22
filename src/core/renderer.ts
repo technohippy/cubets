@@ -87,10 +87,10 @@ export class Renderer {
   render(scene: Scene, camera: FilteredCamera) {
     this.use()
     this.clear(scene.clearColor, camera)
-    scene.eachMesh((mesh, transform) => {
+    scene.eachMesh(mesh => {
       if (mesh.skipRender) return
 
-      this.setupVAO(scene, mesh, transform)
+      this.setupVAO(scene, mesh)
       this.renderMesh(scene, mesh, camera)
     })
   }
@@ -106,7 +106,7 @@ export class Renderer {
     camera.resetFilters()
   }
 
-  setupVAO(scene: Scene, mesh: Mesh, transform:Transform3) {
+  setupVAO(scene: Scene, mesh: Mesh) {
     if (!this.vao) {
       const vao = this.gl.createVertexArray()
       if (vao === null) {
@@ -117,7 +117,7 @@ export class Renderer {
 
     this.gl.bindVertexArray(this.vao)
 
-    mesh.setupGLBuffers(this, scene, transform)
+    mesh.setupGLBuffers(this, scene)
 
     // clear
     this.gl.bindVertexArray(null)

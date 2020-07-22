@@ -48,7 +48,7 @@ export abstract class Scene {
     this.eachLight(fn)
   }
 
-  eachMesh(fn: (mesh:Mesh, transform?:Transform3) => void) {
+  eachMesh(fn: (mesh:Mesh) => void) {
     this.meshes.forEach(m => {
       m.forEachChild(fn)
       fn(m)
