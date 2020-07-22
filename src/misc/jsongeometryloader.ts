@@ -1,8 +1,8 @@
 import { Geometry } from "../core/geometry.js";
+import { Vec2 } from "../math/vec2.js";
 import { Vec3 } from "../math/vec3.js";
 import { Face3 } from "../math/face3.js";
 import { RGBAColor } from "../math/rgbacolor.js";
-import { Vec2 } from "../math/vec2.js";
 
 export class JSONGeometryLoader {
   static load(url:string): Promise<Geometry> {

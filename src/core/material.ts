@@ -7,6 +7,7 @@ export abstract class Material {
   normal = false
   skipPrepare = false
   texture?: Texture
+  bumpMap?: Texture
 
   abstract prepare(renderer:Renderer, mesh:Mesh): void;
   abstract setupGLVars(renderer:Renderer, mesh:Mesh): void;
