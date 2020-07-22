@@ -30,7 +30,6 @@
 
 - 動的環境マップが複数あると一つ真っ白
 - check spotlight direction
-- ライトがひとつもないとエラーになる
 
 ## Refactoring
 
@@ -82,6 +81,7 @@
 
 ## Bug Fix
 
+- ライトがひとつもないとエラーになる
 - CubeMapを鏡面反射に利用できない
   - ライティングを有効にするかどうかのUniformを追加
   - texturecoordsがおかしい

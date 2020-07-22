@@ -101,7 +101,7 @@ export class PhongScene extends Scene {
       precision mediump float;
       precision mediump int;
 
-      const int numLights = ${this.lights.length};
+      const int numLights = ${this.lights.length === 0 ? 1 : this.lights.length};
 
       uniform int uVertexColorMode;
 
@@ -183,7 +183,7 @@ export class PhongScene extends Scene {
       precision mediump float;
       precision mediump int;
 
-      const int numLights = ${this.lights.length};
+      const int numLights = ${this.lights.length === 0 ? 1 : this.lights.length};
 
       uniform mat4 uModelViewMatrix;
 
