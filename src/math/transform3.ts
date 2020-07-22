@@ -11,6 +11,10 @@ export class Transform3 {
     this.#mat = mat
   }
 
+  clone(): Transform3 {
+    return new Transform3(mat4.clone(this.#mat))
+  }
+
   static translate(amount: Vec3): Transform3 {
     return new Transform3().translate(amount)
   }

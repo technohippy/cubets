@@ -25,8 +25,9 @@
 - Animation tools
 - add Gouraud Scene (or other scene/shader)
 - shader toy
+- ray tracing
 - morphing
-- reflection environment (using CubeMap)
+- heightfield
 
 ## Bugs
 
@@ -63,6 +64,7 @@
 
 ## Enhancement
 
+- reflection environment (using CubeMap)
 - Skybox
 - postprocessing
 - add plane geometry

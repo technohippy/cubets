@@ -3,6 +3,7 @@ import { FilteredCamera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
+import { Transform3 } from "../math/transform3.js"
 
 export class Renderer {
   container?: HTMLCanvasElement

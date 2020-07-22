@@ -31,14 +31,10 @@ export abstract class Geometry {
     }
   }
 
-  transformVertices(position:Vec3, rotation:Quat, transforms:Transform3[]): Vec3[] {
-    const positionTransform = Transform3.translate(position)
-    const rotationTransform = rotation.toTransform()
+  transformVertices(transform:Transform3): Vec3[] {
     return this.vertices.map(v => {
       const vv = v.clone()
-      rotationTransform.apply(vv)
-      positionTransform.apply(vv)
-      transforms.forEach(t => t.apply(vv))
+      transform.apply(vv)
       return vv
     })
   }

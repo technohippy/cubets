@@ -11,12 +11,17 @@ import { CubeTexture } from "./cubetexture.js";
 export class Mesh {
   skipRender = false
 
+  parent?: Mesh
+  children: Mesh[] = []
+  localPosition = new Vec3() // relative position from the parent mesh
+
   geometry: Geometry
   material: Material
 
   position = new Vec3()
   rotation = new Quat()
   transforms: Transform3[] = []
+  basePosition = new Vec3() // center of rotation
 
   verticesBuffer?: WebGLBuffer
   indicesBuffer?: WebGLBuffer
@@ -26,6 +31,41 @@ export class Mesh {
   constructor(geometry: Geometry, material: Material) {
     this.geometry = geometry
     this.material = material
+  }
+
+  add(mesh:Mesh, localPosition:Vec3=new Vec3()) {
+    mesh.localPosition = localPosition
+    this.children.push(mesh)
+    mesh.parent = this
+  }
+
+  forEachChild(fn: (child:Mesh) => void) {
+    this.children.forEach(childMesh => {
+      childMesh.forEachChild(child => {
+        fn(child)
+      })
+      fn(childMesh)
+    })
+  }
+
+  getTransform(): Transform3 {
+    const parentTransform = this.parent ? this.parent.getTransform() : new Transform3()
+    const localPositionTransform = Transform3.translate(this.localPosition)
+    const basePositionTransform = Transform3.translate(this.basePosition.clone().negate())
+    const positionTransform = Transform3.translate(this.position)
+    const rotationTransform = this.rotation.toTransform()
+
+    const transform = parentTransform
+    transform.multiply(localPositionTransform)
+    for (let i = this.transforms.length - 1; 0 <= i; i--) {
+      transform.multiply(this.transforms[i])
+    }
+    transform.multiply(positionTransform)
+    transform.multiply(rotationTransform)
+    transform.multiply(basePositionTransform)
+    console.log(this.basePosition)
+
+    return transform
   }
 
   translate(amount: Vec3) {
@@ -56,7 +96,8 @@ export class Mesh {
     const gl = renderer.gl
 
     this._concentrateMatrixes()
-    const transformedVertices = this.geometry.transformVertices(this.position, this.rotation, this.transforms)
+
+    const transformedVertices = this.geometry.transformVertices(this.getTransform())
 
     const vertexLocation = scene.getVertexPositionAttribLocation(renderer)
     if (0 <= vertexLocation) {
