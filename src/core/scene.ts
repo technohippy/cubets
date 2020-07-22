@@ -6,6 +6,7 @@ import { Texture } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 import { CubeTexture } from './cubetexture.js'
 import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
+import { Transform3 } from '../math/transform3.js'
 
 export abstract class Scene {
   name?: string
@@ -17,25 +18,29 @@ export abstract class Scene {
 
   #textures?: Texture[]
 
-  add(obj: Mesh | Light) {
-    if (obj instanceof Mesh) {
-      this.addMesh(obj)
-    } else if (obj instanceof Light) {
-      this.addLight(obj)
-    }
+  add(...objs: (Mesh | Light)[]) {
+    objs.forEach(obj => {
+      if (obj instanceof Mesh) {
+        this.addMesh(obj)
+      } else if (obj instanceof Light) {
+        this.addLight(obj)
+      }
+    })
   }
 
-  addMesh(mesh: Mesh) {
-    // TODO: PhongReflectionMaterial が漏れているのでどうにかする
-    if (mesh.material instanceof PhongReflectionMaterial) {
-      this.reflectionMeshes.push(mesh)
-    } else {
-      this.meshes.push(mesh)
-    }
+  addMesh(...meshes: Mesh[]) {
+    meshes.forEach(mesh => {
+      // TODO: PhongReflectionMaterial が漏れているのでどうにかする
+      if (mesh.material instanceof PhongReflectionMaterial) {
+        this.reflectionMeshes.push(mesh)
+      } else {
+        this.meshes.push(mesh)
+      }
+    })
   }
 
-  addLight(light: Light) {
-    this.lights.push(light)
+  addLight(...lights: Light[]) {
+    lights.forEach(light => this.lights.push(light))
   }
 
   each(fn: (obj: Mesh | Light) => void) {
@@ -43,9 +48,15 @@ export abstract class Scene {
     this.eachLight(fn)
   }
 
-  eachMesh(fn: (obj: Mesh) => void) {
-    this.meshes.forEach(fn)
-    this.reflectionMeshes.forEach(fn)
+  eachMesh(fn: (mesh:Mesh, transform?:Transform3) => void) {
+    this.meshes.forEach(m => {
+      m.forEachChild(fn)
+      fn(m)
+    })
+    this.reflectionMeshes.forEach(m => {
+      m.forEachChild(fn)
+      fn(m)
+    })
   }
 
   eachLight(fn: (obj: Light) => void) {
@@ -55,6 +66,7 @@ export abstract class Scene {
   collectTextures(): Texture[] {
     if (this.#textures === undefined) {
       this.#textures = []
+      //this.eachAllMesh(m => {
       this.eachMesh(m => {
         const tex = m.material.texture
         if (tex) this.#textures?.push(tex)

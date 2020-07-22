@@ -11,12 +11,15 @@ import { CubeTexture } from "./cubetexture.js";
 export class Mesh {
   skipRender = false
 
+  children: ChildMesh[] = []
+
   geometry: Geometry
   material: Material
 
   position = new Vec3()
   rotation = new Quat()
   transforms: Transform3[] = []
+  center = new Vec3() // center of rotation
 
   verticesBuffer?: WebGLBuffer
   indicesBuffer?: WebGLBuffer
@@ -26,6 +29,38 @@ export class Mesh {
   constructor(geometry: Geometry, material: Material) {
     this.geometry = geometry
     this.material = material
+  }
+
+  add(mesh:Mesh, localPosition:Vec3=new Vec3()) {
+    this.children.push(new ChildMesh(mesh, localPosition))
+  }
+
+  forEachChild(fn: (child:Mesh, transform?:Transform3) => void) {
+    const transform = this.getTransform()
+    this.children.forEach(childMesh => {
+      childMesh.mesh.forEachChild((child:Mesh, parentTransform?:Transform3) => {
+        const t = new Transform3()
+        t.multiply(transform)
+        if (parentTransform) t.multiply(parentTransform)
+        fn(child, t)
+      })
+      fn(childMesh.mesh, transform)
+    })
+  }
+
+  getTransform(): Transform3 {
+    const positionTransform = Transform3.translate(this.position)
+    const rotationTransform = this.rotation.toTransform(this.center)
+
+    const transform = new Transform3()
+    for (let i = this.transforms.length - 1; 0 <= i; i--) {
+      transform.multiply(this.transforms[i])
+    }
+    transform.multiply(positionTransform)
+    transform.multiply(rotationTransform)
+
+
+    return transform
   }
 
   translate(amount: Vec3) {
@@ -52,11 +87,11 @@ export class Mesh {
     return this.material.texture instanceof CubeTexture
   }
 
-  setupGLBuffers(renderer:Renderer, scene:Scene) {
+  setupGLBuffers(renderer:Renderer, scene:Scene, transform:Transform3) {
     const gl = renderer.gl
 
     this._concentrateMatrixes()
-    const transformedVertices = this.geometry.transformVertices(this.position, this.rotation, this.transforms)
+    const transformedVertices = this.geometry.transformVertices(this.getTransform())
 
     const vertexLocation = scene.getVertexPositionAttribLocation(renderer)
     if (0 <= vertexLocation) {
@@ -108,5 +143,15 @@ export class Mesh {
       this.transforms.length = 0
       this.transforms.push(concentration!)
     }
+  }
+}
+
+class ChildMesh {
+  mesh: Mesh
+  localPosition: Vec3
+
+  constructor(mesh:Mesh, localPosition:Vec3) {
+    this.mesh = mesh
+    this.localPosition = localPosition
   }
 }

@@ -3,6 +3,7 @@ import { FilteredCamera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
+import { Transform3 } from "../math/transform3.js"
 
 export class Renderer {
   container?: HTMLCanvasElement
@@ -86,10 +87,10 @@ export class Renderer {
   render(scene: Scene, camera: FilteredCamera) {
     this.use()
     this.clear(scene.clearColor, camera)
-    scene.eachMesh(mesh => {
+    scene.eachMesh((mesh, transform) => {
       if (mesh.skipRender) return
 
-      this.setupVAO(scene, mesh)
+      this.setupVAO(scene, mesh, transform)
       this.renderMesh(scene, mesh, camera)
     })
   }
@@ -105,7 +106,7 @@ export class Renderer {
     camera.resetFilters()
   }
 
-  setupVAO(scene: Scene, mesh: Mesh) {
+  setupVAO(scene: Scene, mesh: Mesh, transform:Transform3) {
     if (!this.vao) {
       const vao = this.gl.createVertexArray()
       if (vao === null) {
@@ -116,7 +117,7 @@ export class Renderer {
 
     this.gl.bindVertexArray(this.vao)
 
-    mesh.setupGLBuffers(this, scene)
+    mesh.setupGLBuffers(this, scene, transform)
 
     // clear
     this.gl.bindVertexArray(null)

@@ -2,6 +2,7 @@ import { Transform3 } from "./transform3.js"
 
 //@ts-ignore
 import { glMatrix, quat, mat4 } from "../../node_modules/gl-matrix/esm/index.js"
+import { Vec3 } from "./vec3.js"
 glMatrix.setMatrixArrayType(Array)
 
 export class Quat {
@@ -30,8 +31,10 @@ export class Quat {
     return [this.x, this.y, this.z, this.w]
   }
 
-  toTransform(): Transform3 {
-    const mat = mat4.fromQuat(mat4.create(), this.toArray())
-    return new Transform3(mat)
+  toTransform(center:Vec3=new Vec3()): Transform3 {
+    const move = Transform3.translate(center.clone().negate())
+    const rotate = new Transform3(mat4.fromQuat(mat4.create(), this.toArray()))
+    const remove = Transform3.translate(center.clone())
+    return remove.multiply(rotate).multiply(move)
   }
 }
