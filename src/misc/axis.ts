@@ -1,13 +1,13 @@
 import { Mesh } from "../core/mesh.js";
-import { PhongMaterial } from "../core/phong/phongmaterial.js";
+import { Material } from "../core/material.js";
 import { RGBAColor } from "../math/rgbacolor.js";
 import { Geometry } from "../core/geometry.js";
 import { Vec3 } from "../math/vec3.js";
 import { Face3 } from "../math/face3.js";
 
 export class Axis extends Mesh {
-  constructor(size:number) {
-    super(new AxisGeometry(size), new PhongMaterial())
+  constructor(size:number, material:Material) {
+    super(new AxisGeometry(size), material)
     this.material.wireframe = true
   }
 }
@@ -40,6 +40,5 @@ export class AxisGeometry extends Geometry {
       new RGBAColor(0, 0, 1),
       new RGBAColor(0, 0, 1),
     ]
-    this.enableVertexColor = true
   }
 }

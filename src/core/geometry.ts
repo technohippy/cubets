@@ -10,7 +10,6 @@ export abstract class Geometry {
   normals:Vec3[] = []
   uvs:Vec2[] = []
   colors:RGBAColor[] = []
-  enableVertexColor = false
 
   getVertices(transformedVertices:Vec3[]): Float32Array {
     return new Float32Array(transformedVertices.map(v => v.toArray()).flat())
@@ -33,8 +32,12 @@ export abstract class Geometry {
     }
   }
 
+  hasVertexColors(): boolean {
+    return 0 < this.colors.length
+  }
+
   getColors(): Float32Array {
-    if (this.enableVertexColor) {
+    if (this.hasVertexColors()) {
       return new Float32Array(this.colors.map(color => color.toArray()).flat())
     } else {
       return new Float32Array(this.vertices.map(_ => [0, 0, 0, 0]).flat())

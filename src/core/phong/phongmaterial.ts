@@ -36,7 +36,7 @@ export class PhongMaterial extends Material {
     const shininessLocation = renderer.getUniformLocation("uShininess")
     gl.uniform1i(wireframeModeLocation, this.wireframe ? 1 : 0)
     gl.uniform1i(normalModeLocation, this.normal ? 1 : 0)
-    gl.uniform1i(vertexColorModeLocation, mesh.geometry.enableVertexColor ? 1 : 0)
+    gl.uniform1i(vertexColorModeLocation, mesh.geometry.hasVertexColors() ? 1 : 0)
     gl.uniform4fv(materialDiffuseLocation, this.diffuseColor.toArray())
     gl.uniform4fv(materialAmbientLocation, this.ambientColor.toArray())
     gl.uniform4fv(materialSpecularLocation, this.specularColor.toArray())
