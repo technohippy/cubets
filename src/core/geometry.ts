@@ -4,7 +4,7 @@ import { Face3 } from '../math/face3.js'
 import { Transform3 } from '../math/transform3.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 
-export abstract class Geometry {
+export class Geometry {
   vertices:Vec3[] = []
   indices:Face3[] = []
   normals:Vec3[] = []
@@ -94,5 +94,13 @@ export abstract class Geometry {
       uvs.push(new Vec2((v.x - min.x) / w, (max.y - v.y) / h))
     })
     return uvs
+  }
+
+  computeNormals() {
+    this.normals = Geometry.computeNormals(this.indices, this.vertices)
+  }
+
+  computeUvs() {
+    this.uvs = this._computeUvs()
   }
 }

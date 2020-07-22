@@ -29,7 +29,9 @@ import { Vec2 } from "./math/vec2.js"
 import { Vec3 } from "./math/vec3.js"
 import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
+
 import { Axis } from "./misc/axis.js"
+import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
 
 export default {
   Scene: PhongScene,
@@ -69,4 +71,5 @@ export default {
   Color: RGBAColor,
 
   Axis: Axis,
+  JSONGeometryLoader: JSONGeometryLoader,
 }

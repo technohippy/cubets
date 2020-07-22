@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- load 3d objects (.json)
 - picker
 - BumpMap
 - particle system
@@ -25,6 +24,7 @@
 - ray tracing
 - morphing
 - heightfield
+- use more than one shaders
 
 ## Bugs
 
@@ -60,6 +60,7 @@
 
 ## Enhancement
 
+- load 3d objects (.json)
 - add axis geometry
 - vertex color 
 - group geometries
