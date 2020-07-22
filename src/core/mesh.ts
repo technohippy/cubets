@@ -26,6 +26,7 @@ export class Mesh {
   verticesBuffer?: WebGLBuffer
   indicesBuffer?: WebGLBuffer
   normalBuffer?: WebGLBuffer
+  colorBuffer?: WebGLBuffer
   textureCoordsBuffer?: WebGLBuffer
 
   constructor(geometry: Geometry, material: Material) {
@@ -63,7 +64,6 @@ export class Mesh {
     transform.multiply(positionTransform)
     transform.multiply(rotationTransform)
     transform.multiply(basePositionTransform)
-    console.log(this.basePosition)
 
     return transform
   }
@@ -115,6 +115,15 @@ export class Mesh {
       gl.bufferData(gl.ARRAY_BUFFER, this.geometry.getNormals(transformedVertices), gl.STATIC_DRAW)
       gl.enableVertexAttribArray(normalLocation)
       gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, 0, 0)
+    }
+
+    const colorLocation = scene.getVertexColorAttribLocation(renderer)
+    if (0 <= colorLocation) {
+      this.colorBuffer = gl.createBuffer()!
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer)
+      gl.bufferData(gl.ARRAY_BUFFER, this.geometry.getColors(), gl.STATIC_DRAW)
+      gl.enableVertexAttribArray(colorLocation)
+      gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0)
     }
 
     if (scene.hasTexture()) {

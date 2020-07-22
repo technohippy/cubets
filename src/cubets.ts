@@ -29,6 +29,7 @@ import { Vec2 } from "./math/vec2.js"
 import { Vec3 } from "./math/vec3.js"
 import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
+import { Axis } from "./misc/axis.js"
 
 export default {
   Scene: PhongScene,
@@ -66,4 +67,6 @@ export default {
   Quat: Quat,
   RGBAColor: RGBAColor,
   Color: RGBAColor,
+
+  Axis: Axis,
 }

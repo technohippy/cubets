@@ -31,9 +31,16 @@
         new Cubets.Color(0.8, 0.8, 0.8)
       )
 
-      // create mesh
+      const axis = new Cubets.Axis(5)
+
+      const mesh = new Cubets.Mesh(
+        new Cubets.CubeGeometry(10, 10, 10),
+        new Cubets.Scene.Material(),
+      )
 
       scene.add(light)
+      scene.add(axis)
+      //scene.add(mesh)
 
       const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 100)
       camera.position.z = 20

@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- group geometries
 - load 3d objects (.json)
 - picker
 - BumpMap
@@ -10,8 +9,6 @@
 - **make tiny applications with cubets**
 - texture properties
 - multi textures for one mesh
-- add axis geometry
-- vertex color 
 - add TSDoc comments
 - build a website
 - **release alpha**
@@ -33,7 +30,7 @@
 
 - 動的環境マップが複数あると一つ真っ白
 - check spotlight direction
-- ライトがないとエラーになる
+- ライトがひとつもないとエラーになる
 
 ## Refactoring
 
@@ -64,6 +61,9 @@
 
 ## Enhancement
 
+- add axis geometry
+- vertex color 
+- group geometries
 - reflection environment (using CubeMap)
 - Skybox
 - postprocessing

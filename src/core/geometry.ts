@@ -2,13 +2,14 @@ import { Vec2 } from '../math/vec2.js'
 import { Vec3 } from '../math/vec3.js'
 import { Face3 } from '../math/face3.js'
 import { Transform3 } from '../math/transform3.js'
-import { Quat } from '../math/quat.js'
+import { RGBAColor } from '../math/rgbacolor.js'
 
 export abstract class Geometry {
   vertices:Vec3[] = []
   indices:Face3[] = []
   normals:Vec3[] = []
   uvs:Vec2[] = []
+  colors:RGBAColor[] = []
 
   getVertices(transformedVertices:Vec3[]): Float32Array {
     return new Float32Array(transformedVertices.map(v => v.toArray()).flat())
@@ -29,6 +30,10 @@ export abstract class Geometry {
     } else {
       return new Uint16Array(this.indices.map(face => face.toArray()).flat())
     }
+  }
+
+  getColors(): Float32Array {
+    return new Float32Array(this.colors.map(color => color.toArray()).flat())
   }
 
   transformVertices(transform:Transform3): Vec3[] {

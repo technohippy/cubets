@@ -15,6 +15,10 @@ export class PhongScene extends Scene {
     return renderer.getAttributeLocation("aVertexNormal")
   }
 
+  getVertexColorAttribLocation(renderer:Renderer): number {
+    return renderer.getAttributeLocation("aVertexColor")
+  }
+
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number {
     return renderer.getAttributeLocation("aVertexTextureCoords")
   }
@@ -47,6 +51,7 @@ export class PhongScene extends Scene {
     const names = [
       "aVertexPosition",
       "aVertexNormal",
+      "aVertexColor",
     ]
     if (this.hasTexture()) {
       names.push("aVertexTextureCoords")
@@ -61,6 +66,7 @@ export class PhongScene extends Scene {
       "uNormalMatrix",
       "uWireframeMode",
       "uNormalMode",
+      "uVertexColorMode",
       "uLightFollowCameraMode",
       "uShininess",
       "uPositionalLight",
@@ -97,6 +103,8 @@ export class PhongScene extends Scene {
 
       const int numLights = ${this.lights.length};
 
+      uniform int uVertexColorMode;
+
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
       uniform mat4 uNormalMatrix;
@@ -107,6 +115,7 @@ export class PhongScene extends Scene {
 
       in vec3 aVertexPosition;
       in vec3 aVertexNormal;
+      in vec4 aVertexColor;
 
       #ifdef TEXTURE
       in vec2 aVertexTextureCoords;
@@ -120,6 +129,7 @@ export class PhongScene extends Scene {
       out vec3 vEyeVector;
       out vec3 vLightNormal[numLights];
       out vec3 vLightVector[numLights];
+      out vec4 vVertexColor;
 
       #ifdef TEXTURE
       out vec2 vTextureCoords;
@@ -155,6 +165,10 @@ export class PhongScene extends Scene {
         }
         #endif
 
+        if (0 < uVertexColorMode) {
+          vVertexColor = aVertexColor;
+        }
+
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
       }
     `
@@ -187,6 +201,7 @@ export class PhongScene extends Scene {
       // flags
       uniform int uNormalMode;
       uniform int uWireframeMode;
+      uniform int uVertexColorMode;
 
       // light
       uniform int uLightFollowCameraMode[numLights];
@@ -206,6 +221,7 @@ export class PhongScene extends Scene {
       in vec3 vEyeVector;
       in vec3 vLightNormal[numLights];
       in vec3 vLightVector[numLights];
+      in vec4 vVertexColor;
 
       #ifdef TEXTURE
       in vec2 vTextureCoords;
@@ -223,7 +239,15 @@ export class PhongScene extends Scene {
           return;
         }
         if (0 < uWireframeMode) {
-          fragColor = uMaterialAmbient;
+          if (0 < uVertexColorMode) {
+            fragColor = vVertexColor;
+          } else {
+            fragColor = uMaterialAmbient;
+          }
+          return;
+        }
+        if (0 < uVertexColorMode) {
+          fragColor = vVertexColor;
           return;
         }
         #ifdef CUBETEXTURE
