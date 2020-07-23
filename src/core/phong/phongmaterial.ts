@@ -3,6 +3,7 @@ import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
 import { CubeTexture } from "../cubetexture.js";
 import { Mesh } from "../mesh.js";
+import { TextureType } from "../texture.js";
 
 export class PhongMaterial extends Material {
   diffuseColor: RGBAColor
@@ -44,25 +45,28 @@ export class PhongMaterial extends Material {
 
     // texture
     let ignoreTextureLocation = renderer.getUniformLocation("uIgnoreTexture", true)
+    let ignoreNormalTextureLocation = renderer.getUniformLocation("uIgnoreNormalTexture", true)
     let ignoreCubeTextureLocation = renderer.getUniformLocation("uIgnoreCubeTexture", true)
+    const ignoreFlags = { texture: 1, normal: 1, cube: 1 }
     if (this.texture) {
       if (this.texture instanceof CubeTexture) {
         const skyboxLocation = renderer.getUniformLocation("uSkybox")
         const samplerLocation = renderer.getUniformLocation("uCubeSampler")
         this.texture.setupGLTexture(gl, samplerLocation!, skyboxLocation!)
-
-        if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 1)
-        if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 0)
+        ignoreFlags.cube = 0
       } else {
         const samplerLocation = renderer.getUniformLocation("uSampler")
         this.texture.setupGLTexture(gl, samplerLocation!)
-
-        if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 0)
-        if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 1)
+        ignoreFlags.texture = 0
       }
-    } else {
-      if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, 1)
-      if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, 1)
     }
+    if (this.normalTexture) {
+      const samplerLocation = renderer.getUniformLocation("uNormalSampler")
+      this.normalTexture.setupGLTexture(gl, samplerLocation!)
+      ignoreFlags.normal = 0
+    }
+    if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, ignoreFlags.texture)
+    if (ignoreNormalTextureLocation) gl.uniform1i(ignoreNormalTextureLocation, ignoreFlags.normal)
+    if (ignoreCubeTextureLocation) gl.uniform1i(ignoreCubeTextureLocation, ignoreFlags.cube)
   }
 }

@@ -1,8 +1,16 @@
+export enum TextureType {
+  Texture,
+  CubeTexture,
+  NormalTexture,
+}
+
 export class Texture {
+  type: TextureType
   image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
-  constructor(image:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement) {
+  constructor(image:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, type:TextureType=TextureType.Texture) {
     this.image = image
+    this.type = type
   }
 
   loadImage():Promise<void> {

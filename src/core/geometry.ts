@@ -4,6 +4,10 @@ import { Face3 } from '../math/face3.js'
 import { Transform3 } from '../math/transform3.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 
+//@ts-ignore
+import { glMatrix, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
+glMatrix.setMatrixArrayType(Array)
+
 export class Geometry {
   vertices:Vec3[] = []
   indices:Face3[] = []
@@ -102,5 +106,59 @@ export class Geometry {
 
   computeUvs() {
     this.uvs = this._computeUvs()
+  }
+
+  // TODO
+  computeTangents():number[] {
+    const vs = this.vertices.map(v => v.toArray()).flat()
+    const tc = this.uvs.map(uv => uv.toArray()).flat()
+    const ind = this.indices.map(i => i.toArray()).flat()
+    const tangents = [];
+
+    for (let i = 0; i < vs.length / 3; i++) {
+      tangents[i] = [0, 0, 0];
+    }
+
+    let
+      a = [0, 0, 0],
+      b = [0, 0, 0],
+      triTangent = [0, 0, 0];
+
+    for (let i = 0; i < ind.length; i += 3) {
+      const i0 = ind[i];
+      const i1 = ind[i + 1];
+      const i2 = ind[i + 2];
+
+      const pos0 = [vs[i0 * 3], vs[i0 * 3 + 1], vs[i0 * 3 + 2]];
+      const pos1 = [vs[i1 * 3], vs[i1 * 3 + 1], vs[i1 * 3 + 2]];
+      const pos2 = [vs[i2 * 3], vs[i2 * 3 + 1], vs[i2 * 3 + 2]];
+
+      const tex0 = [tc[i0 * 2], tc[i0 * 2 + 1]];
+      const tex1 = [tc[i1 * 2], tc[i1 * 2 + 1]];
+      const tex2 = [tc[i2 * 2], tc[i2 * 2 + 1]];
+
+      vec3.subtract(a, pos1, pos0);
+      vec3.subtract(b, pos2, pos0);
+
+      const c2c1b = tex1[1] - tex0[1];
+      const c3c1b = tex2[0] - tex0[1];
+
+      triTangent = [c3c1b * a[0] - c2c1b * b[0], c3c1b * a[1] - c2c1b * b[1], c3c1b * a[2] - c2c1b * b[2]];
+
+      vec3.add(triTangent, tangents[i0], triTangent);
+      vec3.add(triTangent, tangents[i1], triTangent);
+      vec3.add(triTangent, tangents[i2], triTangent);
+    }
+
+    // Normalize tangents
+    const ts:number[] = [];
+    tangents.forEach(tan => {
+      vec3.normalize(tan, tan);
+      ts.push(tan[0]);
+      ts.push(tan[1]);
+      ts.push(tan[2]);
+    });
+
+    return ts;
   }
 }

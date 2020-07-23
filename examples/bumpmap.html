@@ -33,7 +33,7 @@
       light.shouldFollowCamera = true
 
       const material = new Cubets.Scene.Material()
-      material.bumpMap = new Cubets.Texture("./images/fieldstone-normal.jpg")
+      material.normalTexture = new Cubets.Texture("./images/fieldstone-normal.jpg", Cubets.TextureType.NormalTexture)
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(10, 10, 10),
         material,
