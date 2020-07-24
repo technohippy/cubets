@@ -88,7 +88,7 @@ export class Renderer {
     this.use()
     this.clear(scene.clearColor, camera)
     scene.eachMesh(mesh => {
-      if (mesh.skipRender) return
+      if (mesh.hidden) return
 
       this.setupVAO(scene, mesh)
       this.renderMesh(scene, mesh, camera)

@@ -178,6 +178,10 @@ export class FilterScene extends Scene {
     return -1
   }
 
+  getVertexTangentAttribLocation(renderer:Renderer): number {
+    return -1
+  }
+
   // overridable
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number { 
     return renderer.getAttributeLocation("aVertexTextureCoords")

@@ -8,15 +8,23 @@ export class PhongScene extends Scene {
   static Material = PhongMaterial
 
   getVertexPositionAttribLocation(renderer:Renderer): number {
+    //console.log("aVertexPosition", renderer.getAttributeLocation("aVertexPosition"))
     return renderer.getAttributeLocation("aVertexPosition")
   }
 
   getVertexNormalAttribLocation(renderer:Renderer): number {
+    //console.log("aVertexNormal", renderer.getAttributeLocation("aVertexNormal"))
     return renderer.getAttributeLocation("aVertexNormal")
   }
 
   getVertexColorAttribLocation(renderer:Renderer): number {
+    //console.log("aVertexColor", renderer.getAttributeLocation("aVertexColor"))
     return renderer.getAttributeLocation("aVertexColor")
+  }
+
+  getVertexTangentAttribLocation(renderer:Renderer): number {
+    //console.log("aVertexTangent", renderer.getAttributeLocation("aVertexTangent"))
+    return renderer.getAttributeLocation("aVertexTangent", true) // TODO
   }
 
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number {
@@ -53,7 +61,10 @@ export class PhongScene extends Scene {
       "aVertexNormal",
       "aVertexColor",
     ]
-    if (this.hasTexture()) {
+    if (this.hasNormalTexture()) {
+      names.push("aVertexTangent")
+    }
+    if (this.hasTexture() || this.hasNormalTexture()) {
       names.push("aVertexTextureCoords")
     }
     return names
@@ -84,6 +95,10 @@ export class PhongScene extends Scene {
       names.push("uSampler")
       names.push("uIgnoreTexture")
     }
+    if (this.hasNormalTexture()) {
+      names.push("uNormalSampler")
+      names.push("uIgnoreNormalTexture")
+    }
     if (this.hasCubeTexture()) {
       names.push("uCubeSampler")
       names.push("uIgnoreCubeTexture")
@@ -96,6 +111,7 @@ export class PhongScene extends Scene {
     return `#version 300 es
 
       ${this.hasTexture() ? "#define TEXTURE" : ""}
+      ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
 
       precision mediump float;
@@ -117,7 +133,11 @@ export class PhongScene extends Scene {
       in vec3 aVertexNormal;
       in vec4 aVertexColor;
 
-      #ifdef TEXTURE
+      #ifdef NORMALTEXTURE
+      in vec3 aVertexTangent;
+      #endif
+
+      #if defined(TEXTURE) || defined(NORMALTEXTURE)
       in vec2 aVertexTextureCoords;
       #endif
 
@@ -131,7 +151,7 @@ export class PhongScene extends Scene {
       out vec3 vLightVector[numLights];
       out vec4 vVertexColor;
 
-      #ifdef TEXTURE
+      #if defined(TEXTURE) || defined(NORMALTEXTURE)
       out vec2 vTextureCoords;
       #endif
 
@@ -142,8 +162,22 @@ export class PhongScene extends Scene {
       void main(void) {
         vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
 
-        vEyeVector = -vec3(vertex.xyz);
         vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+        #ifdef NORMALTEXTURE
+        vec3 tangent = vec3(uNormalMatrix * vec4(aVertexTangent, 1.0));
+        vec3 bitangent = cross(vNormal, tangent);
+        mat3 tbnMatrix = mat3(
+          tangent.x, bitangent.x, vNormal.x,
+          tangent.y, bitangent.y, vNormal.y,
+          tangent.z, bitangent.z, vNormal.z
+        );
+        #endif
+
+        vEyeVector = -vec3(vertex.xyz);
+        #ifdef NORMALTEXTURE
+        vEyeVector = vEyeVector * tbnMatrix;
+        #endif
+
         for (int i = 0; i < numLights; i++) {
           if (0 < uPositionalLight[i]) {
             vec4 lightPosition = uModelViewMatrix * vec4(uLightPosition[i], 1.0);
@@ -153,9 +187,13 @@ export class PhongScene extends Scene {
             vLightVector[i] = (vec4(uLightDirection[i], 1.0) * inverse(uModelViewMatrix)).xyz;
             vLightNormal[i] = vNormal;
           }
+          #ifdef NORMALTEXTURE
+          vLightVector[i] = vLightVector[i] * tbnMatrix;
+          vLightNormal[i] = vLightNormal[i] * tbnMatrix;
+          #endif
         }
 
-        #ifdef TEXTURE
+        #if defined(TEXTURE) || defined(NORMALTEXTURE)
         vTextureCoords = aVertexTextureCoords;
         #endif
         
@@ -178,6 +216,7 @@ export class PhongScene extends Scene {
     return `#version 300 es
 
       ${this.hasTexture() ? "#define TEXTURE" : ""}
+      ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
 
       precision mediump float;
@@ -190,6 +229,11 @@ export class PhongScene extends Scene {
       #ifdef TEXTURE
       uniform sampler2D uSampler;
       uniform int uIgnoreTexture;
+      #endif
+
+      #ifdef NORMALTEXTURE
+      uniform sampler2D uNormalSampler;
+      uniform int uIgnoreNormalTexture;
       #endif
 
       #ifdef CUBETEXTURE
@@ -223,7 +267,7 @@ export class PhongScene extends Scene {
       in vec3 vLightVector[numLights];
       in vec4 vVertexColor;
 
-      #ifdef TEXTURE
+      #if defined(TEXTURE) || defined(NORMALTEXTURE)
       in vec2 vTextureCoords;
       #endif
 
@@ -266,7 +310,13 @@ export class PhongScene extends Scene {
           } else {
             L = normalize(vLightVector[i]);
           }
-          vec3 N = normalize(vLightNormal[i]);
+          vec3 normal = vLightNormal[i];
+          #ifdef NORMALTEXTURE
+          if (uIgnoreNormalTexture == 0) {
+            normal = 2.0 * texture(uNormalSampler, vTextureCoords).rgb - 1.0;
+          }
+          #endif
+          vec3 N = normalize(normal);
           float lambertTerm = dot(N, -L);
           vec4 Ia = uLightAmbient[i] * uMaterialAmbient;
           vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);

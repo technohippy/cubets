@@ -2,11 +2,10 @@ import { Mesh } from './mesh.js'
 import { Light } from './light.js'
 import { Lights } from './lights.js'
 import { Renderer } from './renderer.js'
-import { Texture } from './texture.js'
+import { Texture, TextureType } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 import { CubeTexture } from './cubetexture.js'
 import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
-import { Transform3 } from '../math/transform3.js'
 
 export abstract class Scene {
   name?: string
@@ -66,37 +65,37 @@ export abstract class Scene {
   collectTextures(): Texture[] {
     if (this.#textures === undefined) {
       this.#textures = []
-      //this.eachAllMesh(m => {
       this.eachMesh(m => {
         const tex = m.material.texture
         if (tex) this.#textures?.push(tex)
+        const ntex = m.material.normalTexture
+        if (ntex) this.#textures?.push(ntex)
       })
     }
     return this.#textures
   }
 
-  hasTexture(): boolean {
+  hasTextureType(type: TextureType): boolean {
     const textures = this.collectTextures()
     for (let i = 0; i < textures.length; i++) {
       const texture = textures[i]
-      if (texture instanceof CubeTexture) {
-        // ignore
-      } else if (texture instanceof Texture) {
+      if (texture.type === type) {
         return true
       }
     }
     return false
   }
 
+  hasTexture(): boolean {
+    return this.hasTextureType(TextureType.Texture)
+  }
+
+  hasNormalTexture(): boolean {
+    return this.hasTextureType(TextureType.NormalTexture)
+  }
+
   hasCubeTexture(): boolean {
-    const textures = this.collectTextures()
-    for (let i = 0; i < textures.length; i++) {
-      const texture = textures[i]
-      if (texture instanceof CubeTexture) {
-        return true
-      }
-    }
-    return false
+    return this.hasTextureType(TextureType.CubeTexture)
   }
 
   async loadAllTextures(): Promise<void[]> {
@@ -110,12 +109,12 @@ export abstract class Scene {
   abstract getVertexNormalAttribLocation(renderer:Renderer): number
   abstract getVertexTextureCoordsAttribLocation(renderer:Renderer): number
   abstract getVertexColorAttribLocation(renderer:Renderer): number
+  abstract getVertexTangentAttribLocation(renderer:Renderer): number
 
   abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
   abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
   abstract getNormalMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
 
   abstract getAttributeNames(): string[]
-
   abstract getUniformNames(): string[]
 }

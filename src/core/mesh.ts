@@ -9,7 +9,7 @@ import { Texture } from "./texture.js";
 import { CubeTexture } from "./cubetexture.js";
 
 export class Mesh {
-  skipRender = false
+  hidden = false
 
   parent?: Mesh
   children: Mesh[] = []
@@ -27,6 +27,7 @@ export class Mesh {
   indicesBuffer?: WebGLBuffer
   normalBuffer?: WebGLBuffer
   colorBuffer?: WebGLBuffer
+  tangentBuffer?: WebGLBuffer
   textureCoordsBuffer?: WebGLBuffer
 
   constructor(geometry: Geometry, material: Material) {
@@ -126,7 +127,16 @@ export class Mesh {
       gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0)
     }
 
-    if (scene.hasTexture()) {
+    const tangentLocation = scene.getVertexTangentAttribLocation(renderer)
+    if (0 <= tangentLocation) {
+      this.tangentBuffer = gl.createBuffer()!
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.tangentBuffer)
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.geometry.computeTangents()), gl.STATIC_DRAW)
+      gl.enableVertexAttribArray(colorLocation)
+      gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0)
+    }
+
+    if (scene.hasTexture() || scene.hasNormalTexture()) {
       const textureCoordsLocation = scene.getVertexTextureCoordsAttribLocation(renderer)
       this.textureCoordsBuffer = gl.createBuffer()!
       gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordsBuffer)

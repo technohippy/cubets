@@ -1,6 +1,7 @@
-import { Texture } from "./texture.js";
+import { Texture, TextureType } from "./texture.js";
 
 export class CubeTexture implements Texture {
+  type: TextureType
   image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
   images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)[]
 
@@ -17,6 +18,7 @@ export class CubeTexture implements Texture {
   ) {
     this.image = imageNx // TODO
     this.images = [ imageNx, imagePx, imageNy, imagePy, imageNz, imagePz ]
+    this.type = TextureType.CubeTexture
   }
 
   loadImage():Promise<any> {

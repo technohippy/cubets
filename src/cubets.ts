@@ -7,7 +7,7 @@ import { Material } from "./core/material.js"
 import { PhongReflectionMaterial } from "./core/phong/phongreflectionmaterial.js"
 import { Mesh } from "./core/mesh.js"
 import { Viewport } from "./core/viewport.js"
-import { Texture } from "./core/texture.js"
+import { Texture, TextureType } from "./core/texture.js"
 import { CubeTexture } from "./core/cubetexture.js"
 
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
@@ -62,6 +62,7 @@ export default {
 
   Viewport: Viewport,
   Texture: Texture,
+  TextureType: TextureType,
   CubeTexture: CubeTexture,
 
   Vec2: Vec2,

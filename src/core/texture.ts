@@ -1,8 +1,16 @@
+export enum TextureType {
+  Texture,
+  CubeTexture,
+  NormalTexture,
+}
+
 export class Texture {
+  type: TextureType
   image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
-  constructor(image:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement) {
+  constructor(image:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, type:TextureType=TextureType.Texture) {
     this.image = image
+    this.type = type
   }
 
   loadImage():Promise<void> {
@@ -20,7 +28,7 @@ export class Texture {
     })
   }
 
-  setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation) {
+  setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation, unit:number=0) {
     if (typeof this.image === "string") {
       const img = new Image()
       img.onload = () => {
@@ -29,14 +37,21 @@ export class Texture {
       }
       img.src = this.image
     } else {
+      let textureUnit: number = 0
+      if (this.type === TextureType.Texture) {
+        gl.activeTexture(gl.TEXTURE0)
+      } else if (this.type === TextureType.NormalTexture) {
+        textureUnit = 1
+        gl.activeTexture(gl.TEXTURE1)
+      }
+
       const texture = gl.createTexture()!
       gl.bindTexture(gl.TEXTURE_2D, texture)
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 
-      gl.activeTexture(gl.TEXTURE0)
-      gl.uniform1i(location, 0)
+      gl.uniform1i(location, textureUnit)
     }
   }
 }

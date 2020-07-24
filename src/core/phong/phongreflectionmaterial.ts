@@ -28,7 +28,7 @@ export class PhongReflectionMaterial extends PhongMaterial {
     ]
 
     this.reflectionScene.reflectionMeshes.forEach(m => {
-      m.skipRender = true
+      m.hidden = true
       m.material.skipPrepare = true
     })
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
@@ -40,7 +40,7 @@ export class PhongReflectionMaterial extends PhongMaterial {
       this.reflectionCamera!.draw(this.reflectionScene!)
     })
     this.reflectionScene.reflectionMeshes.forEach(m => {
-      m.skipRender = false
+      m.hidden = false
       m.material.skipPrepare = false
     })
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
