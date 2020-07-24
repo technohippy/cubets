@@ -3,7 +3,6 @@
 ## Enhancement
 
 - picker
-- BumpMap
 - particle system
 - **make tiny applications with cubets**
 - texture properties
@@ -60,6 +59,7 @@
 
 ## Enhancement
 
+- BumpMap
 - load 3d objects (.json)
 - add axis geometry
 - vertex color 
