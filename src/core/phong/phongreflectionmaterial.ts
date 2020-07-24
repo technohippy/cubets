@@ -50,7 +50,7 @@ export class PhongReflectionMaterial extends PhongMaterial {
 
   setupGLVars(renderer:Renderer, mesh:Mesh) {
     super.setupGLVars(renderer, mesh)
-    this.texture = undefined
+    this.clearTexture()
   }
 
   createFrameBuffer(gl:WebGL2RenderingContext, size:number=256): {frameBuffer:WebGLFramebuffer, cubeTexture:WebGLTexture} {

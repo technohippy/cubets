@@ -31,6 +31,7 @@
 
 ## Refactoring
 
+- remove TextureType enum
 - remove all 'instanceof'
 - rollup.jsで一ファイルに纏める
 - introduce interfaces
