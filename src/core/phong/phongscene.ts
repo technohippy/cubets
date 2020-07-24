@@ -8,23 +8,19 @@ export class PhongScene extends Scene {
   static Material = PhongMaterial
 
   getVertexPositionAttribLocation(renderer:Renderer): number {
-    //console.log("aVertexPosition", renderer.getAttributeLocation("aVertexPosition"))
     return renderer.getAttributeLocation("aVertexPosition")
   }
 
   getVertexNormalAttribLocation(renderer:Renderer): number {
-    //console.log("aVertexNormal", renderer.getAttributeLocation("aVertexNormal"))
     return renderer.getAttributeLocation("aVertexNormal")
   }
 
   getVertexColorAttribLocation(renderer:Renderer): number {
-    //console.log("aVertexColor", renderer.getAttributeLocation("aVertexColor"))
     return renderer.getAttributeLocation("aVertexColor")
   }
 
   getVertexTangentAttribLocation(renderer:Renderer): number {
-    //console.log("aVertexTangent", renderer.getAttributeLocation("aVertexTangent"))
-    return renderer.getAttributeLocation("aVertexTangent", true) // TODO
+    return renderer.getAttributeLocation("aVertexTangent", true) // TODO: 気になる
   }
 
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number {

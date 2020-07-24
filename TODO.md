@@ -2,14 +2,14 @@
 
 ## Enhancement
 
-- picker
-- particle system
-- **make tiny applications with cubets**
-- texture properties
 - multi textures for one mesh
+- particle system
+- picker
+- **make tiny applications with cubets**
 - add TSDoc comments
 - build a website
 - **release alpha**
+- texture properties
 - drop shadow
 - PBR
 - Stencil Buffer
@@ -23,7 +23,6 @@
 - ray tracing
 - morphing
 - heightfield
-- use more than one shaders
 
 ## Bugs
 
