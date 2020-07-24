@@ -26,13 +26,23 @@
       const scene = new Cubets.Scene()
 
       const light = new Cubets.Scene.Light(
-        new Cubets.Vec3(0, 0, -1),
+        new Cubets.Vec3(0.2, 0.1, -1),
         new Cubets.Color(0.3, 0.3, 0.3),
         new Cubets.Color(0.8, 0.8, 0.8)
       )
-      light.shouldFollowCamera = true
 
-      const material = new Cubets.Scene.Material()
+      const light2 = new Cubets.Scene.Light(
+        new Cubets.Vec3(-0.2, -0.1, 1),
+        new Cubets.Color(0.1, 0.1, 0.1),
+        new Cubets.Color(0.8, 0.8, 0.8)
+      )
+
+      const material = new Cubets.Scene.Material(
+        Cubets.Color.White,
+        Cubets.Color.White,
+        Cubets.Color.White,
+      )
+      material.texture = new Cubets.Texture("./images/unk.png")
       material.normalTexture = new Cubets.Texture("./images/fieldstone-normal.jpg", Cubets.TextureType.NormalTexture)
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(10, 10, 10),
@@ -41,6 +51,7 @@
 
       scene.add(mesh)
       scene.add(light)
+      scene.add(light2)
 
       const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 100)
       camera.position.z = 20

@@ -313,7 +313,7 @@ export class PhongScene extends Scene {
           vec3 normal = vLightNormal[i];
           #ifdef NORMALTEXTURE
           if (uIgnoreNormalTexture == 0) {
-            normal = normal + 0.3 * normalize(2.0 * (texture(uNormalSampler, vTextureCoords).rgb - 0.5));
+            normal = 2.0 * texture(uNormalSampler, vTextureCoords).rgb - 1.0;
           }
           #endif
           vec3 N = normalize(normal);
@@ -338,10 +338,6 @@ export class PhongScene extends Scene {
         if (uIgnoreTexture == 0) {
           fragColor = fragColor * texture(uSampler, vTextureCoords);
         }
-        #endif
-        
-        #ifdef NORMALTEXTURE
-        //fragColor = vec4(1.0, 0.0, 0.0, 1.0);
         #endif
 
         #ifdef CUBETEXTURE
