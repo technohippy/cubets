@@ -44,7 +44,7 @@
       )
 
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
-      skyboxMaterial.texture = new Cubets.CubeTexture(
+      skyboxMaterial.cubeTexture = new Cubets.CubeTexture(
         "./images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
         "./images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
         "./images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
@@ -52,7 +52,7 @@
         "./images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
         "./images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
       )
-      skyboxMaterial.texture.isSkybox = true
+      skyboxMaterial.cubeTexture.isSkybox = true
       const skyMesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(1000, 1000, 1000),
         skyboxMaterial,

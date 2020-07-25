@@ -12,7 +12,6 @@ export abstract class Material {
   cubeTexture?: CubeTexture
   normalTexture?: Texture
 
-  /*
   get texture(): Texture {
     if (1 < this.textures.length) {
       throw "use #textures"
@@ -29,7 +28,6 @@ export abstract class Material {
       throw "use addTexture() or #textures"
     }
   }
-  */
 
   addTexture(texture:Texture) {
     this.textures.push(texture)
