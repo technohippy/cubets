@@ -45,7 +45,7 @@ export class PhongReflectionMaterial extends PhongMaterial {
     })
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
 
-    this.texture = new ReflectionCubeTexture(cubeTexture)
+    this.cubeTexture = new ReflectionCubeTexture(cubeTexture)
   }
 
   setupGLVars(renderer:Renderer, mesh:Mesh) {
@@ -85,15 +85,13 @@ export class PhongReflectionMaterial extends PhongMaterial {
 }
 
 class ReflectionCubeTexture extends CubeTexture {
-  cubeTexture: WebGLTexture
-
   constructor(cubeTexture: WebGLTexture) {
     super("", "", "", "", "", "")
     this.cubeTexture = cubeTexture
   }
   
   setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation, skyboxLocation?:WebGLUniformLocation) {
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeTexture)
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubeTexture!)
     gl.activeTexture(gl.TEXTURE0)
     gl.uniform1i(location, 0)
 

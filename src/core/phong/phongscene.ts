@@ -95,6 +95,8 @@ export class PhongScene extends Scene {
       names.push("uNormalSampler")
       names.push("uIgnoreNormalTexture")
     }
+    console.log("this.collectTextures()", this.collectTextures())
+    console.log("this.hasCubeTexture()", this.hasCubeTexture())
     if (this.hasCubeTexture()) {
       names.push("uCubeSampler")
       names.push("uIgnoreCubeTexture")

@@ -1,6 +1,7 @@
 import { Renderer } from "./renderer.js";
 import { Texture } from "./texture.js";
 import { Mesh } from "./mesh.js";
+import { CubeTexture } from "./cubetexture.js";
 
 export abstract class Material {
   wireframe = false
@@ -8,9 +9,10 @@ export abstract class Material {
   skipPrepare = false
 
   textures: Texture[] = []
-  cubeTexture?: Texture
+  cubeTexture?: CubeTexture
   normalTexture?: Texture
 
+  /*
   get texture(): Texture {
     if (1 < this.textures.length) {
       throw "use #textures"
@@ -27,6 +29,7 @@ export abstract class Material {
       throw "use addTexture() or #textures"
     }
   }
+  */
 
   addTexture(texture:Texture) {
     this.textures.push(texture)
