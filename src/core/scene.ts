@@ -66,8 +66,7 @@ export abstract class Scene {
     if (this.#textures === undefined) {
       this.#textures = []
       this.eachMesh(m => {
-        const tex = m.material.texture
-        if (tex) this.#textures?.push(tex)
+        this.#textures?.push(...m.material.textures)
         const ntex = m.material.normalTexture
         if (ntex) this.#textures?.push(ntex)
       })

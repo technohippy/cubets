@@ -3,7 +3,6 @@ import { RGBAColor } from "../../math/rgbacolor.js";
 import { Renderer } from "../renderer.js";
 import { CubeTexture } from "../cubetexture.js";
 import { Mesh } from "../mesh.js";
-import { TextureType } from "../texture.js";
 
 export class PhongMaterial extends Material {
   diffuseColor: RGBAColor
@@ -48,21 +47,22 @@ export class PhongMaterial extends Material {
     let ignoreNormalTextureLocation = renderer.getUniformLocation("uIgnoreNormalTexture", true)
     let ignoreCubeTextureLocation = renderer.getUniformLocation("uIgnoreCubeTexture", true)
     const ignoreFlags = { texture: 1, normal: 1, cube: 1 }
-    if (this.texture) {
-      if (this.texture instanceof CubeTexture) {
+    let textureUnit = 0
+    this.textures.forEach(texture => {
+      if (texture instanceof CubeTexture) {
         const skyboxLocation = renderer.getUniformLocation("uSkybox")
         const samplerLocation = renderer.getUniformLocation("uCubeSampler")
-        this.texture.setupGLTexture(gl, samplerLocation!, skyboxLocation!)
+        texture.setupGLTexture(gl, samplerLocation!, skyboxLocation!)
         ignoreFlags.cube = 0
       } else {
         const samplerLocation = renderer.getUniformLocation("uSampler")
-        this.texture.setupGLTexture(gl, samplerLocation!)
+        texture.setupGLTexture(gl, samplerLocation!, textureUnit++)
         ignoreFlags.texture = 0
       }
-    }
+    })
     if (this.normalTexture) {
       const samplerLocation = renderer.getUniformLocation("uNormalSampler")
-      this.normalTexture.setupGLTexture(gl, samplerLocation!)
+      this.normalTexture.setupGLTexture(gl, samplerLocation!, textureUnit++)
       ignoreFlags.normal = 0
     }
     if (ignoreTextureLocation) gl.uniform1i(ignoreTextureLocation, ignoreFlags.texture)

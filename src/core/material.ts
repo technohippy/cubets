@@ -6,7 +6,9 @@ export abstract class Material {
   wireframe = false
   normal = false
   skipPrepare = false
+
   textures: Texture[] = []
+  cubeTexture?: Texture
   normalTexture?: Texture
 
   get texture(): Texture {
