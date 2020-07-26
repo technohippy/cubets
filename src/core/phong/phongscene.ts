@@ -225,6 +225,8 @@ export class PhongScene extends Scene {
       #ifdef TEXTURE
       uniform sampler2D uSampler;
       uniform int uIgnoreTexture;
+      uniform sampler2D uSampler2;
+      uniform int uIgnoreTexture2;
       #endif
 
       #ifdef NORMALTEXTURE
