@@ -6,6 +6,7 @@ import { PhongSpotLight } from "./core/phong/phongspotlight.js"
 import { Material } from "./core/material.js"
 import { PhongReflectionMaterial } from "./core/phong/phongreflectionmaterial.js"
 import { Mesh } from "./core/mesh.js"
+import { Particles } from "./core/particles.js"
 import { Viewport } from "./core/viewport.js"
 import { Texture, TextureType } from "./core/texture.js"
 import { CubeTexture } from "./core/cubetexture.js"
@@ -40,6 +41,7 @@ export default {
   Material: Material,
   PhongReflectionMaterial: PhongReflectionMaterial,
   Mesh: Mesh,
+  Particles: Particles,
   Renderer: Renderer,
 
   PerspectiveCamera: PerspectiveCamera, 

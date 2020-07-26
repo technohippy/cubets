@@ -5,8 +5,6 @@ import { Vec3 } from "../math/vec3.js"
 import { Quat } from "../math/quat.js"
 import { Scene } from "./scene.js";
 import { Renderer } from "./renderer.js";
-import { Texture } from "./texture.js";
-import { CubeTexture } from "./cubetexture.js";
 
 export class Mesh {
   hidden = false

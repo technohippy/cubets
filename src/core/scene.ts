@@ -5,6 +5,7 @@ import { Renderer } from './renderer.js'
 import { Texture, TextureType } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
+import { Particles } from './particles.js'
 
 export abstract class Scene {
   name?: string
@@ -98,6 +99,16 @@ export abstract class Scene {
 
   hasCubeTexture(): boolean {
     return this.hasTextureType(TextureType.CubeTexture)
+  }
+
+  hasParticles(): boolean {
+    for (let i = 0; i < this.meshes.length; i++) {
+      const mesh = this.meshes[i]
+      if (mesh instanceof Particles) {
+        return true
+      }
+    }
+    return false
   }
 
   async loadAllTextures(): Promise<void[]> {

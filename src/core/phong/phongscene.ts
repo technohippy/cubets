@@ -8,23 +8,33 @@ export class PhongScene extends Scene {
   static Material = PhongMaterial
 
   getVertexPositionAttribLocation(renderer:Renderer): number {
-    return renderer.getAttributeLocation("aVertexPosition")
+    const loc = renderer.getAttributeLocation("aVertexPosition")
+    //console.log("aVertexPosition", loc)
+    return loc
   }
 
   getVertexNormalAttribLocation(renderer:Renderer): number {
-    return renderer.getAttributeLocation("aVertexNormal")
+    const loc = renderer.getAttributeLocation("aVertexNormal")
+    //console.log("aVertexNormal", loc)
+    return loc
   }
 
   getVertexColorAttribLocation(renderer:Renderer): number {
-    return renderer.getAttributeLocation("aVertexColor")
+    const loc = renderer.getAttributeLocation("aVertexColor")
+    //console.log("aVertexColor", loc)
+    return loc
   }
 
   getVertexTangentAttribLocation(renderer:Renderer): number {
-    return renderer.getAttributeLocation("aVertexTangent", true) // TODO: 気になる
+    const loc = renderer.getAttributeLocation("aVertexTangent", true) // TODO: 気になる
+    //console.log("aVertexTangent", loc)
+    return loc
   }
 
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number {
-    return renderer.getAttributeLocation("aVertexTextureCoords")
+    const loc = renderer.getAttributeLocation("aVertexTextureCoords")
+    //console.log("aVertexTextureCoords", loc)
+    return loc
   }
 
   getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null {
@@ -87,6 +97,10 @@ export class PhongScene extends Scene {
       "uMaterialDiffuse",
       "uMaterialSpecular",
     ]
+    if (this.hasParticles()) {
+      names.push("uParticles")
+      names.push("uPointSize")
+    }
     if (this.hasTexture()) {
       names.push("uSampler")
       names.push("uIgnoreTexture")
@@ -106,6 +120,7 @@ export class PhongScene extends Scene {
   getVertexShader() {
     return `#version 300 es
 
+      ${this.hasParticles() ? "#define PARTICLES" : ""}
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
@@ -115,7 +130,7 @@ export class PhongScene extends Scene {
 
       const int numLights = ${this.lights.length === 0 ? 1 : this.lights.length};
 
-      uniform int uVertexColorMode;
+      uniform bool uVertexColorMode;
 
       uniform mat4 uModelViewMatrix;
       uniform mat4 uProjectionMatrix;
@@ -138,7 +153,12 @@ export class PhongScene extends Scene {
       #endif
 
       #ifdef CUBETEXTURE
-      uniform int uSkybox;
+      uniform bool uSkybox;
+      #endif
+
+      #ifdef PARTICLES
+      uniform bool uParticles;
+      uniform float uPointSize;
       #endif
 
       out vec3 vNormal;
@@ -194,16 +214,22 @@ export class PhongScene extends Scene {
         #endif
         
         #ifdef CUBETEXTURE
-        if (0 < uSkybox) {
+        if (uSkybox) {
           vSkyboxTextureCoords = aVertexPosition;
         }
         #endif
 
-        if (0 < uVertexColorMode) {
+        if (uVertexColorMode) {
           vVertexColor = aVertexColor;
         }
 
         gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+
+        #ifdef PARTICLES
+        if (uParticles) {
+          gl_PointSize = uPointSize;
+        }
+        #endif
       }
     `
   }
@@ -211,6 +237,7 @@ export class PhongScene extends Scene {
   getFragmentShader() {
     return `#version 300 es
 
+      ${this.hasParticles() ? "#define PARTICLES" : ""}
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
@@ -225,8 +252,6 @@ export class PhongScene extends Scene {
       #ifdef TEXTURE
       uniform sampler2D uSampler;
       uniform int uIgnoreTexture;
-      uniform sampler2D uSampler2;
-      uniform int uIgnoreTexture2;
       #endif
 
       #ifdef NORMALTEXTURE
@@ -236,14 +261,18 @@ export class PhongScene extends Scene {
 
       #ifdef CUBETEXTURE
       uniform samplerCube uCubeSampler;
-      uniform int uIgnoreCubeTexture;
-      uniform int uSkybox;
+      uniform bool uIgnoreCubeTexture;
+      uniform bool uSkybox;
       #endif
 
       // flags
-      uniform int uNormalMode;
-      uniform int uWireframeMode;
-      uniform int uVertexColorMode;
+      uniform bool uNormalMode;
+      uniform bool uWireframeMode;
+      uniform bool uVertexColorMode;
+
+      #ifdef PARTICLES
+      uniform bool uParticles;
+      #endif
 
       // light
       uniform int uLightFollowCameraMode[numLights];
@@ -276,24 +305,31 @@ export class PhongScene extends Scene {
       out vec4 fragColor;
 
       void main(void) {
-        if (0 < uNormalMode) {
+        #ifdef PARTICLES
+        if (uParticles) {
+          fragColor = texture(uSampler, gl_PointCoord);
+          return;
+        }
+        #endif
+
+        if (uNormalMode) {
           fragColor = vec4(vLightNormal[0], 1);
           return;
         }
-        if (0 < uWireframeMode) {
-          if (0 < uVertexColorMode) {
+        if (uWireframeMode) {
+          if (uVertexColorMode) {
             fragColor = vVertexColor;
           } else {
             fragColor = uMaterialAmbient;
           }
           return;
         }
-        if (0 < uVertexColorMode) {
+        if (uVertexColorMode) {
           fragColor = vVertexColor;
           return;
         }
         #ifdef CUBETEXTURE
-        if (uIgnoreCubeTexture == 0 && 0 < uSkybox) {
+        if (!uIgnoreCubeTexture && uSkybox) {
           fragColor = texture(uCubeSampler, vSkyboxTextureCoords);
           return;
         }
@@ -339,7 +375,7 @@ export class PhongScene extends Scene {
         #endif
 
         #ifdef CUBETEXTURE
-        if (uIgnoreCubeTexture == 0) {
+        if (!uIgnoreCubeTexture) {
           vec3 ref = reflect(-vEyeVector, vNormal);
           vec3 coords = (inverse(uModelViewMatrix) * vec4(ref, 1.0)).xyz;
           fragColor = fragColor * texture(uCubeSampler, coords);
