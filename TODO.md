@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- particle system
 - picker
 - **make tiny applications with cubets**
 - add TSDoc comments
@@ -59,6 +58,7 @@
 
 ## Enhancement
 
+- particle system
 - BumpMap
 - load 3d objects (.json)
 - add axis geometry

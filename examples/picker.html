@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cubets: Picker</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="js/default.min.css">
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../dist/cubets.js"
+
+      const scene = new Cubets.Scene()
+
+      const light = new Cubets.Scene.Light(
+        new Cubets.Vec3(0.2, 0.3, -1),
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0.8, 0.8, 0.8)
+      )
+
+      const light2 = new Cubets.Scene.Light(
+        new Cubets.Vec3(-0.2, -0.3, 1),
+        new Cubets.Color(0.3, 0.3, 0.3),
+        new Cubets.Color(0.8, 0.8, 0.8)
+      )
+
+      scene.add(light)
+      scene.add(light2)
+
+      for (let i = 0; i < 10; i++) {
+        const geometry = new Cubets.CubeGeometry(
+          8 + Math.random() * 6 - 3,
+          8 + Math.random() * 6 - 3,
+          8 + Math.random() * 6 - 3,
+        )
+        const mesh = new Cubets.Mesh(geometry, new Cubets.Scene.Material())
+        mesh.position = new Cubets.Vec3(
+          Math.random() * 50 - 25,
+          Math.random() * 50 - 25,
+          Math.random() * 50 - 25,
+        )
+        mesh.rotation = Cubets.Quat.fromEulerDegrees(
+          Math.random() * 180,
+          Math.random() * 180,
+          Math.random() * 180,
+        )
+        scene.add(mesh)
+      }
+
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 500)
+      camera.position.z = 50
+      camera.addControl(new Cubets.OrbitCameraControl())
+      camera.setPicker(new Cubets.Picker())
+      camera.start(scene)
+    </script>
+  </body>
+</html>

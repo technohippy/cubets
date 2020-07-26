@@ -10,6 +10,7 @@ import { Vec2 } from "../math/vec2.js";
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
 import { Mesh } from "./mesh.js";
+import { Picker } from "./picker.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -26,6 +27,8 @@ export abstract class Camera implements FilteredCamera {
   normalMatrix: number[] = mat4.create()
 
   controls:CameraControl[] = []
+  picker?:Picker
+
   position = new Vec3()
   rotation = new Quat()
   up = new Vec3(0, 1, 0)
@@ -45,6 +48,10 @@ export abstract class Camera implements FilteredCamera {
 
   addControl(control: CameraControl) {
     this.controls.push(control)
+  }
+
+ setPicker(picker: Picker) {
+    this.picker = picker
   }
 
   removeControl(control: CameraControl) {
