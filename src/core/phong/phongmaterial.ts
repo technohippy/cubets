@@ -9,6 +9,8 @@ export class PhongMaterial extends Material {
   specularColor: RGBAColor
   shininess: number
 
+  pointSize?: number // only for particles
+
   constructor(
     diffuseColor: RGBAColor=RGBAColor.random(),
     ambientColor: RGBAColor=RGBAColor.Gray,
@@ -40,6 +42,12 @@ export class PhongMaterial extends Material {
     gl.uniform4fv(materialAmbientLocation, this.ambientColor.toArray())
     gl.uniform4fv(materialSpecularLocation, this.specularColor.toArray())
     gl.uniform1f(shininessLocation, this.shininess)
+
+    // particles
+    if (this.pointSize) {
+      const pointSizeLocation = renderer.getUniformLocation("uPointSize")
+      gl.uniform1f(pointSizeLocation, this.pointSize)
+    }
 
     // texture
     let ignoreTextureLocation = renderer.getUniformLocation("uIgnoreTexture", true)
