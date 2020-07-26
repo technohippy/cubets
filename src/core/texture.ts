@@ -37,21 +37,15 @@ export class Texture {
       }
       img.src = this.image
     } else {
-      let textureUnit: number = 0
-      if (this.type === TextureType.Texture) {
-        gl.activeTexture(gl.TEXTURE0)
-      } else if (this.type === TextureType.NormalTexture) {
-        textureUnit = 1
-        gl.activeTexture(gl.TEXTURE1)
-      }
-
       const texture = gl.createTexture()!
+      //@ts-ignore
+      gl.activeTexture(gl[`TEXTURE${unit}`])
       gl.bindTexture(gl.TEXTURE_2D, texture)
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 
-      gl.uniform1i(location, textureUnit)
+      gl.uniform1i(location, unit)
     }
   }
 }

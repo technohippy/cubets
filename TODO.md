@@ -2,13 +2,13 @@
 
 ## Enhancement
 
-- multi textures for one mesh
 - particle system
 - picker
 - **make tiny applications with cubets**
 - add TSDoc comments
 - build a website
 - **release alpha**
+- texture array
 - texture properties
 - drop shadow
 - PBR

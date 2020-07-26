@@ -43,15 +43,15 @@
       ]
 
       const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
-      skyboxMaterial.texture = new Cubets.CubeTexture(...cubeImages)
-      skyboxMaterial.texture.isSkybox = true
+      skyboxMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
+      skyboxMaterial.cubeTexture.isSkybox = true
       const skyMesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(1000, 1000, 1000),
         skyboxMaterial,
       )
 
       const reflectionMaterial = new Cubets.Scene.Material(Cubets.Color.White)
-      reflectionMaterial.texture = new Cubets.CubeTexture(...cubeImages)
+      reflectionMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
       const mesh = new Cubets.Mesh(
         new Cubets.SphereGeometry(0.3),
         reflectionMaterial

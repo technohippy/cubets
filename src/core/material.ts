@@ -1,12 +1,15 @@
 import { Renderer } from "./renderer.js";
 import { Texture } from "./texture.js";
 import { Mesh } from "./mesh.js";
+import { CubeTexture } from "./cubetexture.js";
 
 export abstract class Material {
   wireframe = false
   normal = false
   skipPrepare = false
+
   textures: Texture[] = []
+  cubeTexture?: CubeTexture
   normalTexture?: Texture
 
   get texture(): Texture {

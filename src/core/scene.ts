@@ -4,7 +4,6 @@ import { Lights } from './lights.js'
 import { Renderer } from './renderer.js'
 import { Texture, TextureType } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
-import { CubeTexture } from './cubetexture.js'
 import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
 
 export abstract class Scene {
@@ -65,11 +64,14 @@ export abstract class Scene {
   collectTextures(): Texture[] {
     if (this.#textures === undefined) {
       this.#textures = []
-      this.eachMesh(m => {
-        const tex = m.material.texture
-        if (tex) this.#textures?.push(tex)
-        const ntex = m.material.normalTexture
+      this.eachMesh(mesh => {
+        this.#textures?.push(...mesh.material.textures)
+
+        const ntex = mesh.material.normalTexture
         if (ntex) this.#textures?.push(ntex)
+
+        const ctex = mesh.material.cubeTexture
+        if (ctex) this.#textures?.push(ctex)
       })
     }
     return this.#textures

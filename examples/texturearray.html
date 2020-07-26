@@ -18,6 +18,7 @@
     <script src="js/utils.js"></script>
   </head>
   <body>
+    <!-- https://ics.media/web3d-maniacs/webgl2_texture2darray/ -->
     <canvas id="cubets" width="600" height="400"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <script type="module">
@@ -42,7 +43,7 @@
         Cubets.Color.White,
         Cubets.Color.White,
       )
-      //material.addTexture(new Cubets.Texture("./images/unk.png"))
+      material.addTexture(new Cubets.Texture("./images/unk.png"))
       material.addTexture(new Cubets.Texture("./images/sunset.png"))
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(10, 10, 10),

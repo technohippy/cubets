@@ -86,11 +86,11 @@ export class Mesh {
   }
 
   hasTexture(): boolean {
-    return this.material.texture instanceof Texture && !this.hasCubeTexture()
+    return 0 < this.material.textures.length
   }
 
   hasCubeTexture(): boolean {
-    return this.material.texture instanceof CubeTexture
+    return !!this.material.cubeTexture
   }
 
   setupGLBuffers(renderer:Renderer, scene:Scene) {
