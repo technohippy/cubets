@@ -4,6 +4,7 @@ import { Material } from "./material.js"
 import { PlaneGeometry } from "../geometry/planegeometry.js";
 import { Mesh } from "../core/mesh.js";
 import { FilteredCamera } from "./camera.js";
+import { RGBAColor } from "../math/rgbacolor.js";
 
 export abstract class Filter {
   scene: Scene
@@ -135,6 +136,8 @@ export class FilterChain {
 
 export class FilterMaterial extends Material {
   filter?:Filter
+
+  setColor(color: RGBAColor) { }
 
   prepare(renderer:Renderer, mesh:Mesh) { }
   

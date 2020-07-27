@@ -2,6 +2,7 @@ import { Renderer } from "./renderer.js";
 import { Texture } from "./texture.js";
 import { Mesh } from "./mesh.js";
 import { CubeTexture } from "./cubetexture.js";
+import { RGBAColor } from "../math/rgbacolor.js";
 
 export abstract class Material {
   wireframe = false
@@ -37,6 +38,7 @@ export abstract class Material {
     this.textures.length = 0
   }
 
+  abstract setColor(color:RGBAColor): void;
   abstract prepare(renderer:Renderer, mesh:Mesh): void;
   abstract setupGLVars(renderer:Renderer, mesh:Mesh): void;
 }

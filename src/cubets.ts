@@ -25,6 +25,7 @@ import { InvertFilter } from "./filter/invertfilter.js"
 import { BlurFilter } from "./filter/blurfilter.js"
 
 import { OrbitCameraControl } from "./control/orbitcameracontrol.js"
+import { Picker } from "./core/picker.js"
 
 import { Vec2 } from "./math/vec2.js"
 import { Vec3 } from "./math/vec3.js"
@@ -47,6 +48,7 @@ export default {
   PerspectiveCamera: PerspectiveCamera, 
   OrthogonalCamera: OrthogonalCamera,
   OrbitCameraControl: OrbitCameraControl,
+  Picker: Picker,
 
   PhongPositionalLight: PhongPositionalLight,
   PhongDirectionalLight: PhongDirectionalLight,

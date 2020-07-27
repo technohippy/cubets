@@ -6,10 +6,10 @@ import { Quat } from "../math/quat.js";
 import { CameraControl } from "../control/cameracontrol.js";
 import { Viewport } from "./viewport.js";
 import { Vec2 } from "../math/vec2.js";
+import { Picker } from "./picker.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
-import { Mesh } from "./mesh.js";
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {
@@ -26,6 +26,8 @@ export abstract class Camera implements FilteredCamera {
   normalMatrix: number[] = mat4.create()
 
   controls:CameraControl[] = []
+  picker?:Picker
+
   position = new Vec3()
   rotation = new Quat()
   up = new Vec3(0, 1, 0)
@@ -45,6 +47,10 @@ export abstract class Camera implements FilteredCamera {
 
   addControl(control: CameraControl) {
     this.controls.push(control)
+  }
+
+ setPicker(picker: Picker) {
+    this.picker = picker
   }
 
   removeControl(control: CameraControl) {
@@ -130,21 +136,9 @@ export abstract class Camera implements FilteredCamera {
   }
 
   draw(scene: Scene) {
-    if (!this.renderer.program) {
-      this.renderer.prepareProgram(scene)
-      this.renderer.use()
-      this.renderer.setupLocations(scene)
-    }
-
     this.setupProjectionMatrix()
     this.setupModelViewMatrix()
-
-    scene.eachMesh(mesh => {
-      if (!mesh.material.skipPrepare) {
-        mesh.material.prepare(this.renderer, mesh)
-      }
-    })
-
+    this.renderer.prepareRender(scene)
     this.renderer.render(scene, this)
   }
 
@@ -152,6 +146,10 @@ export abstract class Camera implements FilteredCamera {
     if (this.#starting) return
 
     await scene.loadAllTextures()
+
+    if (this.picker) {
+      this.picker.setup(this, scene)      
+    }
 
     this.controls.forEach(control => {
       if (!control.camera) {

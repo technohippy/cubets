@@ -4,6 +4,7 @@ import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 import { Transform3 } from "../math/transform3.js"
+import { Material } from "./material.js"
 
 export class Renderer {
   container?: HTMLCanvasElement
@@ -14,6 +15,8 @@ export class Renderer {
   program?: WebGLProgram
   attributeLocations = new Map<string, number>()
   uniformLocations = new Map<string, WebGLUniformLocation>()
+
+  overrideMaterial?: Material
 
   constructor(viewport:Viewport) {
     this.container = viewport.container
@@ -84,6 +87,25 @@ export class Renderer {
     this.gl.useProgram(this.program!)
   }
 
+  prepareRender(scene:Scene) {
+    if (!this.program) {
+      this.prepareProgram(scene)
+      this.use()
+      this.setupLocations(scene)
+    }
+    if (!this.overrideMaterial) {
+      this.prepareMeshMaterial(scene)
+    }
+  }
+
+  prepareMeshMaterial(scene:Scene) {
+    scene.eachMesh(mesh => {
+      if (!mesh.material.skipPrepare) {
+        mesh.material.prepare(this, mesh)
+      }
+    })
+  }
+
   render(scene: Scene, camera: FilteredCamera) {
     this.use()
     this.clear(scene.clearColor, camera)
@@ -128,7 +150,11 @@ export class Renderer {
   renderMesh(scene: Scene, mesh: Mesh, camera: FilteredCamera) {
     camera.setupGLMatrixes(this, scene)
     scene.lights.setupGLVars(this)
-    mesh.material.setupGLVars(this, mesh)
+    if (this.overrideMaterial) {
+      this.overrideMaterial.setupGLVars(this, mesh)
+    } else {
+      mesh.material.setupGLVars(this, mesh)
+    }
 
     try {
       this.gl.bindVertexArray(this.vao!)

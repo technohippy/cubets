@@ -24,6 +24,13 @@ export class PhongMaterial extends Material {
     this.shininess = shininess
   }
 
+  setColor(color: RGBAColor) {
+    this.diffuseColor = color
+    this.ambientColor = color
+    this.specularColor = color
+
+  }
+
   prepare(renderer:Renderer, mesh:Mesh) {}
 
   setupGLVars(renderer:Renderer, mesh:Mesh) {
