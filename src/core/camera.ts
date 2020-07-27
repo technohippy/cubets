@@ -9,7 +9,7 @@ import { Vec2 } from "../math/vec2.js";
 import { Picker } from "./picker.js";
 
 //@ts-ignore
-import { glMatrix, mat4, vec3 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
 export interface FilteredCamera {

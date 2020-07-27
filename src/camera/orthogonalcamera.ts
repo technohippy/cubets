@@ -2,7 +2,7 @@ import { Camera } from "../core/camera.js"
 import { Viewport } from "../core/viewport.js"
 
 //@ts-ignore
-import { glMatrix, mat4 } from "../../../node_modules/gl-matrix/esm/index.js"
+import { glMatrix, mat4 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
 export class OrthogonalCamera extends Camera {
