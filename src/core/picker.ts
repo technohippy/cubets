@@ -47,7 +47,6 @@ export class Picker {
     gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
     this.resetFrameBuffer(gl)
 
-    console.log(pixel)
     const id = 255 * 255 * pixel[0] + 255 * pixel[1] + pixel[2]
     let found:Mesh | null = null
     this.scene?.eachMesh(mesh => {
