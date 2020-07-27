@@ -10,6 +10,10 @@ export class Vec2 {
     this.x = x
     this.y = y
   }
+
+  distance(v:Vec2): number {
+    return Math.sqrt(Math.pow(this.x-v.x, 2) + Math.pow(this.y-v.y, 2))
+  }
  
   translate(amount:Vec2) {
     this.asArray((vals:number[]):number[] => {
