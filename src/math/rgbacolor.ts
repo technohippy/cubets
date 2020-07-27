@@ -19,7 +19,7 @@ export class RGBAColor {
     const r = (n & 0xff0000) >> 16
     const g = (n & 0x00ff00) >> 8 
     const b = n & 0x0000ff
-    return new RGBAColor(r, g, b)
+    return new RGBAColor(r/255, g/255, b/255)
   }
 
   constructor(r:number, g:number, b:number, a:number = 1) {
