@@ -23,10 +23,18 @@ export class RGBAColor {
   }
 
   constructor(r:number, g:number, b:number, a:number = 1) {
-    this.r = r <= 1 ? r : r / 255
-    this.g = g <= 1 ? g : g / 255
-    this.b = b <= 1 ? b : b / 255
-    this.a = a <= 1 ? a : a / 255
+    if (r <= 1 && g <= 1 && g <= 1 && a <= 1) {
+      this.r = r
+      this.g = g
+      this.b = b
+      this.a = a
+    } else {
+      console.warn("arguments must be less than or equal to 1.0.")
+      this.r = r / 255
+      this.g = g / 255
+      this.b = b / 255
+      this.a = a / 255
+    }
   }
 
   toArray(): number[] {

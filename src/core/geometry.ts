@@ -108,7 +108,7 @@ export class Geometry {
     this.uvs = this._computeUvs()
   }
 
-  // TODO
+  // Real-Time 3D Grphics with WebGL 2: utils.js
   computeTangents():number[] {
     const vs = this.vertices.map(v => v.toArray()).flat()
     const tc = this.uvs.map(uv => uv.toArray()).flat()

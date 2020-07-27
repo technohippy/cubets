@@ -2,7 +2,6 @@
 
 ## Enhancement
 
-- picker
 - **make tiny applications with cubets**
 - add TSDoc comments
 - build a website
@@ -30,6 +29,7 @@
 
 ## Refactoring
 
+- add rendertarget class
 - super class for picker and filter
 - remove TextureType enum
 - remove all 'instanceof'
@@ -59,6 +59,7 @@
 
 ## Enhancement
 
+- picker
 - particle system
 - BumpMap
 - load 3d objects (.json)
