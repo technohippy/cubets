@@ -1,3 +1,4 @@
+import { Vec2 } from "../math/vec2.js"
 import { Vec3 } from "../math/vec3.js"
 import { Camera } from "../core/camera.js"
 import { PolarCoord } from "../math/polarcoord.js"
@@ -9,10 +10,12 @@ export class OrbitCameraControl extends CameraControl {
   cameraPolarCoord?:PolarCoord
   moving = false
 
-  mousedownEvent?: (this: HTMLElement, ev: MouseEvent) => any
-  mouseupEvent?: (this: HTMLElement, ev: MouseEvent) => any
+  prevPoint?:Vec2
+
+  mousedownEvent?: (this: HTMLElement, ev: MouseEvent|TouchEvent) => any
+  mouseupEvent?: (this: HTMLElement, ev: MouseEvent|TouchEvent) => any
   mouseleaveEvent?: (this: HTMLElement, ev: MouseEvent) => any
-  mousemoveEvent?: (this: HTMLElement, ev: MouseEvent) => any
+  mousemoveEvent?: (this: HTMLElement, ev: MouseEvent|TouchEvent) => any
   mousewheelEventListener?: (this: HTMLElement, ev: MouseEvent) => any
 
   constructor(target:Vec3=new Vec3(), container?:string | HTMLElement) {
@@ -47,6 +50,10 @@ export class OrbitCameraControl extends CameraControl {
     this.container!.addEventListener("mousemove", this.mousemoveEvent!)
     //@ts-ignore
     this.container!.addEventListener("mousewheel", this.mousewheelEventListener!)
+
+    this.container!.addEventListener("touchstart", this.mousedownEvent!)
+    this.container!.addEventListener("touchend", this.mouseupEvent!)
+    this.container!.addEventListener("touchmove", this.mousemoveEvent!)
   }
 
   detachEvents() {
@@ -66,14 +73,30 @@ export class OrbitCameraControl extends CameraControl {
     }
     this.mouseupEvent = evt => {
       this.moving = false
+      this.prevPoint = undefined
     }
     this.mouseleaveEvent = evt => {
       this.moving = false
     }
     this.mousemoveEvent = evt => {
+      evt.preventDefault()
       if (!this.moving) return
-      this.cameraPolarCoord!.phai += evt.movementX / 180 * Math.PI
-      this.cameraPolarCoord!.theta -= evt.movementY / 180 * Math.PI
+
+      if (evt instanceof TouchEvent) {
+        const touch = evt.touches[0]
+        if (this.prevPoint) {
+          this.cameraPolarCoord!.phai += (touch.clientX - this.prevPoint.x) / 180 * Math.PI
+          this.cameraPolarCoord!.theta -= (touch.clientY - this.prevPoint.y) / 180 * Math.PI
+          this.prevPoint.x = touch.clientX
+          this.prevPoint.y = touch.clientY
+        } else {
+          this.prevPoint = new Vec2(touch.clientX, touch.clientY)
+        }
+
+      } else if (evt instanceof MouseEvent) {
+        this.cameraPolarCoord!.phai += evt.movementX / 180 * Math.PI
+        this.cameraPolarCoord!.theta -= evt.movementY / 180 * Math.PI
+      }
       this._update()
     }
     this.mousewheelEventListener = evt => {
