@@ -3,8 +3,6 @@ import { Renderer } from "./renderer.js";
 import { Scene } from "./scene.js";
 
 export class Particles extends Mesh {
-  pointSize = 10 // TODO
-
   setupGLBuffers(renderer:Renderer, scene:Scene) {
     super.setupGLBuffers(renderer, scene)
 

@@ -7,6 +7,9 @@ import { Scene } from "./scene.js";
 import { Renderer } from "./renderer.js";
 
 export class Mesh {
+  static currentId = 1 // 0 is used for background.
+  id: number
+
   hidden = false
 
   parent?: Mesh
@@ -29,6 +32,12 @@ export class Mesh {
   textureCoordsBuffer?: WebGLBuffer
 
   constructor(geometry: Geometry, material: Material) {
+    this.id = Mesh.currentId
+    Mesh.currentId += 1
+    if (0xffffff < Mesh.currentId) {
+      console.warn(`mesh id overflow: ${Mesh.currentId}`)
+    }
+
     this.geometry = geometry
     this.material = material
   }

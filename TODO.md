@@ -30,6 +30,7 @@
 
 ## Refactoring
 
+- super class for picker and filter
 - remove TextureType enum
 - remove all 'instanceof'
 - rollup.jsで一ファイルに纏める

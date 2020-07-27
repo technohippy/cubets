@@ -85,6 +85,7 @@ export class PhongScene extends Scene {
       "uNormalMode",
       "uVertexColorMode",
       "uLightFollowCameraMode",
+      "uIgnoreLightingMode",
       "uShininess",
       "uPositionalLight",
       "uLightPosition",
@@ -269,6 +270,7 @@ export class PhongScene extends Scene {
       uniform bool uNormalMode;
       uniform bool uWireframeMode;
       uniform bool uVertexColorMode;
+      uniform bool uIgnoreLightingMode;
 
       #ifdef PARTICLES
       uniform bool uParticles;
@@ -305,6 +307,7 @@ export class PhongScene extends Scene {
       out vec4 fragColor;
 
       void main(void) {
+        // special cases
         #ifdef PARTICLES
         if (uParticles) {
           fragColor = texture(uSampler, gl_PointCoord);
@@ -316,6 +319,7 @@ export class PhongScene extends Scene {
           fragColor = vec4(vLightNormal[0], 1);
           return;
         }
+
         if (uWireframeMode) {
           if (uVertexColorMode) {
             fragColor = vVertexColor;
@@ -324,10 +328,17 @@ export class PhongScene extends Scene {
           }
           return;
         }
+
         if (uVertexColorMode) {
           fragColor = vVertexColor;
           return;
         }
+
+        if (uIgnoreLightingMode) {
+          fragColor = uMaterialDiffuse;
+          return;
+        }
+
         #ifdef CUBETEXTURE
         if (!uIgnoreCubeTexture && uSkybox) {
           fragColor = texture(uCubeSampler, vSkyboxTextureCoords);
@@ -335,6 +346,7 @@ export class PhongScene extends Scene {
         }
         #endif
 
+        // phong coloring
         fragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
         for (int i = 0; i < numLights; i++) {

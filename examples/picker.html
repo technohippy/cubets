@@ -63,7 +63,9 @@
       const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 500)
       camera.position.z = 50
       camera.addControl(new Cubets.OrbitCameraControl())
-      camera.setPicker(new Cubets.Picker())
+      camera.setPicker(new Cubets.Picker(mesh => {
+        mesh.material.setColor(Cubets.Color.random())
+      }))
       camera.start(scene)
     </script>
   </body>

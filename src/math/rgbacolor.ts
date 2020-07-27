@@ -15,6 +15,13 @@ export class RGBAColor {
     return new RGBAColor(Math.random(), Math.random(), Math.random())
   }
 
+  static fromNumber(n:number): RGBAColor {
+    const r = (n & 0xff0000) >> 16
+    const g = (n & 0x00ff00) >> 8 
+    const b = n & 0x0000ff
+    return new RGBAColor(r, g, b)
+  }
+
   constructor(r:number, g:number, b:number, a:number = 1) {
     this.r = r <= 1 ? r : r / 255
     this.g = g <= 1 ? g : g / 255
