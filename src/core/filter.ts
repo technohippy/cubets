@@ -33,11 +33,10 @@ export abstract class Filter {
     this.renderer = parentRenderer.renew()
     this.renderer.prepareRender(this.scene)
 
-    const gl = this.renderer.gl
     const { width, height } = this.renderer.container!
 
     this.inputRenderTarget = new RenderTarget(width, height)
-    this.inputRenderTarget.setup(gl)
+    this.inputRenderTarget.setup(this.renderer.gl)
 
     this.outputRenderTarget = new RenderTarget(width, height) // default output (to screen)
 
@@ -46,9 +45,7 @@ export abstract class Filter {
 
   resetFrameBuffer() {
     if (!this.renderer) return
-
-    const gl = this.renderer.gl
-    this.inputRenderTarget?.reset(gl)
+    this.inputRenderTarget?.reset(this.renderer.gl)
   }
 
   draw() {

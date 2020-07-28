@@ -5,12 +5,15 @@ import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 import { Transform3 } from "../math/transform3.js"
 import { Material } from "./material.js"
+import { RenderTarget } from "./rendertarget.js"
 
 export class Renderer {
   container?: HTMLCanvasElement
   viewport: Viewport
   gl: WebGL2RenderingContext
   vao?: WebGLVertexArrayObject
+
+  renderTarget: RenderTarget
 
   program?: WebGLProgram
   attributeLocations = new Map<string, number>()
@@ -22,6 +25,7 @@ export class Renderer {
     this.container = viewport.container
     this.gl = this.container?.getContext("webgl2") as WebGL2RenderingContext
     this.viewport = viewport
+    this.renderTarget = new RenderTarget(this.viewport.size.x, this.viewport.size.y) // to screen
   }
 
   renew(): Renderer {

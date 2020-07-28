@@ -4,6 +4,7 @@ import { Mesh } from "./mesh.js";
 import { PhongMaterial } from "./phong/phongmaterial.js";
 import { RGBAColor } from "../math/rgbacolor.js";
 import { Renderer } from "./renderer.js";
+import { RenderTarget } from "./rendertarget.js";
 
 export class Picker {
   camera?: Camera
@@ -12,7 +13,7 @@ export class Picker {
   renderer?: Renderer
   handler: (mesh:Mesh) => void
 
-  frameBuffer:WebGLFramebuffer | null = null
+  renderTarget?: RenderTarget
 
   constructor(handler: (mesh:Mesh) => void) {
     this.handler = handler
@@ -39,9 +40,7 @@ export class Picker {
     // TODO: Camera#drawを無理やり分解
     this.camera?.setupProjectionMatrix()
     this.camera?.setupModelViewMatrix()
-    this.renderer?.prepareProgram(this.scene!)
-    this.renderer?.use()
-    this.renderer?.setupLocations(this.scene!)
+    this.renderer?.prepareRender(this.scene!)
     this.renderer?.render(this.scene!, this.camera!)
 
     gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
@@ -56,27 +55,12 @@ export class Picker {
   }
 
   setupFrameBuffer(gl:WebGL2RenderingContext) {
-    if (!this.frameBuffer) {
+    if (!this.renderTarget) {
       const { width, height } = this.container!
-
-      const texture = gl.createTexture()!
-      gl.bindTexture(gl.TEXTURE_2D, texture)
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
-
-      const renderbuffer = gl.createRenderbuffer()!
-      gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer)
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
-
-      this.frameBuffer = gl.createFramebuffer()
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer)
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0)
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer)
-
-      gl.bindTexture(gl.TEXTURE_2D, null)
-      gl.bindRenderbuffer(gl.RENDERBUFFER, null)
-      gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+      this.renderTarget = new RenderTarget(width, height)
+      this.renderTarget.setup(gl)
     }
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffer)
+    this.renderTarget.apply(gl)
   }
 
   resetFrameBuffer(gl:WebGL2RenderingContext) {
