@@ -1,11 +1,13 @@
 import { Scene } from "../scene.js";
 import { PhongDirectionalLight } from "./phongdirectionallight.js";
 import { PhongMaterial } from "./phongmaterial.js";
+import { PhongFog } from "./phongfog.js";
 import { Renderer } from "../renderer.js";
 
 export class PhongScene extends Scene {
   static Light = PhongDirectionalLight
   static Material = PhongMaterial
+  static Fog = PhongFog
 
   getVertexPositionAttribLocation(renderer:Renderer): number {
     const loc = renderer.getAttributeLocation("aVertexPosition")
@@ -78,14 +80,19 @@ export class PhongScene extends Scene {
 
   getUniformNames(): string[] {
     const names = [
+      // matrix
       "uModelViewMatrix",
       "uProjectionMatrix",
       "uNormalMatrix",
+
+      // flags
       "uWireframeMode",
       "uNormalMode",
       "uVertexColorMode",
       "uLightFollowCameraMode",
       "uIgnoreLightingMode",
+
+      // light
       "uShininess",
       "uPositionalLight",
       "uLightPosition",
@@ -94,9 +101,17 @@ export class PhongScene extends Scene {
       "uLightDiffuse",
       "uLightSpecular",
       "uCutoff",
+
+      // material
       "uMaterialAmbient",
       "uMaterialDiffuse",
       "uMaterialSpecular",
+
+      // fog
+      "uUseFog",
+      "uFogNear",
+      "uFogFar",
+      "uFogColor",
     ]
     if (this.hasParticles()) {
       names.push("uParticles")
@@ -167,6 +182,7 @@ export class PhongScene extends Scene {
       out vec3 vLightNormal[numLights];
       out vec3 vLightVector[numLights];
       out vec4 vVertexColor;
+      out float vDepth;
 
       #if defined(TEXTURE) || defined(NORMALTEXTURE)
       out vec2 vTextureCoords;
@@ -224,7 +240,12 @@ export class PhongScene extends Scene {
           vVertexColor = aVertexColor;
         }
 
-        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        vec4 position = uModelViewMatrix * vec4(aVertexPosition, 1.0);
+
+        vDepth = -position.z;
+
+        //gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        gl_Position = uProjectionMatrix * position;
 
         #ifdef PARTICLES
         if (uParticles) {
@@ -276,6 +297,12 @@ export class PhongScene extends Scene {
       uniform bool uParticles;
       #endif
 
+      // fog
+      uniform bool uUseFog;
+      uniform float uFogNear;
+      uniform float uFogFar;
+      uniform vec4 uFogColor;
+
       // light
       uniform int uLightFollowCameraMode[numLights];
       uniform vec3 uLightDirection[numLights];
@@ -295,6 +322,7 @@ export class PhongScene extends Scene {
       in vec3 vLightNormal[numLights];
       in vec3 vLightVector[numLights];
       in vec4 vVertexColor;
+      in float vDepth;
 
       #if defined(TEXTURE) || defined(NORMALTEXTURE)
       in vec2 vTextureCoords;
@@ -393,6 +421,11 @@ export class PhongScene extends Scene {
           fragColor = fragColor * texture(uCubeSampler, coords);
         }
         #endif
+
+        if (uUseFog) {
+          float fogAmount = smoothstep(uFogNear, uFogFar, vDepth);
+          fragColor = mix(fragColor, uFogColor, fogAmount);  
+        }
       }
     `
   }

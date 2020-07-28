@@ -29,8 +29,6 @@
 
 ## Refactoring
 
-- add rendertarget class
-- super class for picker and filter
 - remove TextureType enum
 - remove all 'instanceof'
 - rollup.jsで一ファイルに纏める
@@ -59,6 +57,8 @@
 
 ## Enhancement
 
+- fog
+  - https://webglfundamentals.org/webgl/lessons/webgl-fog.html
 - picker
 - particle system
 - BumpMap
@@ -94,4 +94,6 @@
 
 ## Refactoring
 
+- add rendertarget class
+- super class for picker and filter
 - renderMesh signature

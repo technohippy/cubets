@@ -34,6 +34,7 @@ import { RGBAColor } from "./math/rgbacolor.js"
 
 import { Axis } from "./misc/axis.js"
 import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
+import { Fog } from "./core/fog.js"
 
 export default {
   Scene: PhongScene,
@@ -77,4 +78,5 @@ export default {
 
   Axis: Axis,
   JSONGeometryLoader: JSONGeometryLoader,
+  Fog: Fog,
 }

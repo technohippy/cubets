@@ -113,6 +113,9 @@ export class Renderer {
   render(scene: Scene, camera: FilteredCamera) {
     this.use()
     this.clear(scene.clearColor, camera)
+    if (scene.fog) {
+      scene.fog.setupGLVars(this)
+    }
     scene.eachMesh(mesh => {
       if (mesh.hidden) return
 

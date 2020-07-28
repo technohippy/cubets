@@ -6,6 +6,7 @@ import { Texture, TextureType } from './texture.js'
 import { RGBAColor } from '../math/rgbacolor.js'
 import { PhongReflectionMaterial } from './phong/phongreflectionmaterial.js'
 import { Particles } from './particles.js'
+import { Fog } from './fog.js'
 
 export abstract class Scene {
   name?: string
@@ -14,6 +15,7 @@ export abstract class Scene {
   meshes: Mesh[] = []
   reflectionMeshes: Mesh[] = []
   lights = new Lights()
+  fog?: Fog
 
   #textures?: Texture[]
 
