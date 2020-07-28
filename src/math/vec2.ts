@@ -11,6 +11,10 @@ export class Vec2 {
     this.y = y
   }
 
+  length(): number {
+    return Math.sqrt(this.x*this.x + this.y*this.y)
+  }
+
   distance(v:Vec2): number {
     return Math.sqrt(Math.pow(this.x-v.x, 2) + Math.pow(this.y-v.y, 2))
   }
