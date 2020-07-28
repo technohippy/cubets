@@ -67,7 +67,7 @@ export abstract class Camera implements FilteredCamera {
   }
 
   addFilter(filter: Filter) {
-    filter.setupFrameBuffer(this.renderer)
+    filter.setupRenderTarget(this.renderer)
     this.filters.push(filter)
   }
 

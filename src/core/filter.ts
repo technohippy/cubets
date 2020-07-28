@@ -5,6 +5,7 @@ import { PlaneGeometry } from "../geometry/planegeometry.js";
 import { Mesh } from "../core/mesh.js";
 import { FilteredCamera } from "./camera.js";
 import { RGBAColor } from "../math/rgbacolor.js";
+import { RenderTarget } from "./rendertarget.js";
 
 export abstract class Filter {
   scene: Scene
@@ -13,10 +14,8 @@ export abstract class Filter {
 
   renderer?: Renderer
 
-  inputTexture?:WebGLTexture 
-  inputRenderbuffer?:WebGLRenderbuffer
-  inputFrameBuffer:WebGLFramebuffer | null = null
-  outputFrameBuffer:WebGLFramebuffer | null = null
+  inputRenderTarget?: RenderTarget
+  outputRenderTarget?: RenderTarget
 
   constructor(scene:FilterScene | string, material:FilterMaterial = new FilterMaterial()) {
     material.filter = this
@@ -30,54 +29,26 @@ export abstract class Filter {
     this.scene.add(this.planeMesh)
   }
 
-  setupFrameBuffer(parentRenderer:Renderer) {
+  setupRenderTarget(parentRenderer:Renderer) {
     this.renderer = parentRenderer.renew()
-    this.renderer.prepareProgram(this.scene)
-
-    this.renderer.use()
-
-    this.renderer.setupLocations(this.scene)
+    this.renderer.prepareRender(this.scene)
 
     const gl = this.renderer.gl
     const { width, height } = this.renderer.container!
 
-    this.inputTexture = gl.createTexture()!
-    gl.bindTexture(gl.TEXTURE_2D, this.inputTexture)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
+    this.inputRenderTarget = new RenderTarget(width, height)
+    this.inputRenderTarget.setup(gl)
 
-    this.inputRenderbuffer = gl.createRenderbuffer()!
-    gl.bindRenderbuffer(gl.RENDERBUFFER, this.inputRenderbuffer)
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height)
-
-    this.inputFrameBuffer = gl.createFramebuffer()
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.inputFrameBuffer)
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.inputTexture, 0)
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this.inputRenderbuffer)
-
-    gl.bindTexture(gl.TEXTURE_2D, null)
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null)
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+    this.outputRenderTarget = new RenderTarget(width, height) // default output (to screen)
 
     parentRenderer.use()
   }
 
   resetFrameBuffer() {
     if (!this.renderer) return
+
     const gl = this.renderer.gl
-    const { width, height } = this.renderer.container!
-
-    gl.bindTexture(gl.TEXTURE_2D, this.inputTexture!);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-    gl.bindRenderbuffer(gl.RENDERBUFFER, this.inputRenderbuffer!);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
-
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    this.inputRenderTarget?.reset(gl)
   }
 
   draw() {
@@ -106,7 +77,7 @@ export class FilterChain {
   push(filter:Filter) {
     if (0 < this.filters.length) {
       const lastFilter = this.filters[this.filters.length-1]
-      lastFilter.outputFrameBuffer = filter.inputFrameBuffer
+      lastFilter.outputRenderTarget = filter.inputRenderTarget
     }
     this.filters.push(filter)
   }
@@ -119,14 +90,14 @@ export class FilterChain {
     const gl = parentRenderer.gl
 
     if (0 < this.filters.length) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, this.filters[0].inputFrameBuffer)
+      this.filters[0].inputRenderTarget?.apply(gl)
     }
 
     fn()
     
     this.filters.forEach(filter => {
       filter.renderer!.use()
-      gl.bindFramebuffer(gl.FRAMEBUFFER, filter.outputFrameBuffer)
+      filter.outputRenderTarget!.apply(gl)
       filter.draw()
     })
 
@@ -143,14 +114,12 @@ export class FilterMaterial extends Material {
   
   setupGLVars(renderer:Renderer) {
     if (!this.filter) throw "no filter"
-    if (!this.filter.inputTexture)  throw "no inputTexture"
+    //if (!this.filter.inputTexture)  throw "no inputTexture"
 
     const gl = renderer.gl
-    const samplerLocation = renderer.getUniformLocation("uSampler")
+    const samplerLocation = renderer.getUniformLocation("uSampler") // TODO
 
-    gl.activeTexture(gl.TEXTURE0)
-    gl.bindTexture(gl.TEXTURE_2D, this.filter.inputTexture)
-    gl.uniform1i(samplerLocation, 0)
+    this.filter.inputRenderTarget?.setupGLVars(gl, samplerLocation)
   }
 }
 
