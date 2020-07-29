@@ -1,6 +1,8 @@
 import { Vec3 } from "../../math/vec3.js";
 import { BoidsWorld } from "./boidsworld.js";
 
+const SameFlock = true
+
 export class Boid {
   world: BoidsWorld
   flock: number
@@ -15,7 +17,6 @@ export class Boid {
   }
 
   step() {
-    const SameFlock = true
     // separation
     const separationBoids = this.world.getBoidsInFov(this, 10, Math.PI, !SameFlock)
     const separationVec = new Vec3()
@@ -67,7 +68,7 @@ export class Boid {
     }
     newVelocity.add(boundaryVec)
 
-    const limit = 0.1
+    const limit = 0.2
     const acceleration = newVelocity.clone().subtract(this.velocity)
     if (limit < acceleration.length()) {
       acceleration.normalize().multiplyScalar(limit)

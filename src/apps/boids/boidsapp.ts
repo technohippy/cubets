@@ -64,7 +64,8 @@ export class BoidsApp {
 
     const boidsMeshes = new InstancedMesh(
       this.world.boids.length,
-      new SphereGeometry(2),
+      //new SphereGeometry(2),
+      new CubeGeometry(4, 4, 4),
       new PhongMaterial(),
     )
     this.world.boids.forEach((boid, i) => {

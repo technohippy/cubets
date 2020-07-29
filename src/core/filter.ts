@@ -147,6 +147,10 @@ export class FilterScene extends Scene {
     return -1
   }
 
+  getVertexOffsetAttribLocation(renderer:Renderer): number {
+    return -1
+  }
+
   getVertexTangentAttribLocation(renderer:Renderer): number {
     return -1
   }
