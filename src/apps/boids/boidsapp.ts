@@ -13,6 +13,7 @@ import { InstancedMesh } from "../../core/instancedmesh.js";
 import { SphereGeometry } from "../../geometry/spheregeometry.js";
 import { CubeTexture } from "../../core/cubetexture.js";
 import { CubeGeometry } from "../../geometry/cubegeometry.js";
+import { Quat } from "../../math/quat.js";
 
 export class BoidsApp {
   world:BoidsWorld
@@ -69,7 +70,15 @@ export class BoidsApp {
       new PhongMaterial(),
     )
     this.world.boids.forEach((boid, i) => {
-      boidsMeshes.get(i).position = boid.position
+      const mesh = boidsMeshes.get(i)
+      mesh.position = boid.position
+      if (i != 0) {
+        mesh.rotation = Quat.fromEulerDegrees(
+          Math.random() * 180,
+          Math.random() * 180,
+          Math.random() * 180,
+        )
+      }
     })
     this.scene.add(boidsMeshes)
   }

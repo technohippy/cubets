@@ -125,7 +125,9 @@ export abstract class Scene {
   abstract getVertexTextureCoordsAttribLocation(renderer:Renderer): number
   abstract getVertexColorAttribLocation(renderer:Renderer): number
   abstract getVertexTangentAttribLocation(renderer:Renderer): number
+
   abstract getVertexOffsetAttribLocation(renderer:Renderer): number
+  abstract getVertexQuatAttribLocation(renderer:Renderer): number
 
   abstract getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null
   abstract getModelViewMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null

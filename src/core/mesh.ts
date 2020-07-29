@@ -100,12 +100,17 @@ export class Mesh {
     return !!this.material.cubeTexture
   }
 
-  setupGLBuffers(renderer:Renderer, scene:Scene) {
+  setupGLBuffers(renderer:Renderer, scene:Scene, ignoreTransform:boolean = false) {
     const gl = renderer.gl
 
     this._concentrateMatrixes()
 
-    const transformedVertices = this.geometry.transformVertices(this.getTransform())
+    let transformedVertices: Vec3[]
+    if (ignoreTransform) {
+      transformedVertices = this.geometry.vertices
+    } else {
+      transformedVertices = this.geometry.transformVertices(this.getTransform())
+    }
 
     const vertexLocation = scene.getVertexPositionAttribLocation(renderer)
     if (0 <= vertexLocation) {
@@ -133,18 +138,6 @@ export class Mesh {
       gl.enableVertexAttribArray(colorLocation)
       gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0)
     }
-
-    /*
-    const offsetLocation = scene.getVertexOffsetAttribLocation(renderer)
-    if (0 <= offsetLocation) {
-      const offsetBuffer = gl.createBuffer()!
-      gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer)
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 0]), gl.STATIC_DRAW)
-      gl.enableVertexAttribArray(offsetLocation)
-      gl.vertexAttribPointer(offsetLocation, 3, gl.FLOAT, false, 0, 0)
-      gl.vertexAttribDivisor(offsetLocation, 1);
-    }
-    */
 
     const tangentLocation = scene.getVertexTangentAttribLocation(renderer)
     if (0 <= tangentLocation) {

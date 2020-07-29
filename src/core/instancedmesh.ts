@@ -59,11 +59,12 @@ export class InstancedMesh extends Mesh {
   setupGLBuffers(renderer:Renderer, scene:Scene) {
     const gl = renderer.gl
     const firstMesh = this.meshes[0]
-    firstMesh.setupGLBuffers(renderer, scene)
+    firstMesh.setupGLBuffers(renderer, scene, true)
     const offsetData:number[] = []
+    const quatData:number[] = []
     this.meshes.forEach(mesh => {
-      const offset = mesh.position.clone().subtract(firstMesh.position)
-      offsetData.push(...offset.toArray())
+      offsetData.push(...mesh.position.toArray())
+      quatData.push(...mesh.rotation.toArray())
     })
 
     const offsetLocation = scene.getVertexOffsetAttribLocation(renderer)
@@ -74,6 +75,16 @@ export class InstancedMesh extends Mesh {
       gl.enableVertexAttribArray(offsetLocation)
       gl.vertexAttribPointer(offsetLocation, 3, gl.FLOAT, false, 0, 0)
       gl.vertexAttribDivisor(offsetLocation, 1);
+    }
+
+    const quatLocation = scene.getVertexQuatAttribLocation(renderer)
+    if (0 <= quatLocation) {
+      const quatBuffer = gl.createBuffer()!
+      gl.bindBuffer(gl.ARRAY_BUFFER, quatBuffer)
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(quatData), gl.DYNAMIC_DRAW)
+      gl.enableVertexAttribArray(quatLocation)
+      gl.vertexAttribPointer(quatLocation, 4, gl.FLOAT, false, 0, 0)
+      gl.vertexAttribDivisor(quatLocation, 1);
     }
   }
 
