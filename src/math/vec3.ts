@@ -86,6 +86,10 @@ export class Vec3 {
     return this.divideScalar(this.length())
   }
 
+  angleTo(v:Vec3):number {
+    return vec3.angle(this.toArray(), v.toArray())
+  }
+
   toArray(): number[] {
     return [this.x, this.y, this.z]
   }
