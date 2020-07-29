@@ -134,6 +134,18 @@ export class Mesh {
       gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0)
     }
 
+    /*
+    const offsetLocation = scene.getVertexOffsetAttribLocation(renderer)
+    if (0 <= offsetLocation) {
+      const offsetBuffer = gl.createBuffer()!
+      gl.bindBuffer(gl.ARRAY_BUFFER, offsetBuffer)
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 0]), gl.STATIC_DRAW)
+      gl.enableVertexAttribArray(offsetLocation)
+      gl.vertexAttribPointer(offsetLocation, 3, gl.FLOAT, false, 0, 0)
+      gl.vertexAttribDivisor(offsetLocation, 1);
+    }
+    */
+
     const tangentLocation = scene.getVertexTangentAttribLocation(renderer)
     if (0 <= tangentLocation) {
       this.tangentBuffer = gl.createBuffer()!

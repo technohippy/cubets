@@ -29,6 +29,8 @@
 
 ## Refactoring
 
+- InstancedMeshとMeshの共通インターフェースを抜き出す
+  - InstancedMeshがMeshを継承しなくていいように
 - remove TextureType enum
 - remove all 'instanceof'
 - rollup.jsで一ファイルに纏める

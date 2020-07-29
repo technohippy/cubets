@@ -27,6 +27,12 @@ export class PhongScene extends Scene {
     return loc
   }
 
+  getVertexOffsetAttribLocation(renderer:Renderer): number {
+    const loc = renderer.getAttributeLocation("aVertexOffset")
+    //console.log("aVertexColor", loc)
+    return loc
+  }
+
   getVertexTangentAttribLocation(renderer:Renderer): number {
     const loc = renderer.getAttributeLocation("aVertexTangent", true) // TODO: 気になる
     //console.log("aVertexTangent", loc)
@@ -68,6 +74,7 @@ export class PhongScene extends Scene {
       "aVertexPosition",
       "aVertexNormal",
       "aVertexColor",
+      "aVertexOffset",
     ]
     if (this.hasNormalTexture()) {
       names.push("aVertexTangent")
@@ -159,6 +166,7 @@ export class PhongScene extends Scene {
       in vec3 aVertexPosition;
       in vec3 aVertexNormal;
       in vec4 aVertexColor;
+      in vec3 aVertexOffset; // for instance
 
       #ifdef NORMALTEXTURE
       in vec3 aVertexTangent;
@@ -193,9 +201,11 @@ export class PhongScene extends Scene {
       #endif
 
       void main(void) {
-        vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        //vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        vec4 vertex = uModelViewMatrix * vec4(aVertexPosition + aVertexOffset, 1.0);
 
         vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+
         #ifdef NORMALTEXTURE
         vec3 tangent = vec3(uNormalMatrix * vec4(aVertexTangent, 1.0));
         vec3 bitangent = cross(vNormal, tangent);
@@ -240,12 +250,9 @@ export class PhongScene extends Scene {
           vVertexColor = aVertexColor;
         }
 
-        vec4 position = uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        vDepth = -vertex.z;
 
-        vDepth = -position.z;
-
-        //gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
-        gl_Position = uProjectionMatrix * position;
+        gl_Position = uProjectionMatrix * vertex;
 
         #ifdef PARTICLES
         if (uParticles) {
