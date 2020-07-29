@@ -13,6 +13,10 @@ export class PerspectiveCamera extends Camera {
   constructor(viewport: Viewport | string, fov: number, near: number, far: number) {
     super(viewport)
     this.fov = fov
+    if (near <= 0) {
+      console.warn(`near must be more than zero: ${near}`)
+      near = 0.001
+    }
     this.near = near
     this.far = far
   }
