@@ -73,7 +73,7 @@ export class Boid {
       acceleration.normalize().multiplyScalar(limit)
     }
     this.velocity.add(acceleration)
-    if (this.velocity.length() < 1) {
+    if (this.velocity.length() < 3) {
       this.velocity.normalize().multiplyScalar(
         Math.min(1, this.velocity.length() * 1.2)
       )

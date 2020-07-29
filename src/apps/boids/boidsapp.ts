@@ -9,7 +9,8 @@ import { Scene } from "../../core/scene.js";
 import { PerspectiveCamera } from "../../camera/perspectivecamera.js";
 import { Camera } from "../../core/camera.js";
 import { OrbitCameraControl } from "../../control/orbitcameracontrol.js";
-import { CubeGeometry } from "../../geometry/cubegeometry.js";
+import { InstancedMesh } from "../../core/instancedmesh.js";
+import { SphereGeometry } from "../../geometry/spheregeometry.js";
 
 export class BoidsApp {
   world:BoidsWorld
@@ -32,16 +33,26 @@ export class BoidsApp {
     )
     this.scene.add(light)
 
-    const boidMaterial = new PhongMaterial(RGBAColor.White)
-    this.world.boids.forEach(boid => {
-      const mesh = new Mesh(new CubeGeometry(3, 3, 3), boidMaterial)
-      mesh.position = boid.position
-      this.scene.add(mesh)
+    const light2 = new PhongDirectionalLight(
+        new Vec3(-0.3, -0.2, 1),
+        new RGBAColor(0.6, 0.6, 0.6),
+        new RGBAColor(0.8, 0.8, 0.8)
+    )
+    this.scene.add(light2)
+
+    const boidsMeshes = new InstancedMesh(
+      this.world.boids.length,
+      new SphereGeometry(2),
+      new PhongMaterial(),
+    )
+    this.world.boids.forEach((boid, i) => {
+      boidsMeshes.get(i).position = boid.position
     })
+    this.scene.add(boidsMeshes)
   }
 
   start() {
     this.camera.start(this.scene)
-    setInterval(() => { this.world.step() }, 50)
+    setInterval(() => { this.world.step() }, 30)
   }
 }
