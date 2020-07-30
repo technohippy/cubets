@@ -1,0 +1,1 @@
+{"version":3,"file":"phongfog.d.ts","sourceRoot":"","sources":["../../../../src/core/phong/phongfog.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,GAAG,EAAE,MAAM,WAAW,CAAC;AAChC,OAAO,EAAE,QAAQ,EAAE,MAAM,gBAAgB,CAAC;AAE1C,qBAAa,QAAS,SAAQ,GAAG;IAC/B,WAAW,CAAC,QAAQ,EAAC,QAAQ;CAY9B"}

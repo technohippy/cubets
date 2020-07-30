@@ -1,0 +1,1 @@
+{"version":3,"file":"objgeometryloader.d.ts","sourceRoot":"","sources":["../../src/misc/objgeometryloader.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,qBAAqB,CAAC;AAM/C,qBAAa,iBAAiB;IAC5B,MAAM,CAAC,IAAI,CAAC,GAAG,EAAC,MAAM,GAAG,OAAO,CAAC,QAAQ,CAAC;IAK1C,IAAI,CAAC,GAAG,EAAC,MAAM,GAAG,OAAO,CAAC,QAAQ,CAAC;CA2DpC"}

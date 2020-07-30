@@ -1,0 +1,1 @@
+{"version":3,"file":"polarcoord.d.ts","sourceRoot":"","sources":["../../src/math/polarcoord.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,WAAW,CAAA;AAEhC,qBAAa,UAAU;IACrB,MAAM,EAAC,MAAM,CAAA;IACb,KAAK,EAAC,MAAM,CAAA;IACZ,IAAI,EAAC,MAAM,CAAA;gBAEC,MAAM,EAAC,MAAM,EAAE,KAAK,EAAC,MAAM,EAAE,IAAI,EAAC,MAAM;IAMpD,MAAM,IAAI,IAAI;CAMf"}

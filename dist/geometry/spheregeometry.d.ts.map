@@ -1,0 +1,1 @@
+{"version":3,"file":"spheregeometry.d.ts","sourceRoot":"","sources":["../../src/geometry/spheregeometry.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,qBAAqB,CAAC;AAK/C,qBAAa,cAAe,SAAQ,QAAQ;IAC1C,MAAM,EAAE,MAAM,CAAA;gBAEF,MAAM,EAAC,MAAM;CAiD1B"}

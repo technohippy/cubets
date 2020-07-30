@@ -1,0 +1,1 @@
+{"version":3,"file":"planegeometry.d.ts","sourceRoot":"","sources":["../../src/geometry/planegeometry.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,qBAAqB,CAAC;AAK/C,qBAAa,aAAc,SAAQ,QAAQ;IACzC,CAAC,EAAC,MAAM,CAAA;IACR,CAAC,EAAC,MAAM,CAAA;gBACI,CAAC,GAAC,MAAQ,EAAE,CAAC,GAAC,MAAQ;IAOlC,OAAO,CAAC,CAAC,EAAC,MAAM,EAAE,CAAC,EAAC,MAAM;CAmC3B"}

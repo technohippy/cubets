@@ -1,0 +1,1 @@
+{"version":3,"file":"world.d.ts","sourceRoot":"","sources":["../../../src/apps/boids/world.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,oBAAoB,CAAC;AAC1C,OAAO,EAAE,IAAI,EAAE,MAAM,WAAW,CAAC;AAEjC,qBAAa,UAAU;IACrB,IAAI,EAAC,IAAI,CAAA;IACT,KAAK,EAAC,IAAI,EAAE,CAAK;gBAEL,IAAI,EAAC,IAAI,EAAE,UAAU,EAAC,MAAM,EAAE,UAAU,GAAC,MAAQ;CAY9D"}

@@ -1,0 +1,61 @@
+import { PhongMaterial } from "./phong/phongmaterial.js";
+import { RGBAColor } from "../math/rgbacolor.js";
+import { RenderTarget } from "./rendertarget.js";
+export class Picker {
+    constructor(handler) {
+        this.handler = handler;
+    }
+    setup(camera, scene) {
+        this.camera = camera;
+        this.scene = scene;
+        this.renderer = camera.renderer.renew();
+        this.renderer.overrideMaterial = new PickerMaterial();
+        this.container = camera.renderer.container;
+        this.container?.addEventListener("click", evt => {
+            this.pickObject(evt.offsetX, this.container?.clientHeight - evt.offsetY);
+        });
+    }
+    pickObject(x, y) {
+        const gl = this.renderer.gl;
+        const pixel = new Uint8Array(1 * 1 * 4);
+        this.setupFrameBuffer(gl);
+        // TODO: Camera#drawを無理やり分解
+        this.camera?.setupProjectionMatrix();
+        this.camera?.setupModelViewMatrix();
+        this.renderer?.prepareRender(this.scene);
+        this.renderer?.render(this.scene, this.camera);
+        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+        this.resetFrameBuffer(gl);
+        const id = 255 * 255 * pixel[0] + 255 * pixel[1] + pixel[2];
+        let found = null;
+        this.scene?.eachMesh(mesh => {
+            if (mesh.id === id)
+                found = mesh;
+        });
+        if (found)
+            this.handler(found);
+    }
+    setupFrameBuffer(gl) {
+        if (!this.renderTarget) {
+            const { width, height } = this.container;
+            this.renderTarget = new RenderTarget(width, height);
+            this.renderTarget.setup(gl);
+        }
+        this.renderTarget.apply(gl);
+    }
+    resetFrameBuffer(gl) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+}
+class PickerMaterial extends PhongMaterial {
+    setColor(color) { }
+    prepare(renderer, mesh) { }
+    setupGLVars(renderer, mesh) {
+        const color = RGBAColor.fromNumber(mesh.id);
+        const gl = renderer.gl;
+        const ignoreLightingLocation = renderer.getUniformLocation("uIgnoreLightingMode");
+        const materialDiffuseLocation = renderer.getUniformLocation("uMaterialDiffuse");
+        gl.uniform4fv(materialDiffuseLocation, color.toArray());
+        gl.uniform1i(ignoreLightingLocation, 1);
+    }
+}

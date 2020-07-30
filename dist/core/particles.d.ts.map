@@ -1,0 +1,1 @@
+{"version":3,"file":"particles.d.ts","sourceRoot":"","sources":["../../src/core/particles.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,WAAW,CAAC;AACjC,OAAO,EAAE,QAAQ,EAAE,MAAM,eAAe,CAAC;AACzC,OAAO,EAAE,KAAK,EAAE,MAAM,YAAY,CAAC;AAEnC,qBAAa,SAAU,SAAQ,IAAI;IACjC,cAAc,CAAC,QAAQ,EAAC,QAAQ,EAAE,KAAK,EAAC,KAAK;IAQ7C,MAAM,CAAC,EAAE,EAAE,sBAAsB;CAGlC"}

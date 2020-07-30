@@ -1,0 +1,1 @@
+{"version":3,"file":"cubegeometry.d.ts","sourceRoot":"","sources":["../../src/geometry/cubegeometry.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,qBAAqB,CAAA;AAK9C,qBAAa,YAAa,SAAQ,QAAQ;IACxC,CAAC,EAAC,MAAM,CAAA;IACR,CAAC,EAAC,MAAM,CAAA;IACR,CAAC,EAAC,MAAM,CAAA;gBAEI,CAAC,GAAC,MAAQ,EAAE,CAAC,GAAC,MAAQ,EAAE,CAAC,GAAC,MAAQ;CA4D/C"}

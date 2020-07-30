@@ -1,0 +1,1 @@
+{"version":3,"file":"light.d.ts","sourceRoot":"","sources":["../../src/core/light.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,YAAY,CAAC;AAEtC,8BAAsB,KAAK;IACzB,QAAQ,CAAC,SAAS,CAAC,QAAQ,EAAC,QAAQ,GAAG;QAAC,IAAI,EAAC,MAAM,CAAC;QAAC,GAAG,EAAC,oBAAoB,CAAC;QAAC,KAAK,EAAC,GAAG,CAAA;KAAC,EAAE;CAC5F"}

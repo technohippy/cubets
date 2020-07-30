@@ -1,0 +1,44 @@
+import { Mesh } from './mesh.js';
+import { Light } from './light.js';
+import { Lights } from './lights.js';
+import { Renderer } from './renderer.js';
+import { Texture, TextureType } from './texture.js';
+import { RGBAColor } from '../math/rgbacolor.js';
+import { Fog } from './fog.js';
+export declare abstract class Scene {
+    #private;
+    name?: string;
+    clearColor: RGBAColor;
+    meshes: Mesh[];
+    reflectionMeshes: Mesh[];
+    lights: Lights;
+    fog?: Fog;
+    add(...objs: (Mesh | Light)[]): void;
+    addMesh(...meshes: Mesh[]): void;
+    addLight(...lights: Light[]): void;
+    each(fn: (obj: Mesh | Light) => void): void;
+    eachMesh(fn: (mesh: Mesh) => void): void;
+    eachLight(fn: (obj: Light) => void): void;
+    collectTextures(): Texture[];
+    hasTextureType(type: TextureType): boolean;
+    hasTexture(): boolean;
+    hasNormalTexture(): boolean;
+    hasCubeTexture(): boolean;
+    hasParticles(): boolean;
+    loadAllTextures(): Promise<void[]>;
+    abstract getVertexShader(): string;
+    abstract getFragmentShader(): string;
+    abstract getVertexPositionAttribLocation(renderer: Renderer): number;
+    abstract getVertexNormalAttribLocation(renderer: Renderer): number;
+    abstract getVertexTextureCoordsAttribLocation(renderer: Renderer): number;
+    abstract getVertexColorAttribLocation(renderer: Renderer): number;
+    abstract getVertexTangentAttribLocation(renderer: Renderer): number;
+    abstract getVertexOffsetAttribLocation(renderer: Renderer): number;
+    abstract getVertexQuatAttribLocation(renderer: Renderer): number;
+    abstract getProjectionMatrixUniformLocation(renderer: Renderer): WebGLUniformLocation | null;
+    abstract getModelViewMatrixUniformLocation(renderer: Renderer): WebGLUniformLocation | null;
+    abstract getNormalMatrixUniformLocation(renderer: Renderer): WebGLUniformLocation | null;
+    abstract getAttributeNames(): string[];
+    abstract getUniformNames(): string[];
+}
+//# sourceMappingURL=scene.d.ts.map
