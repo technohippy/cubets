@@ -211,24 +211,22 @@ export class PhongScene extends Scene {
       #endif
 
       void main(void) {
-        //vec4 vertex = uModelViewMatrix * vec4(aVertexPosition + aVertexOffset, 1.0);
-        //vNormal = vec3(uNormalMatrix * offsetMatrix * vec4(aVertexNormal, 1.0));
-
-        vec4 vertex = vec4(aVertexPosition, 1.0);
+        vec4 modelVertex = vec4(aVertexPosition, 1.0);
         vec4 normal = vec4(aVertexNormal, 1.0);
         if (0.0 < length(aVertexQuat)) {
           vec4 q = aVertexQuat;
-          mat4 offsetMatrix = mat4(
+          // http://marupeke296.sakura.ne.jp/DXG_No58_RotQuaternionTrans.html
+          mat4 matrix = mat4(
             1.-2.*q.y*q.y-2.*q.z*q.z,    2.*q.x*q.y+2.*q.w*q.z,    2.*q.x*q.z-2.*q.w*q.y, 0.,
                2.*q.x*q.y-2.*q.w*q.z, 1.-2.*q.x*q.x-2.*q.z*q.z,    2.*q.y*q.z+2.*q.w*q.x, 0.,
                2.*q.x*q.z+2.*q.w*q.y,    2.*q.y*q.z-2.*q.w*q.x, 1.-2.*q.x*q.x-2.*q.y*q.y, 0.,
                                   0.,                       0.,                       0., 1.
           );
-          vertex = offsetMatrix * vertex;
-          normal = offsetMatrix * normal;
+          modelVertex = matrix * modelVertex;
+          normal = matrix * normal;
         }
-        vertex = vertex + vec4(aVertexOffset, 0.0);
-        vertex = uModelViewMatrix * vertex;
+        modelVertex = modelVertex + vec4(aVertexOffset, 0.0);
+        vec4 vertex = uModelViewMatrix * modelVertex;
 
         vNormal = vec3(uNormalMatrix * normal);
 
@@ -268,7 +266,7 @@ export class PhongScene extends Scene {
         
         #ifdef CUBETEXTURE
         if (uSkybox) {
-          vSkyboxTextureCoords = aVertexPosition;
+          vSkyboxTextureCoords = modelVertex.xyz;
         }
         #endif
 

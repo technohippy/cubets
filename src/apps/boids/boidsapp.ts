@@ -15,13 +15,18 @@ import { CubeTexture } from "../../core/cubetexture.js";
 import { CubeGeometry } from "../../geometry/cubegeometry.js";
 import { Quat } from "../../math/quat.js";
 
+//@ts-ignore
+import { glMatrix, mat3, quat } from "../../../node_modules/gl-matrix/esm/index.js"
+glMatrix.setMatrixArrayType(Array)
+
 export class BoidsApp {
   world:BoidsWorld
   scene:Scene
   camera:Camera
+  boidsMeshes?:InstancedMesh
 
   constructor(canvasId:string, size:Vec3, boidsCount:number, flockCount:number=1) {
-    this.world = new BoidsWorld(size, boidsCount, flockCount, new Vec3(0, size.y, 0))
+    this.world = new BoidsWorld(size, boidsCount, flockCount, new Vec3(0, size.y*0.75, 0))
     this.scene = new PhongScene()
     this.camera = new PerspectiveCamera(canvasId, Math.PI/4, 0.01, size.length() * 10)
     this.camera.position.y = -0.1
@@ -61,30 +66,38 @@ export class BoidsApp {
     )
     this.scene.add(skyMesh)
 
-
-
-    const boidsMeshes = new InstancedMesh(
+    this.boidsMeshes = new InstancedMesh(
       this.world.boids.length,
       //new SphereGeometry(2),
       new CubeGeometry(4, 4, 4),
       new PhongMaterial(),
     )
     this.world.boids.forEach((boid, i) => {
-      const mesh = boidsMeshes.get(i)
+      const mesh = this.boidsMeshes!.get(i)
       mesh.position = boid.position
-      if (i != 0) {
-        mesh.rotation = Quat.fromEulerDegrees(
-          Math.random() * 180,
-          Math.random() * 180,
-          Math.random() * 180,
-        )
-      }
     })
-    this.scene.add(boidsMeshes)
+    this.scene.add(this.boidsMeshes)
   }
 
   start() {
     this.camera.start(this.scene)
-    setInterval(() => { this.world.step() }, 30)
+    setInterval(() => {
+      this.world.step()
+      this.world.boids.forEach((boid, i) => {
+        const velocity = boid.velocity
+        const mesh = this.boidsMeshes!.get(i)
+
+        const z = velocity.clone().normalize()
+        const x = z.cross(new Vec3(0, 1, 0))
+        const y = z.cross(x)
+        const m3 = [
+          x.x, y.x, z.x,
+          x.y, y.y, z.y,
+          x.z, y.z, z.z,
+        ]
+        const q = quat.fromMat3(quat.create(), m3)
+        mesh.rotation = new Quat(...q)
+      })
+    }, 30)
   }
 }

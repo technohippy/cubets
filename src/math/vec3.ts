@@ -39,6 +39,10 @@ export class Vec3 {
     })
   }
 
+  cross(vec:Vec3):Vec3 {
+    return new Vec3(...vec3.cross(vec3.create(), this.toArray(), vec.toArray()))
+  }
+
   add(vec: Vec3):Vec3 {
     this.x += vec.x
     this.y += vec.y
