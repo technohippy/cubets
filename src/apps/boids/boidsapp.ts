@@ -34,7 +34,7 @@ export class BoidsApp {
     this.camera.addControl(new OrbitCameraControl())
   }
 
-  setup(): Promise<void> {
+  setup(imagePath:string): Promise<void> {
     const light = new PhongDirectionalLight(
       new Vec3(0.1, -1.0, -0.4),
       RGBAColor.Black,
@@ -53,12 +53,20 @@ export class BoidsApp {
 
     const skyboxMaterial = new PhongMaterial(RGBAColor.White)
     skyboxMaterial.cubeTexture = new CubeTexture(
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/negx.jpg`,
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posx.jpg`,
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/negy.jpg`,
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posy.jpg`,
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/negz.jpg`,
+      `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posz.jpg`
+      /*
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
       "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
+      */
     )
     skyboxMaterial.cubeTexture.isSkybox = true
     const skyMesh = new Mesh(

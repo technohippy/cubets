@@ -9,7 +9,7 @@ export declare class BoidsApp {
     camera: Camera;
     boidsMeshes?: InstancedMesh;
     constructor(canvasId: string, size: Vec3, boidsCount: number, flockCount?: number);
-    setup(): Promise<void>;
+    setup(imagePath: string): Promise<void>;
     start(): void;
 }
 //# sourceMappingURL=boidsapp.d.ts.map

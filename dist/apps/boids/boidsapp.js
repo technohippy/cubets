@@ -23,13 +23,22 @@ export class BoidsApp {
         this.camera.position.y = -0.1;
         this.camera.addControl(new OrbitCameraControl());
     }
-    setup() {
+    setup(imagePath) {
         const light = new PhongDirectionalLight(new Vec3(0.1, -1.0, -0.4), RGBAColor.Black, RGBAColor.White, RGBAColor.White);
         this.scene.add(light);
         const light2 = new PhongDirectionalLight(new Vec3(-0.2, 1.0, 0.2), RGBAColor.Gray, RGBAColor.Gray, RGBAColor.Black);
         this.scene.add(light2);
         const skyboxMaterial = new PhongMaterial(RGBAColor.White);
-        skyboxMaterial.cubeTexture = new CubeTexture("/examples/images/skybox/mountain-skyboxes/Maskonaive/negx.jpg", "/examples/images/skybox/mountain-skyboxes/Maskonaive/posx.jpg", "/examples/images/skybox/mountain-skyboxes/Maskonaive/negy.jpg", "/examples/images/skybox/mountain-skyboxes/Maskonaive/posy.jpg", "/examples/images/skybox/mountain-skyboxes/Maskonaive/negz.jpg", "/examples/images/skybox/mountain-skyboxes/Maskonaive/posz.jpg");
+        skyboxMaterial.cubeTexture = new CubeTexture(`${imagePath}/skybox/mountain-skyboxes/Maskonaive/negx.jpg`, `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posx.jpg`, `${imagePath}/skybox/mountain-skyboxes/Maskonaive/negy.jpg`, `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posy.jpg`, `${imagePath}/skybox/mountain-skyboxes/Maskonaive/negz.jpg`, `${imagePath}/skybox/mountain-skyboxes/Maskonaive/posz.jpg`
+        /*
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+        "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
+        */
+        );
         skyboxMaterial.cubeTexture.isSkybox = true;
         const skyMesh = new Mesh(new CubeGeometry(2000, 2000, 2000), skyboxMaterial);
         this.scene.add(skyMesh);
