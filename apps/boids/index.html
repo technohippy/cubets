@@ -10,7 +10,10 @@
     </style>
   </head>
   <body>
-    <canvas id="cubets" width="600" height="400"></canvas>
+    <button onclick="document.getElementById('cubets').requestFullscreen()">Full Screen</button><br>
+    <canvas id="cubets" width="600" height="400"></canvas><br>
+    Model from <a href="https://poly.google.com/view/cTSOEPvVovs" target="_blank">Poly by Google</a>
+
     <script type="module">
       import Cubets from "../../dist/cubets.js"
       import { BoidsApp } from "../../dist/apps/boids/boidsapp.js"
@@ -19,7 +22,5 @@
         app.start()
       })
     </script>
-    <button onclick="document.getElementById('cubets').requestFullscreen()">Full Screen</button>
-    <a href="https://poly.google.com/view/cTSOEPvVovs">https://poly.google.com/view/cTSOEPvVovs</a>
   </body>
 </html>

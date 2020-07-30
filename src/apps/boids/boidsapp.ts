@@ -89,7 +89,11 @@ export class BoidsApp {
 
   start() {
     this.camera.start(this.scene)
+    const sizeY = this.world.size.y
+    let t = 0
     setInterval(() => {
+      this.world.center.y = sizeY * 0.75 + 0.2 * Math.sin(t/180 * Math.PI)
+      t++
       this.world.step()
       this.world.boids.forEach((boid, i) => {
         const velocity = boid.velocity
