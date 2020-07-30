@@ -35,7 +35,7 @@
       const size = 50
       const instances = new Cubets.InstancedMesh(
         Math.pow(size, 3),
-        new Cubets.SphereGeometry(1),
+        new Cubets.CubeGeometry(1.5, 1.5, 1.5),
         new Cubets.Scene.Material(),
       )
       for (let x = 0; x < size; x++) {
@@ -47,6 +47,11 @@
               (y - size/2) * 3, 
               (z - size/2) * 3,
             )
+            mesh.rotation = Cubets.Quat.fromEulerDegrees(
+              Math.random() * 180,
+              Math.random() * 180,
+              Math.random() * 180,
+            )
           }
         }
       }
@@ -54,8 +59,8 @@
       scene.add(light)
       scene.add(instances)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 10*size)
-      camera.position.z = 3 * size
+      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 20*size)
+      camera.position.z = 2 * size
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
     </script>

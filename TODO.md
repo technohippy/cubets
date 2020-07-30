@@ -2,7 +2,9 @@
 
 ## Enhancement
 
+- obj loader
 - **make tiny applications with cubets**
+  - boids
 - add TSDoc comments
 - build a website
 - **release alpha**
@@ -59,6 +61,7 @@
 
 ## Enhancement
 
+- instancing
 - fog
   - https://webglfundamentals.org/webgl/lessons/webgl-fog.html
 - picker
