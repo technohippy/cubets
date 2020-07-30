@@ -222,8 +222,10 @@ export class PhongScene extends Scene {
                2.*q.x*q.z+2.*q.w*q.y,    2.*q.y*q.z-2.*q.w*q.x, 1.-2.*q.x*q.x-2.*q.y*q.y, 0.,
                                   0.,                       0.,                       0., 1.
           );
-          modelVertex = matrix * modelVertex;
-          normal = matrix * normal;
+          //modelVertex = matrix * modelVertex;
+          //normal = matrix * normal;
+          modelVertex = modelVertex * matrix;
+          normal = normal * matrix;
         }
         modelVertex = modelVertex + vec4(aVertexOffset, 0.0);
         vec4 vertex = uModelViewMatrix * modelVertex;
