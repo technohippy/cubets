@@ -53,12 +53,12 @@ export class BoidsApp {
 
     const skyboxMaterial = new PhongMaterial(RGBAColor.White)
     skyboxMaterial.cubeTexture = new CubeTexture(
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
-      "/examples/images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+      "../../../examples/images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
     )
     skyboxMaterial.cubeTexture.isSkybox = true
     const skyMesh = new Mesh(
