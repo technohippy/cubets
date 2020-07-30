@@ -34,8 +34,10 @@ import { Quat } from "./math/quat.js"
 import { RGBAColor } from "./math/rgbacolor.js"
 
 import { Axis } from "./misc/axis.js"
-import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
 import { Fog } from "./core/fog.js"
+
+import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
+import { OBJGeometryLoader } from "./misc/objgeometryloader.js"
 
 export default {
   Scene: PhongScene,
@@ -80,5 +82,6 @@ export default {
 
   Axis: Axis,
   JSONGeometryLoader: JSONGeometryLoader,
+  OBJGeometryLoader: OBJGeometryLoader,
   Fog: Fog,
 }
