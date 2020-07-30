@@ -1,0 +1,2 @@
+original OBJ file: ./Bird_01.obj
+part1.json > alias: pCube7

@@ -1,7 +1,8 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
 mtllib Bird_01.mtl
-g default
+o bird_mesh
+#g default
 v -99.565098 -0.007192 68.729023
 v -48.385406 -0.007192 72.194820
 v -28.288571 -0.007192 62.522674

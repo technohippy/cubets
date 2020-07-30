@@ -42,7 +42,6 @@
       scene.add(light)
 
       const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 100)
-      //const camera = new Cubets.OrthogonalCamera("cubets", 40, -150, 150)
       camera.position.z = 20
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)

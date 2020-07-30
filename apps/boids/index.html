@@ -14,9 +14,10 @@
     <script type="module">
       import Cubets from "../../dist/cubets.js"
       import { BoidsApp } from "../../dist/apps/boids/boidsapp.js"
-      const app = new BoidsApp("cubets", new Cubets.Vec3(500, 200, 500), 300, 3)
-      app.setup()
-      app.start()
+      const app = new BoidsApp("cubets", new Cubets.Vec3(600, 200, 600), 400, 4)
+      app.setup().then(() => {
+        app.start()
+      })
     </script>
     <button onclick="document.getElementById('cubets').requestFullscreen()">Full Screen</button>
     <a href="https://poly.google.com/view/cTSOEPvVovs">https://poly.google.com/view/cTSOEPvVovs</a>

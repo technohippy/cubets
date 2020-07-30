@@ -17,6 +17,7 @@ import { Quat } from "../../math/quat.js";
 
 //@ts-ignore
 import { glMatrix, mat3, quat } from "../../../node_modules/gl-matrix/esm/index.js"
+import { JSONGeometryLoader } from "../../misc/jsongeometryloader.js";
 glMatrix.setMatrixArrayType(Array)
 
 export class BoidsApp {
@@ -33,7 +34,7 @@ export class BoidsApp {
     this.camera.addControl(new OrbitCameraControl())
   }
 
-  setup() {
+  setup(): Promise<void> {
     const light = new PhongDirectionalLight(
       new Vec3(0.1, -1.0, -0.4),
       RGBAColor.Black,
@@ -61,22 +62,29 @@ export class BoidsApp {
     )
     skyboxMaterial.cubeTexture.isSkybox = true
     const skyMesh = new Mesh(
-      new CubeGeometry(1000, 1000, 1000),
+      new CubeGeometry(2000, 2000, 2000),
       skyboxMaterial,
     )
     this.scene.add(skyMesh)
 
-    this.boidsMeshes = new InstancedMesh(
-      this.world.boids.length,
-      //new SphereGeometry(2),
-      new CubeGeometry(4, 4, 4),
-      new PhongMaterial(),
-    )
-    this.world.boids.forEach((boid, i) => {
-      const mesh = this.boidsMeshes!.get(i)
-      mesh.position = boid.position
+    return JSONGeometryLoader.load("../../examples/data/Bird_01.json").then(geometry => {
+      geometry.vertices.forEach(v => {
+        v.rotate(Math.PI/2, new Vec3(1, 0, 0))
+        v.rotate(-Math.PI/2, new Vec3(0, 1, 0))
+        v.multiplyScalar(0.02)
+      })
+      this.boidsMeshes = new InstancedMesh(
+        this.world.boids.length,
+        geometry,
+        //new PhongMaterial(RGBAColor.White),
+        new PhongMaterial(RGBAColor.Gray),
+      )
+      this.world.boids.forEach((boid, i) => {
+        const mesh = this.boidsMeshes!.get(i)
+        mesh.position = boid.position
+      })
+      this.scene.add(this.boidsMeshes)
     })
-    this.scene.add(this.boidsMeshes)
   }
 
   start() {

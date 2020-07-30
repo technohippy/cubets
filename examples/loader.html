@@ -43,20 +43,14 @@
       scene.add(light)
       scene.add(light2)
 
-      Cubets.JSONGeometryLoader.load("./data/cone.json").then(geometry => {
-        const cone = new Cubets.Mesh(geometry, new Cubets.Scene.Material())
-        cone.position.x = -10
-        scene.add(cone)
-      })
-
-      Cubets.OBJGeometryLoader.load("./data/Bird_01.obj").then(geometry => {
+      Cubets.JSONGeometryLoader.load("./data/Bird_01.json").then(geometry => {
+        geometry.vertices.forEach(v => v.multiplyScalar(0.01))
         const bird = new Cubets.Mesh(geometry, new Cubets.Scene.Material())
-        bird.position.x = 10
         scene.add(bird)
       })
 
       const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 100)
-      camera.position.z = 5 
+      camera.position.z = 5
       camera.addControl(new Cubets.OrbitCameraControl())
       camera.start(scene)
     </script>
