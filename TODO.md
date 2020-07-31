@@ -2,12 +2,12 @@
 
 ## Enhancement
 
-- obj loader
 - **make tiny applications with cubets**
   - boids
 - add TSDoc comments
 - build a website
 - **release alpha**
+- obj loader
 - texture array
 - texture properties
 - drop shadow

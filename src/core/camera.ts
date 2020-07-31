@@ -18,6 +18,10 @@ export interface FilteredCamera {
   setupGLMatrixes(renderer:Renderer, scene:Scene): void
 }
 
+/**
+ * Represents a camera.
+ * This is the starting point for rendering.
+ */
 export abstract class Camera implements FilteredCamera {
   renderer: Renderer
   filters = new FilterChain()
@@ -34,6 +38,10 @@ export abstract class Camera implements FilteredCamera {
   target?: Vec3
   #starting = false
 
+  /**
+   * Constructs a camera 
+   * @param viewport the area where a scene is rendered in
+   */
   constructor(viewport: Viewport | string) {
     if (typeof viewport === "string") {
       viewport = new Viewport(new Vec2(), new Vec2(1, 1), viewport)
@@ -41,21 +49,32 @@ export abstract class Camera implements FilteredCamera {
     this.renderer = new Renderer(viewport)
   }
 
+  /**
+   * Returns the aspect ratio (width/height)
+   */
   getAspectRatio(): number {
     return this.renderer.getAspectRatio()
   }
 
+  /**
+   * Adds a camera control
+   * @param control 
+   */
   addControl(control: CameraControl) {
     this.controls.push(control)
-  }
-
- setPicker(picker: Picker) {
-    this.picker = picker
   }
 
   removeControl(control: CameraControl) {
     this.controls.splice(this.controls.indexOf(control), 1)
     control.detachEvents()
+  }
+
+  /**
+   * Sets a object picker
+   * @param picker 
+   */
+  setPicker(picker: Picker) {
+    this.picker = picker
   }
 
   followTarget(target:Vec3) {
@@ -169,6 +188,10 @@ export abstract class Camera implements FilteredCamera {
     this.#starting = false
   }
 
+  /**
+   * Repeats rendering the given scene
+   * @param scene 
+   */
   private _anim(scene: Scene) {
     this.draw(scene)
     if (this.#starting) requestAnimationFrame(() => this._anim(scene))

@@ -5,12 +5,14 @@
   "scripts": {
     "bs": "browser-sync start --server --config bs-config.js",
     "dev": "tsc -w & npm run bs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc": "typedoc --options typedoc.json"
   },
   "author": "Ando Yasushi <andyjpn@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.26.7",
+    "typedoc": "^0.17.8",
     "typescript": "^3.9.6"
   },
   "dependencies": {
