@@ -12,6 +12,9 @@ import { Picker } from "./picker.js";
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
+/**
+ * @internal
+ */
 export interface FilteredCamera {
   resetFilters(): void
   applyFilters(renderer:Renderer, fn:()=>void): void
@@ -23,19 +26,40 @@ export interface FilteredCamera {
  * This is the starting point for rendering.
  */
 export abstract class Camera implements FilteredCamera {
+  /** @internal */
   renderer: Renderer
+
+  /** @internal */
   filters = new FilterChain()
+
+  /** @internal */
   projectionMatrix: number[] = mat4.create()
+
+  /** @internal */
   modelViewMatrix: number[] = mat4.create()
+
+  /** @internal */
   normalMatrix: number[] = mat4.create()
 
+  /** @internal */
   controls:CameraControl[] = []
+
+  /** @internal */
   picker?:Picker
 
+  /** camera position */
   position = new Vec3()
+
+  /** camera direction */
   rotation = new Quat()
+
+  /** @internal */
   up = new Vec3(0, 1, 0)
+
+  /** @internal */
   target?: Vec3
+
+  /** @internal */
   #starting = false
 
   /**
@@ -50,7 +74,7 @@ export abstract class Camera implements FilteredCamera {
   }
 
   /**
-   * Returns the aspect ratio (width/height)
+   * Returns the viewport's aspect ratio (width/height)
    */
   getAspectRatio(): number {
     return this.renderer.getAspectRatio()
@@ -64,6 +88,10 @@ export abstract class Camera implements FilteredCamera {
     this.controls.push(control)
   }
 
+  /**
+   * Removes a camera control
+   * @param control 
+   */
   removeControl(control: CameraControl) {
     this.controls.splice(this.controls.indexOf(control), 1)
     control.detachEvents()
@@ -77,33 +105,56 @@ export abstract class Camera implements FilteredCamera {
     this.picker = picker
   }
 
+  /**
+   * Sets a target for the camera to follow
+   * @param target 
+   */
   followTarget(target:Vec3) {
     this.target = target
   }
 
+  /**
+   * Rests a target for the camera to follow
+   */
   resetTarget() {
     this.target = undefined
   }
 
+  /**
+   * Adds a filter (i.e. postprocessing)
+   * @param filter 
+   */
   addFilter(filter: Filter) {
     filter.setupRenderTarget(this.renderer)
     this.filters.push(filter)
   }
 
+  /**
+   * Removes a filter
+   */
   removeFilter(filter: Filter) {
     throw "not yet"
   }
 
+  /**
+   * @internal
+   */
   resetFilters() {
     this.filters.forEach(f => {
       f.resetFrameBuffer()
     })
   }
 
+  /**
+   * @internal
+   */
   applyFilters(renderer:Renderer, fn:()=>void) {
     this.filters.apply(renderer, fn)
   }
 
+  /**
+   * @internal
+   */
   setupGLMatrixes(renderer:Renderer, scene:Scene) {
     const gl = renderer.gl
     const projectionMatrixLocation = scene.getProjectionMatrixUniformLocation(renderer)
@@ -114,8 +165,14 @@ export abstract class Camera implements FilteredCamera {
     gl.uniformMatrix4fv(normalMatrixLocation, false, this.normalMatrix)
   }
 
+  /**
+   * @internal
+   */
   abstract setupProjectionMatrix(): void
 
+  /**
+   * @internal
+   */
   setupModelViewMatrix() {
     const translationMat = mat4.create()
     mat4.translate(translationMat, translationMat, this.position.toArray())
@@ -154,6 +211,10 @@ export abstract class Camera implements FilteredCamera {
     mat4.transpose(this.normalMatrix, this.normalMatrix)
   }
 
+  /**
+   * Draws the given scene
+   * @param scene 
+   */
   draw(scene: Scene) {
     this.setupProjectionMatrix()
     this.setupModelViewMatrix()
@@ -161,6 +222,11 @@ export abstract class Camera implements FilteredCamera {
     this.renderer.render(scene, this)
   }
 
+  /**
+   * Prepares and draw the given scene
+   * @param scene 
+   * @param loop if true repeat drawing, if false draw once
+   */
   async start(scene: Scene, loop:boolean=true) {
     if (this.#starting) return
 
@@ -180,10 +246,16 @@ export abstract class Camera implements FilteredCamera {
     this._anim(scene)
   }
 
+  /**
+   * Draws the given scene once
+   */
   startOnce(scene: Scene) {
     this.start(scene, false)
   }
 
+  /**
+   * Stops drawing
+   */
   stop() {
     this.#starting = false
   }
