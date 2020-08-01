@@ -17,15 +17,22 @@ export abstract class Filter {
   inputRenderTarget?: RenderTarget
   outputRenderTarget?: RenderTarget
 
-  constructor(scene:FilterScene | string, material:FilterMaterial = new FilterMaterial()) {
-    material.filter = this
+  constructor(scene:FilterScene | string, material:FilterMaterial | ((gl:WebGL2RenderingContext, renderer:Renderer)=>void) = new FilterMaterial()) {
+    let mat:FilterMaterial
+    if (material instanceof FilterMaterial) {
+      mat = material
+    } else {
+      mat = new FilterMaterial(material)
+    }
+    mat.filter = this
+
     if (typeof scene === "string") {
       const body = scene as string
       scene = new FilterScene((frag:string, frame:string)=>body)
     }
     this.scene = scene
     this.plane = new PlaneGeometry(2, 2)
-    this.planeMesh = new Mesh(this.plane, material)
+    this.planeMesh = new Mesh(this.plane, mat)
     this.scene.add(this.planeMesh)
   }
 
@@ -104,6 +111,12 @@ export class FilterChain {
 
 export class FilterMaterial extends Material {
   filter?:Filter
+  setupGLVarsFn?:(gl:WebGL2RenderingContext, renderer:Renderer) => void
+
+  constructor(setupGLVarsFn?:((gl:WebGL2RenderingContext, renderer:Renderer) => void)) {
+    super()
+    this.setupGLVarsFn = setupGLVarsFn
+  }
 
   setColor(color: RGBAColor) { }
 
@@ -117,6 +130,10 @@ export class FilterMaterial extends Material {
     const samplerLocation = renderer.getUniformLocation("uSampler") // TODO
 
     this.filter.inputRenderTarget?.setupGLVars(gl, samplerLocation)
+
+    if (this.setupGLVarsFn) {
+      this.setupGLVarsFn(gl, renderer)
+    }
   }
 }
 
@@ -204,13 +221,21 @@ export class FilterScene extends Scene {
 
   getFragmentShader():string {
     const body = this.getFragmentShaderBody("fragColor", "frameColor")
-    return `${this.getFragmentShaderHead()}
-
-      void main(void) {
-        vec4 frameColor = texture(uSampler, vTextureCoords);
+    if (0 <= body.search(/\s*void\s+main\s*\(/g)) {
+      // if main function exists
+      return `${this.getFragmentShaderHead()}
         ${this.getFragmentShaderBody("fragColor", "frameColor")}
-      }
-   `
+      `
+    } else {
+      // if main function does not exist
+      return `${this.getFragmentShaderHead()}
+
+        void main(void) {
+          vec4 frameColor = texture(uSampler, vTextureCoords);
+          ${this.getFragmentShaderBody("fragColor", "frameColor")}
+        }
+      `
+    }
   }
 
   getFragmentShaderHead():string {

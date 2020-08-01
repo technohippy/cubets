@@ -188,10 +188,17 @@ export class Renderer {
   }
 
   getUniformLocation(name: string, ignoreError: boolean = false): WebGLUniformLocation | null {
-    const loc = this.uniformLocations.get(name)
+    let loc: WebGLUniformLocation | undefined | null = this.uniformLocations.get(name)
     if (loc === undefined) {
-      if (ignoreError) return null
-      throw `uniform not found: ${name}`
+      loc = this.gl.getUniformLocation(this.program!, name)
+      if (loc === null) {
+        if (ignoreError) {
+          return null
+        } else {
+          throw `fail to get uniform location: ${name}`
+        }
+      }
+      this.uniformLocations.set(name, loc)
     }
     return loc as WebGLUniformLocation
   }

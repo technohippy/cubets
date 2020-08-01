@@ -26,6 +26,13 @@ export interface FilteredCamera {
  * This is the starting point for rendering.
  */
 export abstract class Camera implements FilteredCamera {
+
+  /** camera position */
+  position = new Vec3()
+
+  /** camera direction */
+  rotation = new Quat()
+
   /** @internal */
   renderer: Renderer
 
@@ -46,12 +53,6 @@ export abstract class Camera implements FilteredCamera {
 
   /** @internal */
   picker?:Picker
-
-  /** camera position */
-  position = new Vec3()
-
-  /** camera direction */
-  rotation = new Quat()
 
   /** @internal */
   up = new Vec3(0, 1, 0)
