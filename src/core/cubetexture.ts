@@ -1,13 +1,30 @@
 import { Texture, TextureType } from "./texture.js";
 
 export class CubeTexture implements Texture {
+  /** must be {@link TextureType.CubeTexture} */
   type: TextureType
+
+  /** if true, this cube texture is used for skybox. */
+  isSkybox = false
+
+  /** @internal */
   image: string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+  
+  /** @internal */
   images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)[]
 
-  isSkybox = false
+  /** @internal */
   cubeTexture?: WebGLTexture
 
+  /**
+   * Constructs a cube texture
+   * @param imageNx image source for negative X plane
+   * @param imagePx image source for positive X plane
+   * @param imageNy image source for negative Y plane
+   * @param imagePy image source for positive Y plane
+   * @param imageNz image source for negative Z plane
+   * @param imagePz image source for positive Z plane
+   */
   constructor(
     imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
     imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
@@ -21,6 +38,7 @@ export class CubeTexture implements Texture {
     this.type = TextureType.CubeTexture
   }
 
+  /** @internal */
   loadImage():Promise<any> {
     return Promise.all(
       this.images.map((image, i) => {
@@ -40,6 +58,7 @@ export class CubeTexture implements Texture {
     )
   }
 
+  /** @internal */
   setupGLTexture(gl:WebGL2RenderingContext, location:WebGLUniformLocation, skyboxLocation?:WebGLUniformLocation) {
     if (!this.cubeTexture) {
       this.images.forEach((image, i) => {

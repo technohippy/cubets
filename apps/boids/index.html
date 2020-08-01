@@ -18,7 +18,8 @@
       import Cubets from "../../dist/cubets.js"
       import { BoidsApp } from "../../dist/apps/boids/boidsapp.js"
       const app = new BoidsApp("cubets", new Cubets.Vec3(600, 200, 600), 400, 4)
-      app.setup().then(() => {
+      let currentPath = window.location.pathname.replace("index.html", "")
+      app.setup(`${currentPath}../../examples/images`).then(() => {
         app.start()
       })
     </script>

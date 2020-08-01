@@ -1,4 +1,5 @@
 /**
+ * @internal
  * RenderTarget manages a frame buffer.
  */
 export class RenderTarget {

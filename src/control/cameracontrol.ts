@@ -1,5 +1,9 @@
 import { Camera } from "../core/camera.js"
 
+/**
+ * CameraControl handles user inputs (e.g. click, touch or device motion)
+ * and moves a camera.
+ */
 export abstract class CameraControl {
   camera?:Camera
   container?:HTMLElement

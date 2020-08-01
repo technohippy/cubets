@@ -1,0 +1,8 @@
+{
+  "inputFiles": ["./src"],
+  "out": "docs",
+  "exclude": ["./src/apps/**/*.ts"],
+  "stripInternal": true,
+  "toc": [
+  ]
+}
