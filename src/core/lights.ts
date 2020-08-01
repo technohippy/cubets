@@ -1,6 +1,7 @@
 import { Light } from "./light.js";
 import { Renderer } from "./renderer.js";
 
+/** @internal */
 export class Lights {
   lights: Light[] = []
 

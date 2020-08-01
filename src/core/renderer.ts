@@ -7,6 +7,7 @@ import { Transform3 } from "../math/transform3.js"
 import { Material } from "./material.js"
 import { RenderTarget } from "./rendertarget.js"
 
+/** @internal */
 export class Renderer {
   container?: HTMLCanvasElement
   viewport: Viewport

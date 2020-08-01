@@ -212,6 +212,7 @@ export abstract class Camera implements FilteredCamera {
   }
 
   /**
+   * @internal
    * Draws the given scene
    * @param scene 
    */
@@ -261,6 +262,7 @@ export abstract class Camera implements FilteredCamera {
   }
 
   /**
+   * @internal
    * Repeats rendering the given scene
    * @param scene 
    */
