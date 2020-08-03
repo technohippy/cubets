@@ -1,4 +1,5 @@
 import { PhongScene } from "./core/phong/phongscene.js"
+import { ShaderScene } from "./core/shaderscene.js"
 import { Renderer } from "./core/renderer.js"
 import { PhongDirectionalLight } from "./core/phong/phongdirectionallight.js"
 import { PhongPositionalLight } from "./core/phong/phongpositionallight.js"
@@ -14,6 +15,7 @@ import { CubeTexture } from "./core/cubetexture.js"
 
 import { PerspectiveCamera } from "./camera/perspectivecamera.js"
 import { OrthogonalCamera } from "./camera/orthogonalcamera.js"
+import { ShaderCamera } from "./camera/shadercamera.js"
 
 import { PlaneGeometry } from "./geometry/planegeometry.js"
 import { GroundGeometry } from "./geometry/groundgeometry.js"
@@ -21,6 +23,9 @@ import { CubeGeometry } from "./geometry/cubegeometry.js"
 import { SphereGeometry } from "./geometry/spheregeometry.js"
 import { CylinderGeometry } from "./geometry/cylindergeometry.js"
 
+import { Filter } from "./core/filter.js"
+import { FilterMaterial } from "./core/filter/filtermaterial.js"
+import { FilterScene } from "./core/filter/filterscene.js"
 import { GrayscaleFilter } from "./filter/grayscalefilter.js"
 import { InvertFilter } from "./filter/invertfilter.js"
 import { BlurFilter } from "./filter/blurfilter.js"
@@ -42,6 +47,7 @@ import { OBJGeometryLoader } from "./misc/objgeometryloader.js"
 export default {
   Scene: PhongScene,
   PhongScene: PhongScene,
+  ShaderScene: ShaderScene,
 
   Material: Material,
   PhongReflectionMaterial: PhongReflectionMaterial,
@@ -52,6 +58,8 @@ export default {
 
   PerspectiveCamera: PerspectiveCamera, 
   OrthogonalCamera: OrthogonalCamera,
+  ShaderCamera: ShaderCamera,
+
   OrbitCameraControl: OrbitCameraControl,
   Picker: Picker,
 
@@ -64,6 +72,10 @@ export default {
   CubeGeometry: CubeGeometry,
   SphereGeometry: SphereGeometry,
   CylinderGeometry: CylinderGeometry,
+
+  Filter: Filter,
+  FilterScene: FilterScene,
+  FilterMaterial: FilterMaterial,
 
   GrayscaleFilter: GrayscaleFilter,
   InvertFilter: InvertFilter,

@@ -73,18 +73,20 @@ export class Renderer {
   setupLocations(scene: Scene) {
     scene.getAttributeNames().forEach(attrName => {
       const loc = this.gl.getAttribLocation(this.program!, attrName)
-      if (loc < 0) {
-        throw `fail to get attribute location: ${attrName}`
+      if (0 <= loc) {
+        this.attributeLocations.set(attrName, loc)
+      } else {
+        console.warn(`fail to set attribute location: ${attrName}`)
       }
-      this.attributeLocations.set(attrName, loc)
     })
 
     scene.getUniformNames().forEach(uniName => {
       const loc = this.gl.getUniformLocation(this.program!, uniName)
-      if (loc === null) {
-        throw `fail to get uniform location: ${uniName}`
+      if (loc !== null) {
+        this.uniformLocations.set(uniName, loc)
+      } else {
+        console.warn(`fail to set uniform location: ${uniName}`)
       }
-      this.uniformLocations.set(uniName, loc)
     })
   }
 
@@ -188,10 +190,17 @@ export class Renderer {
   }
 
   getUniformLocation(name: string, ignoreError: boolean = false): WebGLUniformLocation | null {
-    const loc = this.uniformLocations.get(name)
+    let loc: WebGLUniformLocation | undefined | null = this.uniformLocations.get(name)
     if (loc === undefined) {
-      if (ignoreError) return null
-      throw `uniform not found: ${name}`
+      loc = this.gl.getUniformLocation(this.program!, name)
+      if (loc === null) {
+        if (ignoreError) {
+          return null
+        } else {
+          throw `fail to get uniform location: ${name}`
+        }
+      }
+      this.uniformLocations.set(name, loc)
     }
     return loc as WebGLUniformLocation
   }

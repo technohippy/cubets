@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Shader</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="js/default.min.css">
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="js/utils.js"></script>
+  </head>
+  <body>
+    Shift+Enter to apply
+    <pre><code id="shader" contenteditable="true">void main(void) {
+  fragColor = vec4(vVertexPosition.xy, 0.0, 1.0);
+}</code></pre>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../dist/cubets.js"
+
+      const shaderElm = document.getElementById("shader")
+
+      const scene = new Cubets.ShaderScene(shaderElm.textContent)
+      let camera = new Cubets.ShaderCamera("cubets")
+      camera.start(scene)
+
+      shaderElm.addEventListener("keydown", evt => {
+        if (evt.keyCode !== 13 || !evt.shiftKey) return
+
+        camera.stop()
+        Cubets.ShaderCamera.start("cubets", shaderElm.textContent)
+          .then(newCamera => camera = newCamera)
+
+        hljs.highlightBlock(shaderElm)
+        evt.preventDefault()
+      })
+    </script>
+  </body>
+</html>
