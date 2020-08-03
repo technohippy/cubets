@@ -1,4 +1,4 @@
-import { Filter, FilterScene, FilterMaterial } from "../core/filter.js"
+import { Filter } from "../core/filter.js"
 import { Renderer } from "../core/renderer.js"
 
 export class BlurFilter extends Filter {

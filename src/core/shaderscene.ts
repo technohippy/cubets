@@ -2,7 +2,7 @@ import { Scene } from "./scene.js"
 import { PlaneGeometry } from "../geometry/planegeometry.js"
 import { Mesh } from "./mesh.js"
 import { Renderer } from "./renderer.js"
-import { FilterMaterial } from "../core/filter.js"
+import { FilterMaterial } from "../core/filter/filtermaterial.js"
 
 export class ShaderScene extends Scene {
   static Material = FilterMaterial
@@ -13,6 +13,10 @@ export class ShaderScene extends Scene {
 
   constructor(fragmentShaderBodyFn?:string | ((fragColor:string, frameColor:string)=>string)) {
     super()
+    if (fragmentShaderBodyFn) this.setShaderBody(fragmentShaderBodyFn)
+  }
+
+  setShaderBody(fragmentShaderBodyFn:string | ((fragColor:string, frameColor:string)=>string)) {
     if (typeof fragmentShaderBodyFn === "string") {
       this.fragmentShaderBodyFn = (fragColor:string, frameColor:string)=>fragmentShaderBodyFn
     } else {
@@ -27,7 +31,7 @@ export class ShaderScene extends Scene {
   }
 
   hasTexture(): boolean {
-    return true
+    return false
   }
 
   // overridable
@@ -57,7 +61,7 @@ export class ShaderScene extends Scene {
 
   // overridable
   getVertexTextureCoordsAttribLocation(renderer:Renderer): number { 
-    return renderer.getAttributeLocation("aVertexTextureCoords")
+    return -1
   }
 
   getProjectionMatrixUniformLocation(renderer:Renderer): WebGLUniformLocation | null  {
@@ -74,28 +78,30 @@ export class ShaderScene extends Scene {
 
   // overridable
   getAttributeNames(): string[] {
-    return [ "aVertexPosition", "aVertexTextureCoords" ]
+    return [ "aVertexPosition" ]
   }
 
   // overridable
   getUniformNames(): string[] {
-    return [ "uSampler" ]
+    return []
   }
 
-  getVertexShader():string {
+  getVertexShader(options:{declare?:string, mainBody?:string}={}):string {
     return `#version 300 es
       precision mediump float;
 
       in vec3 aVertexPosition;
-      in vec2 aVertexTextureCoords;
 
       out vec3 vVertexPosition;
       out vec2 vTextureCoords;
 
+      ${options.declare || ""}
+
       void main(void) {
         vVertexPosition = aVertexPosition;
-        vTextureCoords = aVertexTextureCoords;
         gl_Position = vec4(aVertexPosition, 1.0);
+
+        ${options.mainBody || ""}
       }
     `
   }
@@ -105,13 +111,9 @@ export class ShaderScene extends Scene {
     if (0 <= body.search(/\s*void\s+main\s*\(/g)) {
       // if main function exists
       if (body.trim().startsWith("#version 300")) {
-        console.log(this.getFragmentShaderBody("fragColor", "frameColor"))
         // if the shader is complete
         return this.getFragmentShaderBody("fragColor", "frameColor")
       } else {
-        console.log(`${this.getFragmentShaderHead()}
-          ${this.getFragmentShaderBody("fragColor", "frameColor")}
-        ` )
         // if the shader is incomplete
         return `${this.getFragmentShaderHead()}
           ${this.getFragmentShaderBody("fragColor", "frameColor")}
@@ -121,21 +123,20 @@ export class ShaderScene extends Scene {
       // if main function does not exist
       return `${this.getFragmentShaderHead()}
         void main(void) {
-          vec4 frameColor = texture(uSampler, vTextureCoords);
           ${this.getFragmentShaderBody("fragColor", "frameColor")}
         }
       `
     }
   }
 
-  getFragmentShaderHead():string {
+  getFragmentShaderHead(options:{declare?:string}={}):string {
     return `#version 300 es
       precision mediump float;
 
-      uniform sampler2D uSampler;
       in vec3 vVertexPosition;
-      in vec2 vTextureCoords;
       out vec4 fragColor;
+
+      ${options.declare || ""}
     `
   }
 
