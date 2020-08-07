@@ -47,3 +47,27 @@ export class GLUniform {
     this.updated = false
   }
 }
+
+export class GLUniformI1 {
+  constructor(name:string, value:number[] | number | GLTexture) {
+    return new GLUniform(name, "1i", value)
+  }
+}
+
+export class GLUniformF1 {
+  constructor(name:string, value:number[] | number) {
+    return new GLUniform(name, "1f", value)
+  }
+}
+
+export class GLUniformF2 {
+  constructor(name:string, value:number[] | number) {
+    return new GLUniform(name, "2f", value)
+  }
+}
+
+export class GLUniformFv1 {
+  constructor(name:string, value:number[] | number) {
+    return new GLUniform(name, "1fv", value)
+  }
+}

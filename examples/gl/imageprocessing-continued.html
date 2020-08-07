@@ -19,8 +19,8 @@
     <script src="../js/utils.js"></script>
   </head>
   <body>
-    <a href="https://webglfundamentals.org/webgl/lessons/webgl-image-processing.html">
-      https://webglfundamentals.org/webgl/lessons/webgl-image-processing.html
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-image-processing-continued.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-image-processing-continued.html
     </a><br>
     <canvas id="cubets" width="600" height="400"></canvas>
     <div id="code"></div><script>loadCode()</script>
@@ -106,24 +106,19 @@
         texture.minFilter = Cubets.GL.NEAREST
         texture.magFilter = Cubets.GL.NEAREST
 
-        const uImage = new Cubets.GLUniform("u_image", "1i", texture)
-        const uResolution = new Cubets.GLUniform("u_resolution", "2f", [600 ,400])
-        const uTextureSize = new Cubets.GLUniform("u_textureSize", "2f", [width, height])
-        const uKernel = new Cubets.GLUniform("u_kernel[0]", "1fv", [
+        const uImage = new Cubets.GLUniformI1("u_image", texture)
+        const uResolution = new Cubets.GLUniformF2("u_resolution", [600 ,400])
+        const uTextureSize = new Cubets.GLUniformF2("u_textureSize", [width, height])
+        const uKernel = new Cubets.GLUniformFv1("u_kernel[0]", [
           -1, -1, -1,
           -1,  8, -1,
           -1, -1, -1
         ])
-        const uKernelWeight = new Cubets.GLUniform("u_kernelWeight", "1f", 1)
+        const uKernelWeight = new Cubets.GLUniformF1("u_kernelWeight", 1)
 
         const context = new Cubets.GLContext()
-        context.addAttribute(aPosition)
-        context.addAttribute(aTexCoord)
-        context.addUniform(uImage)
-        context.addUniform(uResolution)
-        context.addUniform(uTextureSize)
-        context.addUniform(uKernel)
-        context.addUniform(uKernelWeight)
+        context.add(aPosition, aTexCoord)
+        context.add(uImage, uResolution, uTextureSize, uKernel, uKernelWeight)
 
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 

@@ -26,12 +26,14 @@ export class GLContext {
     return firstAttr.drawSize()
   }
 
-  add(param:GLAttribute | GLUniform) {
-    if (param instanceof GLAttribute) {
-      this.addAttribute(param)
-    } else {
-      this.addUniform(param)
-    }
+  add(...params:(GLAttribute | GLUniform)[]) {
+    params.forEach(param => {
+      if (param instanceof GLAttribute) {
+        this.addAttribute(param)
+      } else {
+        this.addUniform(param)
+      }
+    })
   }
 
   addAttribute(attribute:GLAttribute) {
