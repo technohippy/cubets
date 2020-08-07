@@ -44,6 +44,13 @@ import { Fog } from "./core/fog.js"
 import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
 import { OBJGeometryLoader } from "./misc/objgeometryloader.js"
 
+import { GL2Renderer } from "./gl/gl2renderer.js"
+import { GLProgram } from "./gl/glprogram.js"
+import { GLAttribute } from "./gl/glattribute.js"
+import { GLUniform } from "./gl/gluniform.js"
+import { GLBuffer } from "./gl/glbuffer.js"
+import { GLContext } from "./gl/glcontext.js"
+
 export default {
   Scene: PhongScene,
   PhongScene: PhongScene,
@@ -96,4 +103,14 @@ export default {
   JSONGeometryLoader: JSONGeometryLoader,
   OBJGeometryLoader: OBJGeometryLoader,
   Fog: Fog,
+
+  GL2Renderer: GL2Renderer,
+  GLProgram: GLProgram,
+  GLAttribute: GLAttribute,
+  GLUniform: GLUniform,
+  GLBuffer: GLBuffer,
+  GLContext: GLContext,
+
+  GL: WebGLRenderingContext,
+  GL2: WebGL2RenderingContext,
 }
