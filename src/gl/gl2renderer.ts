@@ -5,8 +5,11 @@ import { GLAttribute } from "./glattribute"
 import { GLUniform } from "./gluniform"
 import { GLViewport } from "./glviewport"
 import { RGBAColor } from "../math/rgbacolor"
+import { GLTexture } from "./gltexture"
 
 export class GL2Renderer {
+  debug = false
+
   container:HTMLCanvasElement | OffscreenCanvas
   #gl:WebGL2RenderingContext
 
@@ -47,7 +50,7 @@ export class GL2Renderer {
     context.storeLocations(this, program)
     context.apply(this)
     this.clear()
-    this.#gl.drawArrays(this.#gl.TRIANGLES, 0, 3)
+    this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
   }
 
   createProgram(vertexShaderSource:string, fragmentShaderSource:string):WebGLProgram {
@@ -104,6 +107,8 @@ export class GL2Renderer {
   }
 
   uploadAttribute(attribute:GLAttribute) {
+    if (this.debug) console.log(`upload attribute: ${attribute.name}`)
+
     attribute.uploadBufferData(this)
     if (attribute.location < 0) throw `no attribute location: ${attribute.name}`
     this.#gl.enableVertexAttribArray(attribute.location)
@@ -111,12 +116,34 @@ export class GL2Renderer {
   }
 
   uploadUniform(uniform:GLUniform) {
-    if (!uniform.location) throw `no uniform location: ${uniform.name}`
-    switch(uniform.type) {
-      case "3f":
-        this.#gl.uniform3f(uniform.location, uniform.values[0], uniform.values[1], uniform.values[2])
-        break
-    }
+    if (this.debug) console.log(`upload uniform: ${uniform.name}`)
+
+    uniform.upload(this)
+  }
+
+  uploadTexture(texture:GLTexture):number {
+    const textureUnit = 0 // TODO
+
+    const tex = this.#gl.createTexture()
+    this.#gl.activeTexture(this.#gl.TEXTURE0 + textureUnit)
+    this.#gl.bindTexture(texture.type, tex)
+    texture.params.forEach((v, k) => {
+      this.#gl.texParameteri(texture.type, k, v)
+    })
+    const image = texture.image
+    this.#gl.texImage2D(
+      texture.type,
+      image.level,
+      image.internalFormat,
+      image.width,
+      image.height,
+      image.border,
+      image.format,
+      image.type,
+      image.source
+    )
+
+    return textureUnit
   }
 
   // wrap
@@ -152,5 +179,27 @@ export class GL2Renderer {
 
   clear(flag:number=WebGL2RenderingContext.COLOR_BUFFER_BIT) {
     this.#gl.clear(flag)
+  }
+
+  uniform(type:string, location:WebGLUniformLocation, values:number[]) {
+    switch(type) {
+      case "1i":
+        this.#gl.uniform1i(location, values[0])
+        break
+      case "1f":
+        this.#gl.uniform1f(location, values[0])
+        break
+      case "2f":
+        this.#gl.uniform2f(location, values[0], values[1])
+        break
+      case "3f":
+        this.#gl.uniform3f(location, values[0], values[1], values[2])
+        break
+      case "1fv":
+        this.#gl.uniform1fv(location, values)
+        break
+      default:
+        throw `unsupported type: ${type}`
+    }
   }
 }

@@ -12,6 +12,8 @@ export class GLAttribute {
 
   location:number = -1
 
+  updated = true
+
   set buffer(data:TypedArray | GLBuffer) {
     if (data instanceof GLBuffer) {
       this.#buffer = data
@@ -30,10 +32,29 @@ export class GLAttribute {
     if (buffer) this.buffer = buffer
   }
 
+  updateBufferData(dataOrFn:number[] | ((data:number[]) => number[])) {
+    if (!this.#buffer) throw 'no data'
+
+    let fn:(data:number[]) => number[]
+    if (Array.isArray(dataOrFn)) {
+      fn = () => dataOrFn
+    } else {
+      fn = dataOrFn
+    }
+    this.#buffer.update(fn)
+    this.updated = true
+  }
+
   uploadBufferData(renderer:GL2Renderer) {
     if (!this.#buffer) {
       throw "no buffer data"
     }
     renderer.bufferData(this.#buffer)
+    this.updated = false
+  }
+
+  drawSize():number {
+    if (!this.#buffer) throw `no data`
+    return (this.#buffer.data.length - this.offset) / (this.stride === 0 ? 1 : this.stride) / this.size
   }
 }

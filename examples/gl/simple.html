@@ -19,17 +19,20 @@
     <script src="../js/utils.js"></script>
   </head>
   <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-fundamentals.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-fundamentals.html
+    </a><br>
     <canvas id="cubets" width="600" height="400"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <script type="module">
       import Cubets from "../../dist/cubets.js"
 
+      // program
       const vs = `#version 300 es
         in vec4 a_position;
         void main() {
           gl_Position = a_position;
         }`
-
       const fs = `#version 300 es
         precision mediump float;
         uniform vec3 u_color;
@@ -37,20 +40,26 @@
         void main() {
           fragColor = vec4(u_color, 1.0);
         }`
-
       const program = new Cubets.GLProgram(vs, fs)
+
+      // context
       const attr = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
-      attr.buffer = Cubets.GLBuffer.f32([
-        0,   0,   
-        0,   0.5, 
-        0.7, 0,   
-      ])
-      const uniform = new Cubets.GLUniform("u_color", "3f", 1, 0, 0)
+      attr.buffer = Cubets.GLBuffer.f32([0, 0, 0, 0.5, 0.7, 0])
+      const uniform = new Cubets.GLUniform("u_color", "3f", [1, 0, 0])
       const context = new Cubets.GLContext()
       context.addAttribute(attr)
       context.addUniform(uniform)
+
+      // run the program on the context
       const renderer = new Cubets.GL2Renderer("#cubets") 
       renderer.draw(program, context)
+
+      // update context
+      setTimeout(() => {
+        attr.updateBufferData([0.5, 0, 0, 0.7, 0, 0])
+        uniform.updateValue([1, 1, 0])
+        renderer.draw(program, context)
+      }, 1000)
     </script>
   </body>
 </html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: </title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-image-processing.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-image-processing.html
+    </a><br>
+    <canvas id="cubets" width="600" height="600"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets.js"
+
+      // program
+      const vs = `#version 300 es
+        in vec2 a_position;
+        in vec2 a_texCoord;
+
+        uniform vec2 u_resolution;
+
+        out vec2 v_texCoord;
+
+        void main() {
+          vec2 zeroToOne = a_position / u_resolution;
+          vec2 zeroToTwo = zeroToOne * 2.0;
+          vec2 clipSpace = zeroToTwo - 1.0;
+
+          gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+          v_texCoord = a_texCoord;
+        }`
+      const fs = `#version 300 es
+        precision mediump float;
+
+        uniform sampler2D u_image;
+        uniform vec2 u_textureSize;
+        uniform float u_kernel[9];
+        uniform float u_kernelWeight;
+
+        in vec2 v_texCoord;
+        out vec4 fragColor;
+
+        void main() {
+          vec2 onePixel = vec2(1.0, 1.0) / u_textureSize;
+          vec4 colorSum =
+              texture(u_image, v_texCoord + onePixel * vec2(-1, -1)) * u_kernel[0] +
+              texture(u_image, v_texCoord + onePixel * vec2( 0, -1)) * u_kernel[1] +
+              texture(u_image, v_texCoord + onePixel * vec2( 1, -1)) * u_kernel[2] +
+              texture(u_image, v_texCoord + onePixel * vec2(-1,  0)) * u_kernel[3] +
+              texture(u_image, v_texCoord + onePixel * vec2( 0,  0)) * u_kernel[4] +
+              texture(u_image, v_texCoord + onePixel * vec2( 1,  0)) * u_kernel[5] +
+              texture(u_image, v_texCoord + onePixel * vec2(-1,  1)) * u_kernel[6] +
+              texture(u_image, v_texCoord + onePixel * vec2( 0,  1)) * u_kernel[7] +
+              texture(u_image, v_texCoord + onePixel * vec2( 1,  1)) * u_kernel[8] ;
+          fragColor = vec4((colorSum / u_kernelWeight).rgb, 1);
+        }`
+
+      const image = new Image()
+      image.onload = () => {
+        start(image)
+      }
+      image.src = "../images/sunset.png"
+
+      function start(image) {
+        const program = new Cubets.GLProgram(vs, fs)
+
+        // context
+        const {width, height} = image
+        const aPosition = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
+        aPosition.buffer = Cubets.GLBuffer.f32([
+          0, 0,
+          width, 0,
+          0, height,
+          0, height,
+          width, 0,
+          width, height,
+        ])
+        const aTexCoord = new Cubets.GLAttribute("a_texCoord", 2, Cubets.GL.FLOAT)
+        aTexCoord.buffer = Cubets.GLBuffer.f32([
+          0.0,  0.0,
+          1.0,  0.0,
+          0.0,  1.0,
+          0.0,  1.0,
+          1.0,  0.0,
+          1.0,  1.0,
+        ])
+
+        const texture = new Cubets.GLTexture(Cubets.GL.TEXTURE_2D, image)
+        texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
+        texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
+        texture.minFilter = Cubets.GL.NEAREST
+        texture.magFilter = Cubets.GL.NEAREST
+
+        const uImage = new Cubets.GLUniform("u_image", "1i", texture)
+        const uResolution = new Cubets.GLUniform("u_resolution", "2f", [600 ,600])
+        const uTextureSize = new Cubets.GLUniform("u_textureSize", "2f", [width, height])
+        const uKernel = new Cubets.GLUniform("u_kernel[0]", "1fv", [
+          -1, -1, -1,
+          -1,  8, -1,
+          -1, -1, -1
+        ])
+        const uKernelWeight = new Cubets.GLUniform("u_kernelWeight", "1f", 1)
+
+        const context = new Cubets.GLContext()
+        context.addAttribute(aPosition)
+        context.addAttribute(aTexCoord)
+        context.addUniform(uImage)
+        context.addUniform(uResolution)
+        context.addUniform(uTextureSize)
+        context.addUniform(uKernel)
+        context.addUniform(uKernelWeight)
+
+        // run the program on the context
+        const renderer = new Cubets.GL2Renderer("#cubets") 
+        renderer.draw(program, context)
+      }
+    </script>
+  </body>
+</html>

@@ -10,11 +10,21 @@ export class GLContext {
   viewport = new GLViewport()
   clearColor = new RGBAColor(0, 0, 0)
 
-  attributes:GLAttribute[] = [] // TODO: attribute(buffer)を更新したらvaoをリセットしないと駄目
+  attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
-  textures = []
+
+  drawMode:number = WebGLRenderingContext.TRIANGLES
+  drawOffset:number = 0
+  drawSize?:number
 
   vao?:WebGLVertexArrayObject
+
+  get assuredDrawSize():number {
+    if (this.drawSize) return this.drawSize
+    if (this.attributes.length === 0) throw `invalid draw size`
+    const firstAttr = this.attributes[0]
+    return firstAttr.drawSize()
+  }
 
   add(param:GLAttribute | GLUniform) {
     if (param instanceof GLAttribute) {
@@ -54,17 +64,18 @@ export class GLContext {
   }
     
   uploadVariables(renderer:GL2Renderer) {
-    if (!this.vao) { 
+    const attrUpdated = this.attributes.some(a => a.updated)
+    if (!this.vao || attrUpdated) { 
       this.vao = renderer.setupVAO(() => {
         this.attributes.forEach(attribute => {
-          renderer.uploadAttribute(attribute)
+          if (attribute.updated) renderer.uploadAttribute(attribute)
         })
       })
     }
     renderer.bindVertexArray(this.vao)
 
     this.uniforms.forEach(uniform => {
-      renderer.uploadUniform(uniform)
+      if (uniform.updated) renderer.uploadUniform(uniform)
     })
   }
 } 

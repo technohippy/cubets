@@ -14,4 +14,11 @@ export class GLBuffer {
     this.target = target
     this.usage = usage
   }
+
+  update(fn:(data:number[]) => number[]) {
+    const newData = fn([...this.data])
+
+    //@ts-ignore
+    this.data = new this.data.constructor(newData)
+  }
 }
