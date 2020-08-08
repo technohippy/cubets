@@ -70,6 +70,28 @@
           fragColor = vec4((colorSum / u_kernelWeight).rgb, 1);
         }`
 
+      const kernels = [
+        [ // edgeDetect2
+          -1, -1, -1,
+          -1,  8, -1,
+          -1, -1, -1
+        ],
+        [ // gaussianBlur3
+          0, 1, 0,
+          1, 1, 1,
+          0, 1, 0
+        ],
+        [ // emboss
+          -2, -1,  0,
+          -1,  1,  1,
+           0,  1,  2        
+        ]
+      ]
+      const kernelWeights = kernels.map(kernel => {
+        const w = kernel.reduce((s, e) => s + e)
+        return w <= 0 ? 1 : w
+      })
+
       const image = new Image()
       image.onload = () => {
         start(image)
@@ -80,15 +102,16 @@
         const program = new Cubets.GLProgram(vs, fs)
 
         // context
-        const {width, height} = image
+        const {width:canvasWidth, height:canvasHeight} = document.getElementById("cubets")
+        const {width:imageWidth, height:imageHeight} = image
         const aPosition = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
         aPosition.buffer = Cubets.GLBuffer.f32([
           0, 0,
-          width, 0,
-          0, height,
-          0, height,
-          width, 0,
-          width, height,
+          imageWidth, 0,
+          0, imageHeight,
+          0, imageHeight,
+          imageWidth, 0,
+          imageWidth, imageHeight,
         ])
         const aTexCoord = new Cubets.GLAttribute("a_texCoord", 2, Cubets.GL.FLOAT)
         aTexCoord.buffer = Cubets.GLBuffer.f32([
@@ -107,22 +130,38 @@
         texture.magFilter = Cubets.GL.NEAREST
 
         const uImage = new Cubets.GLUniformI1("u_image", texture)
-        const uResolution = new Cubets.GLUniformF2("u_resolution", [600 ,400])
-        const uTextureSize = new Cubets.GLUniformF2("u_textureSize", [width, height])
-        const uKernel = new Cubets.GLUniformFv1("u_kernel[0]", [
-          -1, -1, -1,
-          -1,  8, -1,
-          -1, -1, -1
-        ])
-        const uKernelWeight = new Cubets.GLUniformF1("u_kernelWeight", 1)
+        const uResolution = new Cubets.GLUniformF2("u_resolution", [canvasWidth, canvasHeight])
+        const uTextureSize = new Cubets.GLUniformF2("u_textureSize", [imageWidth, imageHeight])
+        const uKernel = new Cubets.GLUniformFv1("u_kernel[0]", [])
+        const uKernelWeight = new Cubets.GLUniformF1("u_kernelWeight", 0)
 
         const context = new Cubets.GLContext()
         context.add(aPosition, aTexCoord)
         context.add(uImage, uResolution, uTextureSize, uKernel, uKernelWeight)
 
+        const framebuffers = [
+          new Cubets.GLFramebuffer(imageWidth, imageHeight),
+          new Cubets.GLFramebuffer(imageWidth, imageHeight),
+        ]
+
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 
-        renderer.draw(program, context)
+
+        kernels.forEach((kernel, i) => {
+          const kernelWeight = kernelWeights[i]
+          uKernel.updateValue(kernel)
+          uKernelWeight.updateValue(kernelWeight)
+
+          if (i === framebuffers.length-1) {
+            context.framebuffer = null
+          } else {
+            context.framebuffer = framebuffers[i % 2]
+          }
+
+          renderer.draw(program, context)
+
+          uImage.updateValue(context.framebuffer.texture)
+        })
       }
     </script>
   </body>

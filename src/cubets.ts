@@ -52,6 +52,7 @@ import { GLImage } from "./gl/glimage.js"
 import { GLTexture } from "./gl/gltexture.js"
 import { GLBuffer } from "./gl/glbuffer.js"
 import { GLContext } from "./gl/glcontext.js"
+import { GLFramebuffer } from "./gl/glframebuffer.js"
 
 export default {
   Scene: PhongScene,
@@ -118,6 +119,7 @@ export default {
   GLTexture: GLTexture,
   GLBuffer: GLBuffer,
   GLContext: GLContext,
+  GLFramebuffer: GLFramebuffer,
 
   GL: WebGLRenderingContext,
   GL2: WebGL2RenderingContext,

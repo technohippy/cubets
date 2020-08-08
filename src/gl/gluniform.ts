@@ -21,7 +21,7 @@ export class GLUniform {
     }
   }
 
-  updateValue(value:number[] | GLTexture) {
+  updateValue(value:number[] | number | GLTexture) {
     if (value instanceof GLTexture) {
       if (!(this.#value instanceof GLTexture)) {
         throw "current value is not a texture"
@@ -31,7 +31,11 @@ export class GLUniform {
       if (this.#value instanceof GLTexture) {
         throw "current value is not numbers"
       }
-      this.#value = [...value]
+      if (typeof value === "number") {
+        this.#value = [value]
+      } else {
+        this.#value = [...value]
+      }
     }
     this.updated = true
   }

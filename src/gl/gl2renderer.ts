@@ -6,6 +6,7 @@ import { GLUniform } from "./gluniform"
 import { GLViewport } from "./glviewport"
 import { RGBAColor } from "../math/rgbacolor"
 import { GLTexture } from "./gltexture"
+import { GLFramebuffer } from "./glframebuffer"
 
 export class GL2Renderer {
   debug = false
@@ -14,6 +15,7 @@ export class GL2Renderer {
   #gl:WebGL2RenderingContext
 
   lastProgram?:GLProgram
+  lastFramebuffer:GLFramebuffer | null = null
 
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext) {
     if (container instanceof WebGL2RenderingContext) {
@@ -49,7 +51,12 @@ export class GL2Renderer {
 
     context.storeLocations(this, program)
     context.apply(this)
-    this.clear()
+    if (context.framebuffer !== this.lastFramebuffer) {
+      //throw "**TODO**"
+      this.lastFramebuffer = context.framebuffer
+    }
+    if (context.needClear) this.clear()
+
     this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
   }
 
@@ -131,6 +138,8 @@ export class GL2Renderer {
       this.#gl.texParameteri(texture.type, k, v)
     })
     const image = texture.image
+    if (!image) throw 'texture has no image'
+    if (!image.source) throw 'image has no source'
     this.#gl.texImage2D(
       texture.type,
       image.level,

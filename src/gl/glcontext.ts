@@ -4,15 +4,19 @@ import { GL2Renderer } from "./gl2renderer.js"
 import { GLViewport } from "./glviewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 import { GLProgram } from "./glprogram.js"
+import { GLFramebuffer } from "./glframebuffer.js"
 
 export class GLContext {
-  target:WebGLFramebuffer | null = null
+  framebuffer:GLFramebuffer | null = null
   viewport = new GLViewport()
   clearColor = new RGBAColor(0, 0, 0)
 
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
 
+  needClear = true
+
+  // draw call parameters
   drawMode:number = WebGLRenderingContext.TRIANGLES
   drawOffset:number = 0
   drawSize?:number

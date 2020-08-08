@@ -17,12 +17,14 @@ export class GLTexture {
   ])
 
   type:number
-  image:GLImage
+  image:GLImage | null
   params:Map<number, number>
 
-  constructor(type:number, image:GLImage | GLImageSource, params:Map<string, number>=new Map()) {
+  constructor(type:number, image:GLImage | GLImageSource | null, params:Map<string, number>=new Map()) {
     this.type = type
-    if (image instanceof GLImage) {
+    if (!image) {
+      this.image = null
+    } else if (image instanceof GLImage) {
       this.image = image
     } else {
       this.image = new GLImage(image)
