@@ -16,7 +16,7 @@ export class GLImage {
     this.level = params.get("level") || 0
     this.internalFormat = params.get("internalFormat") || WebGLRenderingContext.RGBA
     const width = params.get("width")
-    const height = params.get("height0")
+    const height = params.get("height")
     if (!source) {
       if (!width) throw `width must be set`
       if (!height) throw `height must be set`

@@ -17,6 +17,8 @@ export class GL2Renderer {
   lastProgram?:GLProgram
   lastFramebuffer:GLFramebuffer | null = null
 
+  textureUnit = 0
+
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext) {
     if (container instanceof WebGL2RenderingContext) {
       this.container = container.canvas
@@ -41,6 +43,7 @@ export class GL2Renderer {
   }
 
   draw(program:GLProgram, context:GLContext) {
+    this.textureUnit = 0
     if (this.lastProgram !== program || !program.prepared()) {
       if (!program.prepared()) {
         program.prepare(this)
@@ -52,7 +55,9 @@ export class GL2Renderer {
     context.storeLocations(this, program)
     context.apply(this)
     if (context.framebuffer !== this.lastFramebuffer) {
-      //throw "**TODO**"
+      if (context.framebuffer && !context.framebuffer?.prepared()) {
+        context.framebuffer.prepare(this)
+      }
       this.lastFramebuffer = context.framebuffer
     }
     if (context.needClear) this.clear()
@@ -129,17 +134,20 @@ export class GL2Renderer {
   }
 
   uploadTexture(texture:GLTexture):number {
-    const textureUnit = 0 // TODO
+    if (!texture.texture) {
+      const tex = this.#gl.createTexture()
+      if (!tex) throw `fail to create texture`
+      texture.texture = tex
+    }
 
-    const tex = this.#gl.createTexture()
-    this.#gl.activeTexture(this.#gl.TEXTURE0 + textureUnit)
-    this.#gl.bindTexture(texture.type, tex)
+    this.#gl.activeTexture(this.#gl.TEXTURE0 + this.textureUnit)
+    this.#gl.bindTexture(texture.type, texture.texture)
     texture.params.forEach((v, k) => {
       this.#gl.texParameteri(texture.type, k, v)
     })
     const image = texture.image
     if (!image) throw 'texture has no image'
-    if (!image.source) throw 'image has no source'
+    //if (!image.source) throw 'image has no source'
     this.#gl.texImage2D(
       texture.type,
       image.level,
@@ -149,10 +157,28 @@ export class GL2Renderer {
       image.border,
       image.format,
       image.type,
-      image.source
+      image.source! // null ok
     )
 
-    return textureUnit
+    this.textureUnit++
+    return this.textureUnit - 1
+  }
+
+  createFramebuffer(glfb:GLFramebuffer): WebGLFramebuffer {
+    this.uploadTexture(glfb.texture)
+
+    const framebuffer = this.#gl.createFramebuffer()
+    this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, framebuffer)
+    if (!framebuffer) throw `fail to create framebuffer`
+
+    this.#gl.framebufferTexture2D(
+      this.#gl.FRAMEBUFFER,
+      this.#gl.COLOR_ATTACHMENT0,
+      this.#gl.TEXTURE_2D,
+      glfb.texture.texture || null,
+      0
+    )
+    return framebuffer
   }
 
   // wrap

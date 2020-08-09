@@ -148,19 +148,23 @@
         const renderer = new Cubets.GL2Renderer("#cubets") 
 
         kernels.forEach((kernel, i) => {
+          console.log("kernel", i)
           const kernelWeight = kernelWeights[i]
           uKernel.updateValue(kernel)
           uKernelWeight.updateValue(kernelWeight)
 
-          if (i === framebuffers.length-1) {
-            context.framebuffer = null
-          } else {
+          if (i !== kernels.length-1) {
+            // render to framebuffer
+            console.log("render to framebuffer", i)
             context.framebuffer = framebuffers[i % 2]
+            renderer.draw(program, context)
+            uImage.updateValue(context.framebuffer.texture)
+          } else {
+            // render to screen
+            console.log("render to screen", i)
+            context.framebuffer = null
+            renderer.draw(program, context)
           }
-
-          renderer.draw(program, context)
-
-          uImage.updateValue(context.framebuffer.texture)
         })
       }
     </script>
