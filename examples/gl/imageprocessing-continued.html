@@ -22,7 +22,7 @@
     <a href="https://webglfundamentals.org/webgl/lessons/webgl-image-processing-continued.html">
       https://webglfundamentals.org/webgl/lessons/webgl-image-processing-continued.html
     </a><br>
-    <canvas id="cubets" width="600" height="400"></canvas>
+    <canvas id="cubets" width="200" height="200"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <script type="module">
       import Cubets from "../../dist/cubets.js"
@@ -33,6 +33,7 @@
         in vec2 a_texCoord;
 
         uniform vec2 u_resolution;
+        uniform float u_flipY;
 
         out vec2 v_texCoord;
 
@@ -41,7 +42,7 @@
           vec2 zeroToTwo = zeroToOne * 2.0;
           vec2 clipSpace = zeroToTwo - 1.0;
 
-          gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+          gl_Position = vec4(clipSpace * vec2(1, u_flipY), 0, 1);
           v_texCoord = a_texCoord;
         }`
       const fs = `#version 300 es
@@ -76,27 +77,33 @@
           -1,  8, -1,
           -1, -1, -1
         ],
-        [ // gaussianBlur3
-          0, 1, 0,
-          1, 1, 1,
-          0, 1, 0
-        ],
         [ // emboss
           -2, -1,  0,
           -1,  1,  1,
            0,  1,  2        
-        ]
+        ],
+        [ // boxBlur
+          0.111, 0.111, 0.111,
+          0.111, 0.111, 0.111,
+          0.111, 0.111, 0.111
+        ],
       ]
       const kernelWeights = kernels.map(kernel => {
         const w = kernel.reduce((s, e) => s + e)
         return w <= 0 ? 1 : w
       })
 
-      const image = new Image()
-      image.onload = () => {
-        start(image)
+      function loadImage(url) {
+        return new Promise((resolve, reject) => {
+          const image = new Image()
+          image.onload = () => {
+            resolve(image)
+          }
+          image.src = url
+        })
       }
-      image.src = "../images/sunset_small.png"
+
+      loadImage("../images/sunset_small.png").then(image => start(image))
 
       function start(image) {
         const program = new Cubets.GLProgram(vs, fs)
@@ -131,41 +138,46 @@
 
         const uImage = new Cubets.GLUniformI1("u_image", texture)
         const uResolution = new Cubets.GLUniformF2("u_resolution", [canvasWidth, canvasHeight])
+        const uFlipY = new Cubets.GLUniformF1("u_flipY", 1)
         const uTextureSize = new Cubets.GLUniformF2("u_textureSize", [imageWidth, imageHeight])
         const uKernel = new Cubets.GLUniformFv1("u_kernel[0]", [])
         const uKernelWeight = new Cubets.GLUniformF1("u_kernelWeight", 0)
 
         const context = new Cubets.GLContext()
         context.add(aPosition, aTexCoord)
-        context.add(uImage, uResolution, uTextureSize, uKernel, uKernelWeight)
+        context.add(uImage, uResolution, uFlipY, uTextureSize, uKernel, uKernelWeight)
 
         const framebuffers = [
-          new Cubets.GLFramebuffer(imageWidth, imageHeight),
-          new Cubets.GLFramebuffer(imageWidth, imageHeight),
+          new Cubets.GLFramebuffer(canvasWidth, canvasHeight),
+          new Cubets.GLFramebuffer(canvasWidth, canvasHeight),
         ]
 
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 
+renderer.debug = true
 
         kernels.forEach((kernel, i) => {
-          console.log("kernel", i)
-          const kernelWeight = kernelWeights[i]
-          uKernel.updateValue(kernel)
-          uKernelWeight.updateValue(kernelWeight)
+          console.log("render to framebuffer", i)
 
-          if (i !== kernels.length-1) {
-            // render to framebuffer
-            console.log("render to framebuffer", i)
-            context.framebuffer = framebuffers[i % 2]
-            renderer.draw(program, context)
-            uImage.updateValue(context.framebuffer.texture)
-          } else {
-            // render to screen
-            console.log("render to screen", i)
-            context.framebuffer = null
-            renderer.draw(program, context)
-          }
+          // set new kernel
+          uKernel.updateValue(kernel)
+          uKernelWeight.updateValue(kernelWeights[i])
+
+          // render to framebuffer
+          context.framebuffer = framebuffers[i % 2]
+          renderer.draw(program, context)
+
+          // copy framebuffer to texture
+          uImage.updateValue(context.framebuffer.texture)
         })
+        
+        // render to screen
+        console.log("render to screen")
+        uKernel.updateValue([0, 0, 0, 0, 1, 0, 0, 0, 0])
+        uKernelWeight.updateValue(1)
+        uFlipY.updateValue(-1)
+        context.framebuffer = null
+        renderer.draw(program, context)
       }
     </script>
   </body>

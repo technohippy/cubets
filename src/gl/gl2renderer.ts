@@ -44,8 +44,10 @@ export class GL2Renderer {
 
   draw(program:GLProgram, context:GLContext) {
     this.textureUnit = 0
+
     if (this.lastProgram !== program || !program.prepared()) {
       if (!program.prepared()) {
+        this._debug("prepare program")
         program.prepare(this)
       }
       program.use(this)
@@ -54,13 +56,17 @@ export class GL2Renderer {
 
     context.storeLocations(this, program)
     context.apply(this)
+
     if (context.framebuffer !== this.lastFramebuffer) {
-      if (context.framebuffer && !context.framebuffer?.prepared()) {
-        context.framebuffer.prepare(this)
-      }
+      this._debug("setup framebuffer")
+      context.setupFramebuffer(this)
       this.lastFramebuffer = context.framebuffer
     }
-    if (context.needClear) this.clear()
+
+    if (context.needClear) {
+      this._debug("clear")
+      this.clear()
+    }
 
     this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
   }
@@ -119,7 +125,7 @@ export class GL2Renderer {
   }
 
   uploadAttribute(attribute:GLAttribute) {
-    if (this.debug) console.log(`upload attribute: ${attribute.name}`)
+    this._debug(`upload attribute: ${attribute.name}`)
 
     attribute.uploadBufferData(this)
     if (attribute.location < 0) throw `no attribute location: ${attribute.name}`
@@ -128,26 +134,30 @@ export class GL2Renderer {
   }
 
   uploadUniform(uniform:GLUniform) {
-    if (this.debug) console.log(`upload uniform: ${uniform.name}`)
+    this._debug(`upload uniform: ${uniform.name}`)
 
     uniform.upload(this)
   }
 
-  uploadTexture(texture:GLTexture):number {
+  uploadTexture(texture:GLTexture) {
+    this._debug("upload texture", texture, texture.image?.source)
+
     if (!texture.texture) {
+      this._debug("create texture")
+
       const tex = this.#gl.createTexture()
-      if (!tex) throw `fail to create texture`
+      if (!tex) throw "fail to create texture"
       texture.texture = tex
     }
+    texture.textureUnit = this.textureUnit
 
-    this.#gl.activeTexture(this.#gl.TEXTURE0 + this.textureUnit)
+    this.#gl.activeTexture(this.#gl.TEXTURE0 + texture.textureUnit)
     this.#gl.bindTexture(texture.type, texture.texture)
     texture.params.forEach((v, k) => {
       this.#gl.texParameteri(texture.type, k, v)
     })
     const image = texture.image
     if (!image) throw 'texture has no image'
-    //if (!image.source) throw 'image has no source'
     this.#gl.texImage2D(
       texture.type,
       image.level,
@@ -160,24 +170,48 @@ export class GL2Renderer {
       image.source! // null ok
     )
 
+    texture.updated = false
     this.textureUnit++
-    return this.textureUnit - 1
   }
 
-  createFramebuffer(glfb:GLFramebuffer): WebGLFramebuffer {
+  setupFramebuffer(glfb:GLFramebuffer | null): WebGLFramebuffer | null {
+    if (!glfb) {
+      this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, null)
+      return null
+    }
+
+    // texture2d
     this.uploadTexture(glfb.texture)
 
-    const framebuffer = this.#gl.createFramebuffer()
-    this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, framebuffer)
-    if (!framebuffer) throw `fail to create framebuffer`
+    // renderbuffer
+    const {width, height} = glfb.texture.image!
+    const renderbuffer = this.#gl.createRenderbuffer()
+    if (!renderbuffer) throw "fail to create renderbuffer"
+    this.#gl.bindRenderbuffer(this.#gl.RENDERBUFFER, renderbuffer)
+    this.#gl.renderbufferStorage(this.#gl.RENDERBUFFER, this.#gl.DEPTH_COMPONENT16, width, height)
 
+    // framebuffer
+    const framebuffer = this.#gl.createFramebuffer()
+    if (!framebuffer) throw "fail to create framebuffer"
+    this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, framebuffer)
+    //this.#gl.viewport(0, 0, 400, 600) // TODO
+
+    if (!glfb.texture.texture) throw "framebuffer has no texture"
     this.#gl.framebufferTexture2D(
       this.#gl.FRAMEBUFFER,
       this.#gl.COLOR_ATTACHMENT0,
       this.#gl.TEXTURE_2D,
-      glfb.texture.texture || null,
+      glfb.texture.texture,
       0
     )
+
+    this.#gl.framebufferRenderbuffer(
+      this.#gl.FRAMEBUFFER,
+      this.#gl.DEPTH_ATTACHMENT,
+      this.#gl.RENDERBUFFER,
+      renderbuffer,
+    )
+
     return framebuffer
   }
 
@@ -236,5 +270,11 @@ export class GL2Renderer {
       default:
         throw `unsupported type: ${type}`
     }
+  }
+
+  _debug(...args: any[]) {
+    args.unshift("[")
+    args.push("]")
+    if (this.debug) console.log(...args)
   }
 }

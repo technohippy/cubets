@@ -21,6 +21,9 @@ export class GLTexture {
   image:GLImage | null
   params:Map<number, number>
 
+  updated = false
+  textureUnit:number = -1
+
   constructor(type:number, image:GLImage | GLImageSource, params:Map<string, number>=new Map()) {
     this.type = type
     if (image instanceof GLImage) {

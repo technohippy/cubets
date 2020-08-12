@@ -42,9 +42,13 @@ export class GLUniform {
 
   upload(renderer:GL2Renderer) {
     if (!this.location) throw `no uniform location: ${this.name}`
+
     if (this.#value instanceof GLTexture) {
-      const unit = renderer.uploadTexture(this.#value)
-      renderer.uniform(this.type, this.location, [unit])
+      const texture = this.#value
+      if (texture.updated || texture.textureUnit < 0) {
+        renderer.uploadTexture(texture)
+      }
+      renderer.uniform(this.type, this.location, [texture.textureUnit])
     } else {
       renderer.uniform(this.type, this.location, this.#value)
     }

@@ -3,18 +3,20 @@ import { GL2Renderer } from "./gl2renderer.js"
 import { GLImage } from "./glimage.js"
 
 export class GLFramebuffer {
-  framebuffer?: WebGLFramebuffer
+  framebuffer: WebGLFramebuffer | null = null
 
   texture:GLTexture
-  
+
   constructor(width:number, height:number) {
-    const imageParams = new Map<string, number>()
-    imageParams.set("width", width)
-    imageParams.set("height", height)
-    const image = new GLImage(null, imageParams)
+    const image = new GLImage(null, new Map([
+      ["width", width],
+      ["height", height],
+    ]))
     this.texture = new GLTexture(WebGLRenderingContext.TEXTURE_2D, image)
     this.texture.minFilter = WebGLRenderingContext.NEAREST
     this.texture.magFilter = WebGLRenderingContext.NEAREST
+    this.texture.wrapS = WebGLRenderingContext.CLAMP_TO_EDGE
+    this.texture.wrapT = WebGLRenderingContext.CLAMP_TO_EDGE
   }
 
   prepared(): boolean {
@@ -22,6 +24,6 @@ export class GLFramebuffer {
   }
 
   prepare(renderer:GL2Renderer) {
-    this.framebuffer = renderer.createFramebuffer(this)
+    this.framebuffer = renderer.setupFramebuffer(this)
   }
 }

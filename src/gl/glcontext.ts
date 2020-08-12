@@ -1,5 +1,5 @@
 import { GLAttribute } from "./glattribute.js"
-import { GLUniform } from "./gluniform.js"
+import { GLUniform, GLUniformFv1 } from "./gluniform.js"
 import { GL2Renderer } from "./gl2renderer.js"
 import { GLViewport } from "./glviewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
@@ -8,8 +8,9 @@ import { GLFramebuffer } from "./glframebuffer.js"
 
 export class GLContext {
   framebuffer:GLFramebuffer | null = null
+
   viewport = new GLViewport()
-  clearColor = new RGBAColor(0, 0, 0)
+  clearColor = new RGBAColor(0, 0, 0.5)
 
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
@@ -66,7 +67,6 @@ export class GLContext {
     renderer.viewport(this.viewport)
     renderer.clearColor(this.clearColor)
     // TODO: texture
-    // TODO: render target
   }
     
   uploadVariables(renderer:GL2Renderer) {
@@ -83,5 +83,21 @@ export class GLContext {
     this.uniforms.forEach(uniform => {
       if (uniform.updated) renderer.uploadUniform(uniform)
     })
+  }
+
+  setupFramebuffer(renderer:GL2Renderer) {
+    if (!this.framebuffer) { // to screen
+      renderer.setupFramebuffer(null)
+    } else if (!this.framebuffer.prepared()) {
+      this.framebuffer.prepare(renderer)
+    }
+  }
+
+  uniform(name:string):GLUniform | undefined {
+    return this.uniforms.find(u => u.name === name)
+  }
+
+  attribute(name:string):GLAttribute | undefined {
+    return this.attributes.find(a => a.name === name)
   }
 } 
