@@ -46,6 +46,7 @@ import { OBJGeometryLoader } from "./misc/objgeometryloader.js"
 
 import { GL2Renderer } from "./gl/gl2renderer.js"
 import { GLProgram } from "./gl/glprogram.js"
+import { GLIndex } from "./gl/glindex.js"
 import { GLAttribute } from "./gl/glattribute.js"
 import { GLUniform, GLUniformI1, GLUniformF1, GLUniformF2, GLUniformFv1 } from "./gl/gluniform.js"
 import { GLImage } from "./gl/glimage.js"
@@ -109,6 +110,7 @@ export default {
 
   GL2Renderer: GL2Renderer,
   GLProgram: GLProgram,
+  GLIndex: GLIndex,
   GLAttribute: GLAttribute,
   GLUniform: GLUniform,
   GLUniformI1: GLUniformI1,

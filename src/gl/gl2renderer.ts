@@ -7,6 +7,7 @@ import { GLViewport } from "./glviewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 import { GLTexture } from "./gltexture.js"
 import { GLFramebuffer } from "./glframebuffer.js"
+import { GLIndex } from "./glindex.js"
 
 export class GL2Renderer {
   debug = false
@@ -78,7 +79,12 @@ export class GL2Renderer {
       this.clear()
     }
 
-    this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
+    if (context.index) {
+      context.index.bind(this)
+      this.#gl.drawElements(context.drawMode, context.assuredDrawSize, context.index.type, 0)
+    } else {
+      this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
+    }
   }
 
   createProgram(vertexShaderSource:string, fragmentShaderSource:string):WebGLProgram {
@@ -118,8 +124,15 @@ export class GL2Renderer {
 
   bufferData(data:GLBuffer) {
     const buffer = this.#gl.createBuffer()
-    this.#gl.bindBuffer(data.target, buffer)
+    if (!buffer) throw "fail to create buffer"
+    data.buffer = buffer
+    this.bindBuffer(data)
     this.#gl.bufferData(data.target, data.data, data.usage)
+  }
+
+  bindBuffer(data:GLBuffer) {
+    if (!data.buffer) throw "no buffer"
+    this.#gl.bindBuffer(data.target, data.buffer)
   }
 
   setupVAO(fn:()=>void):WebGLVertexArrayObject {
@@ -132,6 +145,12 @@ export class GL2Renderer {
     this.#gl.bindBuffer(this.#gl.ARRAY_BUFFER, null)
 
     return vao
+  }
+
+  uploadIndex(index:GLIndex) {
+    this._debug("upload index")
+
+    index.uploadBufferData(this)
   }
 
   uploadAttribute(attribute:GLAttribute) {

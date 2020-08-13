@@ -5,6 +5,12 @@ export class GLBuffer {
   target:number
   usage:number
 
+  buffer?:WebGLBuffer
+
+  static ui16(data:number[], target:number=WebGL2RenderingContext.ARRAY_BUFFER, usage:number=WebGL2RenderingContext.STATIC_DRAW):GLBuffer {
+    return new GLBuffer(new Uint16Array(data), target, usage)
+  }
+
   static f32(data:number[], target:number=WebGL2RenderingContext.ARRAY_BUFFER, usage:number=WebGL2RenderingContext.STATIC_DRAW):GLBuffer {
     return new GLBuffer(new Float32Array(data), target, usage)
   }

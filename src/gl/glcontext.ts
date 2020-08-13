@@ -1,17 +1,19 @@
 import { GLAttribute } from "./glattribute.js"
-import { GLUniform, GLUniformFv1 } from "./gluniform.js"
+import { GLUniform } from "./gluniform.js"
 import { GL2Renderer } from "./gl2renderer.js"
 import { GLViewport } from "./glviewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 import { GLProgram } from "./glprogram.js"
 import { GLFramebuffer } from "./glframebuffer.js"
+import { GLIndex } from "./glindex.js"
 
 export class GLContext {
   framebuffer:GLFramebuffer | null = null
 
   viewport = new GLViewport()
-  clearColor = new RGBAColor(0, 0, 0.5)
+  clearColor = new RGBAColor(0, 0, 0)
 
+  index?:GLIndex
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
 
@@ -26,6 +28,7 @@ export class GLContext {
 
   get assuredDrawSize():number {
     if (this.drawSize) return this.drawSize
+    if (this.index) return this.index.drawSize()
     if (this.attributes.length === 0) throw `invalid draw size`
     const firstAttr = this.attributes[0]
     return firstAttr.drawSize()
@@ -33,12 +36,19 @@ export class GLContext {
 
   add(...params:(GLAttribute | GLUniform)[]) {
     params.forEach(param => {
-      if (param instanceof GLAttribute) {
+      if (param instanceof GLIndex) {
+        this.setIndex(param)
+      } else if (param instanceof GLAttribute) {
         this.addAttribute(param)
       } else {
         this.addUniform(param)
       }
     })
+  }
+
+  setIndex(index:GLIndex) {
+    if (this.index) console.warn("index is updated")
+    this.index = index
   }
 
   addAttribute(attribute:GLAttribute) {
@@ -70,6 +80,12 @@ export class GLContext {
   }
     
   uploadVariables(renderer:GL2Renderer) {
+    // index
+    if (this.index?.updated) {
+      renderer.uploadIndex(this.index)
+    }
+
+    // attributes
     const attrUpdated = this.attributes.some(a => a.updated)
     if (!this.vao || attrUpdated) { 
       this.vao = renderer.setupVAO(() => {
@@ -80,6 +96,7 @@ export class GLContext {
     }
     renderer.bindVertexArray(this.vao)
 
+    // uniforms
     this.uniforms.forEach(uniform => {
       if (uniform.updated) renderer.uploadUniform(uniform)
     })
