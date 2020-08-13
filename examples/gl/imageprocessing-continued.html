@@ -72,6 +72,11 @@
         }`
 
       const kernels = [
+        [ // sharpen
+          -1, -1, -1,
+          -1, 16, -1,
+          -1, -1, -1
+        ],
         [ // edgeDetect2
           -1, -1, -1,
           -1,  8, -1,
@@ -154,11 +159,9 @@
 
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 
-renderer.debug = true
+        //renderer.debug = true
 
         kernels.forEach((kernel, i) => {
-          console.log("render to framebuffer", i)
-
           // set new kernel
           uKernel.updateValue(kernel)
           uKernelWeight.updateValue(kernelWeights[i])
@@ -167,12 +170,11 @@ renderer.debug = true
           context.framebuffer = framebuffers[i % 2]
           renderer.draw(program, context)
 
-          // copy framebuffer to texture
+          // copy framebuffer to uniform image
           uImage.updateValue(context.framebuffer.texture)
         })
         
         // render to screen
-        console.log("render to screen")
         uKernel.updateValue([0, 0, 0, 0, 1, 0, 0, 0, 0])
         uKernelWeight.updateValue(1)
         uFlipY.updateValue(-1)

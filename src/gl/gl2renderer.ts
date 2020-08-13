@@ -1,12 +1,12 @@
-import { GLProgram } from "./glprogram"
-import { GLContext } from "./glcontext"
-import { GLBuffer } from "./glbuffer"
-import { GLAttribute } from "./glattribute"
-import { GLUniform } from "./gluniform"
-import { GLViewport } from "./glviewport"
-import { RGBAColor } from "../math/rgbacolor"
-import { GLTexture } from "./gltexture"
-import { GLFramebuffer } from "./glframebuffer"
+import { GLProgram } from "./glprogram.js"
+import { GLContext } from "./glcontext.js"
+import { GLBuffer } from "./glbuffer.js"
+import { GLAttribute } from "./glattribute.js"
+import { GLUniform } from "./gluniform.js"
+import { GLViewport } from "./glviewport.js"
+import { RGBAColor } from "../math/rgbacolor.js"
+import { GLTexture } from "./gltexture.js"
+import { GLFramebuffer } from "./glframebuffer.js"
 
 export class GL2Renderer {
   debug = false
@@ -17,7 +17,11 @@ export class GL2Renderer {
   lastProgram?:GLProgram
   lastFramebuffer:GLFramebuffer | null = null
 
-  textureUnit = 0
+  maxTextureUnits:number
+  maxVertexShaderTextureUnits:number
+  maxFragmentShaderTextureUnits:number
+  minTextureUnits:number
+  #textureUnitUsage:Array<boolean>
 
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext) {
     if (container instanceof WebGL2RenderingContext) {
@@ -38,13 +42,18 @@ export class GL2Renderer {
         throw "fail to get webgl2 context"
       }
       this.#gl = gl
-      this.#gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
     }
+
+    this.maxTextureUnits = this.#gl.getParameter(this.#gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS)
+    this.maxVertexShaderTextureUnits = this.#gl.getParameter(this.#gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)
+    this.maxFragmentShaderTextureUnits = this.#gl.getParameter(this.#gl.MAX_TEXTURE_IMAGE_UNITS)
+    this.minTextureUnits = Math.min(this.maxTextureUnits, this.maxVertexShaderTextureUnits, this.maxFragmentShaderTextureUnits)
+    this.#textureUnitUsage = new Array<boolean>(this.minTextureUnits).fill(false)
+
+    this.#gl.pixelStorei(this.#gl.UNPACK_ALIGNMENT, 1)
   }
 
   draw(program:GLProgram, context:GLContext) {
-    this.textureUnit = 0
-
     if (this.lastProgram !== program || !program.prepared()) {
       if (!program.prepared()) {
         this._debug("prepare program")
@@ -59,6 +68,7 @@ export class GL2Renderer {
 
     if (context.framebuffer !== this.lastFramebuffer) {
       this._debug("setup framebuffer")
+      this.deleteFramebuffer(this.lastFramebuffer)
       context.setupFramebuffer(this)
       this.lastFramebuffer = context.framebuffer
     }
@@ -149,7 +159,10 @@ export class GL2Renderer {
       if (!tex) throw "fail to create texture"
       texture.texture = tex
     }
-    texture.textureUnit = this.textureUnit
+
+    if (texture.textureUnit < 0) {
+      texture.textureUnit = this._reserveTextureUnit()
+    }
 
     this.#gl.activeTexture(this.#gl.TEXTURE0 + texture.textureUnit)
     this.#gl.bindTexture(texture.type, texture.texture)
@@ -171,7 +184,6 @@ export class GL2Renderer {
     )
 
     texture.updated = false
-    this.textureUnit++
   }
 
   setupFramebuffer(glfb:GLFramebuffer | null): WebGLFramebuffer | null {
@@ -194,7 +206,6 @@ export class GL2Renderer {
     const framebuffer = this.#gl.createFramebuffer()
     if (!framebuffer) throw "fail to create framebuffer"
     this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, framebuffer)
-    //this.#gl.viewport(0, 0, 400, 600) // TODO
 
     if (!glfb.texture.texture) throw "framebuffer has no texture"
     this.#gl.framebufferTexture2D(
@@ -213,6 +224,12 @@ export class GL2Renderer {
     )
 
     return framebuffer
+  }
+
+  deleteFramebuffer(glfb:GLFramebuffer | null) {
+    if (!glfb) return
+    this.#gl.deleteFramebuffer(glfb.framebuffer)
+    glfb.framebuffer = null
   }
 
   // wrap
@@ -270,6 +287,17 @@ export class GL2Renderer {
       default:
         throw `unsupported type: ${type}`
     }
+  }
+
+  // private
+
+  _reserveTextureUnit():number {
+    for (let i = 0; i < this.#textureUnitUsage.length; i++) {
+      if (this.#textureUnitUsage[i]) continue
+      this.#textureUnitUsage[i] = true
+      return i
+    }
+    throw "texture unit overflow"
   }
 
   _debug(...args: any[]) {
