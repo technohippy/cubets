@@ -13,3 +13,13 @@ function loadCode(url, id) {
     document.getElementById(id).append(pre)
   })
 }
+
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      resolve(image)
+    }
+    image.src = url
+  })
+}

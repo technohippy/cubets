@@ -1,18 +1,18 @@
-import { GLTexture } from "./gltexture.js"
+import { GLTexture2D } from "./gltexture2d.js"
 import { GL2Renderer } from "./gl2renderer.js"
 import { GLImage } from "./glimage.js"
 
 export class GLFramebuffer {
   framebuffer: WebGLFramebuffer | null = null
 
-  texture:GLTexture
+  texture:GLTexture2D
 
   constructor(width:number, height:number) {
     const image = new GLImage(null, new Map([
       ["width", width],
       ["height", height],
     ]))
-    this.texture = new GLTexture(WebGLRenderingContext.TEXTURE_2D, image)
+    this.texture = new GLTexture2D(WebGLRenderingContext.TEXTURE_2D, image)
     this.texture.minFilter = WebGLRenderingContext.NEAREST
     this.texture.magFilter = WebGLRenderingContext.NEAREST
     this.texture.wrapS = WebGLRenderingContext.CLAMP_TO_EDGE

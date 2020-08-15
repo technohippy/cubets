@@ -5,9 +5,10 @@ import { GLAttribute } from "./glattribute.js"
 import { GLUniform } from "./gluniform.js"
 import { GLViewport } from "./glviewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
-import { GLTexture } from "./gltexture.js"
+import { GLTexture2D } from "./gltexture2d.js"
 import { GLFramebuffer } from "./glframebuffer.js"
 import { GLIndex } from "./glindex.js"
+import { GLTextureCube } from "./gltexturecube.js"
 
 export class GL2Renderer {
   debug = false
@@ -168,7 +169,7 @@ export class GL2Renderer {
     uniform.upload(this)
   }
 
-  uploadTexture(texture:GLTexture) {
+  uploadTexture(texture:GLTexture2D) {
     this._debug("upload texture", texture, texture.image?.source)
 
     if (!texture.texture) {
@@ -203,6 +204,44 @@ export class GL2Renderer {
     )
 
     texture.updated = false
+  }
+
+  uploadTextureCube(textureCube:GLTextureCube) {
+    this._debug("upload textureCube", textureCube)
+
+    if (!textureCube.texture) {
+      this._debug("create texture")
+
+      const tex = this.#gl.createTexture()
+      if (!tex) throw "fail to create texture"
+      textureCube.texture = tex
+    }
+
+    if (textureCube.textureUnit < 0) {
+      textureCube.textureUnit = this._reserveTextureUnit()
+    }
+
+    this.#gl.activeTexture(this.#gl.TEXTURE0 + textureCube.textureUnit)
+    this.#gl.bindTexture(textureCube.type, textureCube.texture)
+    textureCube.params.forEach((v, k) => {
+      this.#gl.texParameteri(textureCube.type, k, v)
+    })
+    textureCube.images.forEach((image, type) => {
+      this.#gl.texImage2D(
+        type,
+        image.level,
+        image.internalFormat,
+        image.width,
+        image.height,
+        image.border,
+        image.format,
+        image.type,
+        image.source! // null ok
+      )
+      //this.#gl.generateMipmap(this.#gl.TEXTURE_CUBE_MAP)
+    })
+
+    textureCube.updated = false
   }
 
   setupFramebuffer(glfb:GLFramebuffer | null): WebGLFramebuffer | null {
@@ -302,6 +341,9 @@ export class GL2Renderer {
         break
       case "1fv":
         this.#gl.uniform1fv(location, values)
+        break
+      case "m4fv":
+        this.#gl.uniformMatrix4fv(location, false, values) // TODO
         break
       default:
         throw `unsupported type: ${type}`

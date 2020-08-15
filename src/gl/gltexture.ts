@@ -1,6 +1,4 @@
-import { GLImage, GLImageSource } from "./glimage.js";
-
-export class GLTexture {
+export abstract class GLTexture {
   static _textureParams = new Map<string, number>([
     ["magFilter", WebGLRenderingContext.TEXTURE_MAG_FILTER],
     ["minFilter", WebGLRenderingContext.TEXTURE_MIN_FILTER],
@@ -18,19 +16,13 @@ export class GLTexture {
 
   texture?:WebGLTexture
   type:number
-  image:GLImage | null
   params:Map<number, number>
 
   updated = false
   textureUnit:number = -1
 
-  constructor(type:number, image:GLImage | GLImageSource, params:Map<string, number>=new Map()) {
+  constructor(type:number, params:Map<string, number>=new Map()) {
     this.type = type
-    if (image instanceof GLImage) {
-      this.image = image
-    } else {
-      this.image = new GLImage(image)
-    }
     this.params = new Map()
     params.forEach((v, k) => this._setParam(k, v))
   }
