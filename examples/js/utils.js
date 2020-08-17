@@ -23,3 +23,10 @@ function loadImage(url) {
     image.src = url
   })
 }
+
+function loadImages(urls) {
+  return Promise.all(urls.map(url => loadImage(url)))
+}
+
+function radToDeg(r) { return r * 180 / Math.PI }
+function degToRad(d) { return d * Math.PI / 180 }

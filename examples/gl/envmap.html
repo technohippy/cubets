@@ -155,13 +155,13 @@
         1, 0, 0,
       ]
 
-      Promise.all([
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/negx.jpg"),
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/posx.jpg"),
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/negy.jpg"),
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/posy.jpg"),
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/negz.jpg"),
-        loadImage("../images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"),
+      loadImages([
+        "../images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posz.jpg",
       ]).then(images => start(images))
 
       function start(images) {
@@ -205,9 +205,6 @@
         const context = new Cubets.GLContext()
         context.add(aPosition, aNormal)
         context.add(uTexture, uProjection, uView, uWorld, uWorldCameraPosition)
-
-        function radToDeg(r) { return r * 180 / Math.PI }
-        function degToRad(d) { return d * Math.PI / 180 }
 
         let fieldOfViewRadians = degToRad(60)
         let modelXRotationRadians = degToRad(0)
