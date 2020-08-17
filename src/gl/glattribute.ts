@@ -10,6 +10,8 @@ export class GLAttribute {
   offset:number
   #buffer?:GLBuffer
 
+  divisor?:number
+
   location:number = -1
 
   updated = true
