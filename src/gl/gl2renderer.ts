@@ -25,6 +25,14 @@ export class GL2Renderer {
   minTextureUnits:number
   #textureUnitUsage:Array<boolean>
 
+  get aspectRatio() {
+    if (this.#gl.canvas instanceof HTMLCanvasElement) {
+      return this.#gl.canvas.clientWidth / this.#gl.canvas.clientHeight
+    } else {
+      return this.#gl.canvas.width / this.#gl.canvas.height
+    }
+  }
+
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext) {
     if (container instanceof WebGL2RenderingContext) {
       this.container = container.canvas
@@ -53,6 +61,8 @@ export class GL2Renderer {
     this.#textureUnitUsage = new Array<boolean>(this.minTextureUnits).fill(false)
 
     this.#gl.pixelStorei(this.#gl.UNPACK_ALIGNMENT, 1)
+    this.#gl.enable(this.#gl.CULL_FACE) // TODO: contextで
+    this.#gl.enable(this.#gl.DEPTH_TEST) // TODO: contextで
   }
 
   draw(program:GLProgram, context:GLContext) {
@@ -321,7 +331,7 @@ export class GL2Renderer {
     this.#gl.clearColor(color.r, color.g, color.b, color.a)
   }
 
-  clear(flag:number=WebGL2RenderingContext.COLOR_BUFFER_BIT) {
+  clear(flag:number=WebGL2RenderingContext.COLOR_BUFFER_BIT | WebGL2RenderingContext.DEPTH_BUFFER_BIT) {
     this.#gl.clear(flag)
   }
 

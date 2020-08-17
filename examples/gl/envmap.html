@@ -44,6 +44,8 @@
           gl_Position = u_projection * u_view * u_world * a_position;
           v_worldPosition = (u_world * a_position).xyz;
           v_worldNormal = mat3(u_world) * a_normal;
+
+          //gl_Position = u_world * a_position;
         }`
 
       const fs = `#version 300 es
@@ -173,14 +175,7 @@
         const aNormal = new Cubets.GLAttribute("a_normal", 3, Cubets.GL.FLOAT)
         aNormal.buffer = Cubets.GLBuffer.f32(cubeNormals)
 
-        const textureCube = new Cubets.GLTextureCube(Cubets.GL.TEXTURE_CUBE_MAP, new Map([
-          [Cubets.GL.TEXTURE_CUBE_MAP_NEGATIVE_X, images[0]],
-          [Cubets.GL.TEXTURE_CUBE_MAP_POSITIVE_X, images[1]],
-          [Cubets.GL.TEXTURE_CUBE_MAP_NEGATIVE_Y, images[2]],
-          [Cubets.GL.TEXTURE_CUBE_MAP_POSITIVE_Y, images[3]],
-          [Cubets.GL.TEXTURE_CUBE_MAP_NEGATIVE_Z, images[4]],
-          [Cubets.GL.TEXTURE_CUBE_MAP_POSITIVE_Z, images[5]],
-        ]))
+        const textureCube = new Cubets.GLTextureCube(Cubets.GL.TEXTURE_CUBE_MAP, images)
         textureCube.wrapS = Cubets.GL.CLAMP_TO_EDGE
         textureCube.wrapT = Cubets.GL.CLAMP_TO_EDGE
         textureCube.minFilter = Cubets.GL.NEAREST
@@ -211,9 +206,48 @@
         context.add(aPosition, aNormal)
         context.add(uTexture, uProjection, uView, uWorld, uWorldCameraPosition)
 
+        function radToDeg(r) { return r * 180 / Math.PI }
+        function degToRad(d) { return d * Math.PI / 180 }
+
+        let fieldOfViewRadians = degToRad(60)
+        let modelXRotationRadians = degToRad(0)
+        let modelYRotationRadians = degToRad(0)
+        let cameraYRotationRadians = degToRad(0)
+
+        let spinCamera = true
+        let then = 0
+
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 
-        renderer.draw(program, context)
+        requestAnimationFrame(drawScene)
+
+        function drawScene(time) {
+          time *= 0.001
+          let deltaTime = time - then
+          then = time
+
+          modelYRotationRadians += -0.7 * deltaTime
+          modelXRotationRadians += -0.4 * deltaTime
+
+          let projectionMatrix = mat4.perspective(mat4.create(), fieldOfViewRadians, renderer.aspectRatio, 1, 2000)
+          uProjection.updateValue(projectionMatrix)
+
+          let cameraPosition = [0, 0, 2]
+          uWorldCameraPosition.updateValue(cameraPosition)
+
+          let cameraMatrix = mat4.targetTo(mat4.create(), cameraPosition, [0, 0, 0], [0, 1, 0])
+          let viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
+          uView.updateValue(viewMatrix)
+
+          let worldMatrix = mat4.create()
+          worldMatrix = mat4.rotateX(worldMatrix, worldMatrix, modelXRotationRadians)
+          worldMatrix = mat4.rotateY(worldMatrix, worldMatrix, modelYRotationRadians)
+          uWorld.updateValue(worldMatrix)
+
+          renderer.draw(program, context)
+
+          requestAnimationFrame(drawScene)
+        }
       }
     </script>
   </body>
