@@ -24,6 +24,9 @@ export class GLContext {
   drawOffset:number = 0
   drawSize?:number
 
+  #instancing?:boolean
+  #instanceCount?:number
+
   vao?:WebGLVertexArrayObject
 
   get assuredDrawSize():number {
@@ -32,6 +35,29 @@ export class GLContext {
     if (this.attributes.length === 0) throw `invalid draw size`
     const firstAttr = this.attributes[0]
     return firstAttr.drawSize()
+  }
+
+  get instanceing():boolean {
+    if (typeof this.#instancing !== "boolean") {
+      this.#instancing = !!(this.attributes.find(a => 0 < a.divisor))
+    }
+    return this.#instancing!
+  }
+
+  set instanceCount(value:number) {
+    this.#instanceCount = value
+  }
+
+  get instanceCount():number {
+    if (typeof this.#instanceCount !== "number") {
+      const instAttr = this.attributes.find(a => 0 < a.divisor)
+      if (instAttr) {
+        this.#instanceCount = instAttr.drawSize()
+      } else {
+        this.#instanceCount = -1
+      }
+    }
+    return this.#instanceCount
   }
 
   add(...params:(GLAttribute | GLUniform)[]) {

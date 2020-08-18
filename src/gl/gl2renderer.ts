@@ -90,11 +90,20 @@ export class GL2Renderer {
       this.clear()
     }
 
+    // draw calls
     if (context.index) {
       context.index.bind(this)
-      this.#gl.drawElements(context.drawMode, context.assuredDrawSize, context.index.type, 0)
+      if (context.instanceing) {
+        this.#gl.drawElementsInstanced(context.drawMode, context.assuredDrawSize, context.index.type, 0, context.instanceCount)
+      } else {
+        this.#gl.drawElements(context.drawMode, context.assuredDrawSize, context.index.type, 0)
+      }
     } else {
-      this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
+      if (context.instanceing) {
+        this.#gl.drawArraysInstanced(context.drawMode, context.drawOffset, context.assuredDrawSize, context.instanceCount)
+      } else {
+        this.#gl.drawArrays( context.drawMode, context.drawOffset, context.assuredDrawSize)
+      }
     }
   }
 
@@ -142,7 +151,7 @@ export class GL2Renderer {
   }
 
   bindBuffer(data:GLBuffer) {
-    if (!data.buffer) throw "no buffer"
+    if (!data.buffer) throw `no buffer:${data}`
     this.#gl.bindBuffer(data.target, data.buffer)
   }
 
@@ -171,6 +180,9 @@ export class GL2Renderer {
     if (attribute.location < 0) throw `no attribute location: ${attribute.name}`
     this.#gl.enableVertexAttribArray(attribute.location)
     this.#gl.vertexAttribPointer(attribute.location, attribute.size, attribute.type, attribute.normalized, attribute.stride, attribute.offset)
+    if (0 < attribute.divisor) {
+      this.#gl.vertexAttribDivisor(attribute.location, attribute.divisor)
+    }
   }
 
   uploadUniform(uniform:GLUniform) {
@@ -307,7 +319,9 @@ export class GL2Renderer {
   }
 
   getAttributeLocation(program:GLProgram, name:string):number {
-    return this.#gl.getAttribLocation(program.program!, name)
+    const loc = this.#gl.getAttribLocation(program.program!, name)
+    this._debug(`${name} location: ${loc}`)
+    return loc
   }
 
   getUniformLocation(program:GLProgram, name:string):WebGLUniformLocation | null {

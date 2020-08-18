@@ -32,15 +32,14 @@
       const vs = `#version 300 es
       in vec4 a_position;
       in vec4 a_color;
-      in mat4 a_matrix;
+      in vec4 a_translate;
 
       uniform mat4 u_projection;
-      uniform mat4 u_view;
 
       out vec4 v_color;
 
       void main() {
-        gl_Position = u_projection * u_view * a_matrix * a_position;
+        gl_Position = u_projection * (a_position + a_translate);
         v_color = a_color;
       }`
 
@@ -55,6 +54,7 @@
       }`
 
       const renderer = new Cubets.GL2Renderer("#cubets") 
+      //renderer.debug = true
 
       const program = new Cubets.GLProgram(vs, fs)
 
@@ -64,16 +64,20 @@
         -0.1,  0.4,
         -0.1, -0.4,
         0.1, -0.4,
+
         0.1, -0.4,
-        -0.1,  0.4,
         0.1,  0.4,
+        -0.1,  0.4,
+
         0.4, -0.1,
-        -0.4, -0.1,
         -0.4,  0.1,
+        -0.4, -0.1,
+
         -0.4,  0.1,
         0.4, -0.1,
         0.4,  0.1,
       ])
+
       const aColor = new Cubets.GLAttribute("a_color", 4, Cubets.GL.FLOAT)
       aColor.buffer = Cubets.GLBuffer.f32([
         1, 0, 0, 1,  // red
@@ -82,44 +86,28 @@
         1, 0, 1, 1,  // magenta
         0, 1, 1, 1,  // cyan
       ])
-      aColor.divisor = 1
+      aColor.divisor = 1 // for instancing
 
-      // setup matrixes, one per instance
-      const numInstances = 5;
-      // make a typed array with one view per matrix
-      const matrixData = new Float32Array(numInstances * 16);
-      const matrices = [];
-      for (let i = 0; i < numInstances; ++i) {
-        const byteOffsetToMatrix = i * 16 * 4;
-        const numFloatsForView = 16;
-        matrices.push(new Float32Array(
-            matrixData.buffer,
-            byteOffsetToMatrix,
-            numFloatsForView));
-      }
-      const aMatrix = new Cubets.GLAttribute("a_matrix", matrixData.byteLength, Cubets.GL.FLOAT, Cubets.GL.DYNAMIC_DRAW)
-      aMatrix.buffer = Cubets.GLBuffer.f32(matrixData)
-      aMatrix.divisor = 1
+      const aTranslate = new Cubets.GLAttribute("a_translate", 2, Cubets.GL.FLOAT)
+      aTranslate.buffer = Cubets.GLBuffer.f32([
+        0, 0,
+        1, 0,
+        0, 1,
+        -1, 0,
+        0, -1,
+      ])
+      aTranslate.divisor = 1 // for instancing
 
       const aspect = renderer.aspectRatio
       const uProjection = new Cubets.GLUniform("u_projection", "m4fv", 
         mat4.ortho(mat4.create(), -aspect, aspect, -1, 1, -1, 1)
       )
-      const uView = new Cubets.GLUniform("u_view", "m4fv", mat4.create())
 
       const context = new Cubets.GLContext()
-      context.add(aPosition, aColor, aMatrix)
-      context.add(uProjection, uView)
+      context.add(aPosition, aColor, aTranslate)
+      context.add(uProjection)
 
-      requestAnimationFrame(drawScene)
-
-      function drawScene(time) {
-        time *= 0.001
-
-        renderer.draw(program, context)
-
-        requestAnimationFrame(drawScene)
-      }
+      renderer.draw(program, context)
     </script>
   </body>
 </html>
