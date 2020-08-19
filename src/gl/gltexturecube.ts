@@ -1,10 +1,10 @@
 import { GLImage, GLImageSource } from "./glimage.js"
-import { GLTexture } from "./gltexture.js"
+import { GLTexture, GLTextureParam } from "./gltexture.js"
 
 export class GLTextureCube extends GLTexture {
   images:Map<number, GLImage>
 
-  constructor(type:number, images:GLImage[] | Map<number, GLImage | GLImageSource>, params:Map<string, number>=new Map()) {
+  constructor(type:number, images:GLImage[] | Map<number, GLImage | GLImageSource>, params:GLTextureParam={}) {
     super(type, params)
 
     if (Array.isArray(images)) {

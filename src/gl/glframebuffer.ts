@@ -8,10 +8,10 @@ export class GLFramebuffer {
   texture:GLTexture2D
 
   constructor(width:number, height:number) {
-    const image = new GLImage(null, new Map([
-      ["width", width],
-      ["height", height],
-    ]))
+    const image = new GLImage(null, {
+      width: width,
+      height: height,
+    })
     this.texture = new GLTexture2D(WebGLRenderingContext.TEXTURE_2D, image)
     this.texture.minFilter = WebGLRenderingContext.NEAREST
     this.texture.magFilter = WebGLRenderingContext.NEAREST

@@ -1,3 +1,6 @@
+type GLTextureParamKey = "magFilter" | "minFilter" | "wrapS" | "wrapT" | "wrapR" | "baseLevel" | "compareFunc" | "compareMode" | "maxLevel" | "maxLod" | "minLod"
+export type GLTextureParam = {[key in GLTextureParamKey]?:number}
+
 export abstract class GLTexture {
   static _textureParams = new Map<string, number>([
     ["magFilter", WebGLRenderingContext.TEXTURE_MAG_FILTER],
@@ -21,10 +24,12 @@ export abstract class GLTexture {
   updated = false
   textureUnit:number = -1
 
-  constructor(type:number, params:Map<string, number>=new Map()) {
+  constructor(type:number, params:GLTextureParam={}) {
     this.type = type
     this.params = new Map()
-    params.forEach((v, k) => this._setParam(k, v))
+    for (const [name, value] of Object.entries(params)) {
+      this._setParam(name, value!)
+    }
   }
 
   set magFilter(val:number) { this._setParam("magFilter", val) }

@@ -159,12 +159,12 @@
       const image = new Cubets.GLImage(new Uint8Array([
         128,  64, 128,
         0, 192,   0,
-      ]), new Map([
-        ["internalFormat", Cubets.GL.LUMINANCE],
-        ["format", Cubets.GL.LUMINANCE],
-        ["width", 3],
-        ["height", 2],
-      ]))
+      ]), {
+        internalFormat: Cubets.GL.LUMINANCE,
+        format: Cubets.GL.LUMINANCE,
+        width: 3,
+        height: 2,
+      })
       const texture = new Cubets.GLTexture2D(Cubets.GL.TEXTURE_2D, image)
       texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
       texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
