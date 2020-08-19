@@ -9,6 +9,7 @@ import { GLTexture2D } from "./gltexture2d.js"
 import { GLFramebuffer } from "./glframebuffer.js"
 import { GLIndex } from "./glindex.js"
 import { GLTextureCube } from "./gltexturecube.js"
+import { GLImage } from "./glimage.js"
 
 export class GL2Renderer {
   debug = false
@@ -211,17 +212,7 @@ export class GL2Renderer {
     })
     const image = texture.image
     if (!image) throw 'texture has no image'
-    this.#gl.texImage2D(
-      texture.type,
-      image.level,
-      image.internalFormat,
-      image.width,
-      image.height,
-      image.border,
-      image.format,
-      image.type,
-      image.source! // null ok
-    )
+    this.texImage2D(texture.type, image)
 
     texture.updated = false
   }
@@ -246,18 +237,8 @@ export class GL2Renderer {
     textureCube.params.forEach((v, k) => {
       this.#gl.texParameteri(textureCube.type, k, v)
     })
-    textureCube.images.forEach((image, type) => {
-      this.#gl.texImage2D(
-        type,
-        image.level,
-        image.internalFormat,
-        image.width,
-        image.height,
-        image.border,
-        image.format,
-        image.type,
-        image.source! // null ok
-      )
+    textureCube.images.forEach((image, target) => {
+      this.texImage2D(target, image)
       //this.#gl.generateMipmap(this.#gl.TEXTURE_CUBE_MAP)
     })
 
@@ -355,10 +336,48 @@ export class GL2Renderer {
     this.#gl.clear(flag)
   }
 
+  texImage2D(target:number, image:GLImage) {
+    if (image.source instanceof Uint8Array) {
+      this.#gl.texImage2D(
+        target,
+        image.level,
+        image.internalFormat,
+        image.width,
+        image.height,
+        image.border,
+        image.format,
+        image.type,
+        image.source,
+        0
+      )
+    } else {
+      this.#gl.texImage2D(
+        target,
+        image.level,
+        image.internalFormat,
+        image.width,
+        image.height,
+        image.border,
+        image.format,
+        image.type,
+        image.source! // null ok
+      )
+    }
+  }
+
   uniform(type:string, location:WebGLUniformLocation, values:number[]) {
     switch(type) {
       case "1i":
         this.#gl.uniform1i(location, values[0])
+        break
+      case "2i":
+        this.#gl.uniform2i(location, values[0], values[1])
+        break
+      case "3i":
+        this.#gl.uniform3i(location, values[0], values[1], values[2])
+        break
+      case "4i":
+        this.#gl.uniform4i(location, values[0], values[1], values[2], values[3])
         break
       case "1f":
         this.#gl.uniform1f(location, values[0])
@@ -369,8 +388,26 @@ export class GL2Renderer {
       case "3f":
         this.#gl.uniform3f(location, values[0], values[1], values[2])
         break
+      case "4f":
+        this.#gl.uniform4f(location, values[0], values[1], values[2], values[3])
+        break
       case "1fv":
         this.#gl.uniform1fv(location, values)
+        break
+      case "2fv":
+        this.#gl.uniform2fv(location, values)
+        break
+      case "3fv":
+        this.#gl.uniform3fv(location, values)
+        break
+      case "4fv":
+        this.#gl.uniform4fv(location, values)
+        break
+      case "m2fv":
+        this.#gl.uniformMatrix2fv(location, false, values) // TODO
+        break
+      case "m3fv":
+        this.#gl.uniformMatrix3fv(location, false, values) // TODO
         break
       case "m4fv":
         this.#gl.uniformMatrix4fv(location, false, values) // TODO

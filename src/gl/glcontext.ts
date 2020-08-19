@@ -62,6 +62,10 @@ export class GLContext {
     return this.#instanceCount
   }
 
+  constructor(...flags:number[]) {
+    flags.forEach(flag => this.enable(flag))
+  }
+
   add(...params:(GLAttribute | GLUniform)[]) {
     params.forEach(param => {
       if (param instanceof GLIndex) {

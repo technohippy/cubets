@@ -30,28 +30,119 @@
 
       // program
       const vs = `#version 300 es
-      in vec4 a_position;
-      in vec4 a_color;
-      in vec4 a_translate;
+        in vec4 a_position;
+        in vec2 a_texcoord;
 
-      uniform mat4 u_projection;
+        uniform mat4 u_matrix;
 
-      out vec4 v_color;
+        out vec2 v_texcoord;
 
-      void main() {
-        gl_Position = u_projection * (a_position + a_translate);
-        v_color = a_color;
-      }`
+        void main() {
+          gl_Position = u_matrix * a_position;
+          v_texcoord = a_texcoord;
+        }`
 
       const fs = `#version 300 es
-      precision mediump float;
+        precision mediump float;
 
-      in vec4 v_color;
-      out vec4 fragColor;
+        in vec2 v_texcoord;
 
-      void main() {
-        fragColor = v_color;
-      }`
+        uniform sampler2D u_texture;
+        uniform vec4 u_colorMult;
+
+        out vec4 fragColor;
+
+        void main() {
+          fragColor = texture(u_texture, v_texcoord) * u_colorMult;
+        }`
+
+      const positions = [
+        -0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+
+        -0.5, -0.5,   0.5,
+        0.5, -0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        0.5, -0.5,   0.5,
+        0.5,  0.5,   0.5,
+
+        -0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+
+        -0.5,  -0.5, -0.5,
+        0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,  -0.5,  0.5,
+        0.5,  -0.5, -0.5,
+        0.5,  -0.5,  0.5,
+
+        -0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5,  0.5,
+        -0.5,   0.5, -0.5,
+
+        0.5,  -0.5, -0.5,
+        0.5,   0.5, -0.5,
+        0.5,  -0.5,  0.5,
+        0.5,  -0.5,  0.5,
+        0.5,   0.5, -0.5,
+        0.5,   0.5,  0.5,
+      ]
+
+      const texcoords = [
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+      ]
 
       const renderer = new Cubets.GL2Renderer("#cubets") 
       //renderer.debug = true
@@ -59,53 +150,34 @@
       const program = new Cubets.GLProgram(vs, fs)
 
       // context
-      const aPosition = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
-      aPosition.buffer = Cubets.GLBuffer.f32([
-        -0.1,  0.4,
-        -0.1, -0.4,
-        0.1, -0.4,
+      const aPosition = new Cubets.GLAttribute("a_position", 3, Cubets.GL.FLOAT)
+      aPosition.buffer = Cubets.GLBuffer.f32(positions)
 
-        0.1, -0.4,
-        0.1,  0.4,
-        -0.1,  0.4,
+      const aTexcoord = new Cubets.GLAttribute("a_texcoord", 2, Cubets.GL.FLOAT)
+      aTexcoord.buffer = Cubets.GLBuffer.f32(texcoords)
 
-        0.4, -0.1,
-        -0.4,  0.1,
-        -0.4, -0.1,
-
-        -0.4,  0.1,
-        0.4, -0.1,
-        0.4,  0.1,
-      ])
-
-      const aColor = new Cubets.GLAttribute("a_color", 4, Cubets.GL.FLOAT)
-      aColor.buffer = Cubets.GLBuffer.f32([
-        1, 0, 0, 1,  // red
-        0, 1, 0, 1,  // green
-        0, 0, 1, 1,  // blue
-        1, 0, 1, 1,  // magenta
-        0, 1, 1, 1,  // cyan
-      ])
-      aColor.divisor = 1 // for instancing
-
-      const aTranslate = new Cubets.GLAttribute("a_translate", 2, Cubets.GL.FLOAT)
-      aTranslate.buffer = Cubets.GLBuffer.f32([
-        0, 0,
-        1, 0,
-        0, 1,
-        -1, 0,
-        0, -1,
-      ])
-      aTranslate.divisor = 1 // for instancing
-
-      const aspect = renderer.aspectRatio
-      const uProjection = new Cubets.GLUniform("u_projection", "m4fv", 
-        mat4.ortho(mat4.create(), -aspect, aspect, -1, 1, -1, 1)
-      )
+      const image = new Cubets.GLImage(new Uint8Array([
+        128,  64, 128,
+        0, 192,   0,
+      ]), new Map([
+        ["internalFormat", Cubets.GL.LUMINANCE],
+        ["format", Cubets.GL.LUMINANCE],
+        ["width", 3],
+        ["height", 2],
+      ]))
+      const texture = new Cubets.GLTexture2D(Cubets.GL.TEXTURE_2D, image)
+      texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
+      texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
+      texture.minFilter = Cubets.GL.NEAREST
+      texture.magFilter = Cubets.GL.NEAREST
+        
+      const uMatrix = new Cubets.GLUniform("u_matrix", "m4fv", mat4.create())
+      const uTexture = new Cubets.GLUniform("u_texture", "1i", texture)
+      const uColorMult = new Cubets.GLUniform("u_colorMult", "4fv", [0, 1, 1, 1])
 
       const context = new Cubets.GLContext()
-      context.add(aPosition, aColor, aTranslate)
-      context.add(uProjection)
+      context.add(aPosition, aTexcoord)
+      context.add(uMatrix, uTexture, uColorMult)
 
       renderer.draw(program, context)
     </script>

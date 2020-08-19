@@ -1,4 +1,4 @@
-export type GLImageSource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement
+export type GLImageSource = HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | Uint8Array
 
 export class GLImage {
   source:GLImageSource | null
@@ -17,7 +17,7 @@ export class GLImage {
     this.internalFormat = params.get("internalFormat") || WebGLRenderingContext.RGBA
     const width = params.get("width")
     const height = params.get("height")
-    if (!source) {
+    if (!source || source instanceof Uint8Array) {
       if (!width) throw `width must be set`
       if (!height) throw `height must be set`
       this.width = width
