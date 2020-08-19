@@ -61,8 +61,6 @@ export class GL2Renderer {
     this.#textureUnitUsage = new Array<boolean>(this.minTextureUnits).fill(false)
 
     this.#gl.pixelStorei(this.#gl.UNPACK_ALIGNMENT, 1)
-    this.#gl.enable(this.#gl.CULL_FACE) // TODO: contextで
-    this.#gl.enable(this.#gl.DEPTH_TEST) // TODO: contextで
   }
 
   draw(program:GLProgram, context:GLContext) {
@@ -339,6 +337,14 @@ export class GL2Renderer {
       viewport.width || this.#gl.canvas.width,
       viewport.height || this.#gl.canvas.height,
     )
+  }
+
+  enable(flag:number) {
+    this.#gl.enable(flag)
+  }
+
+  enableFlags(flags:number[]) {
+    flags.forEach(flag => this.enable(flag))
   }
 
   clearColor(color:RGBAColor) {

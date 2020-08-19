@@ -203,6 +203,8 @@
         const uWorldCameraPosition = new Cubets.GLUniform("u_worldCameraPosition", "3f", [0, 0, -5])
 
         const context = new Cubets.GLContext()
+        context.enable(Cubets.GL.CULL_FACE)
+        context.enable(Cubets.GL.DEPTH_TEST)
         context.add(aPosition, aNormal)
         context.add(uTexture, uProjection, uView, uWorld, uWorldCameraPosition)
 

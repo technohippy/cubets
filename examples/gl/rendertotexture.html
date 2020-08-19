@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: </title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-render-to-texture.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-render-to-texture.html
+    </a><br>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets.js"
+      import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../js/gl-matrix/index.js"
+
+      // program
+      const vs = `#version 300 es
+      in vec4 a_position;
+      in vec4 a_color;
+      in vec4 a_translate;
+
+      uniform mat4 u_projection;
+
+      out vec4 v_color;
+
+      void main() {
+        gl_Position = u_projection * (a_position + a_translate);
+        v_color = a_color;
+      }`
+
+      const fs = `#version 300 es
+      precision mediump float;
+
+      in vec4 v_color;
+      out vec4 fragColor;
+
+      void main() {
+        fragColor = v_color;
+      }`
+
+      const renderer = new Cubets.GL2Renderer("#cubets") 
+      //renderer.debug = true
+
+      const program = new Cubets.GLProgram(vs, fs)
+
+      // context
+      const aPosition = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
+      aPosition.buffer = Cubets.GLBuffer.f32([
+        -0.1,  0.4,
+        -0.1, -0.4,
+        0.1, -0.4,
+
+        0.1, -0.4,
+        0.1,  0.4,
+        -0.1,  0.4,
+
+        0.4, -0.1,
+        -0.4,  0.1,
+        -0.4, -0.1,
+
+        -0.4,  0.1,
+        0.4, -0.1,
+        0.4,  0.1,
+      ])
+
+      const aColor = new Cubets.GLAttribute("a_color", 4, Cubets.GL.FLOAT)
+      aColor.buffer = Cubets.GLBuffer.f32([
+        1, 0, 0, 1,  // red
+        0, 1, 0, 1,  // green
+        0, 0, 1, 1,  // blue
+        1, 0, 1, 1,  // magenta
+        0, 1, 1, 1,  // cyan
+      ])
+      aColor.divisor = 1 // for instancing
+
+      const aTranslate = new Cubets.GLAttribute("a_translate", 2, Cubets.GL.FLOAT)
+      aTranslate.buffer = Cubets.GLBuffer.f32([
+        0, 0,
+        1, 0,
+        0, 1,
+        -1, 0,
+        0, -1,
+      ])
+      aTranslate.divisor = 1 // for instancing
+
+      const aspect = renderer.aspectRatio
+      const uProjection = new Cubets.GLUniform("u_projection", "m4fv", 
+        mat4.ortho(mat4.create(), -aspect, aspect, -1, 1, -1, 1)
+      )
+
+      const context = new Cubets.GLContext()
+      context.add(aPosition, aColor, aTranslate)
+      context.add(uProjection)
+
+      renderer.draw(program, context)
+    </script>
+  </body>
+</html>

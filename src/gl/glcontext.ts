@@ -17,6 +17,8 @@ export class GLContext {
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
 
+  enableFlags:number[] = []
+
   needClear = true
 
   // draw call parameters
@@ -85,6 +87,10 @@ export class GLContext {
     this.uniforms.push(uniform)
   }
 
+  enable(flag:number) {
+    this.enableFlags.push(flag)
+  }
+
   storeLocations(renderer:GL2Renderer, program:GLProgram) {
     this.attributes.forEach(attribute => {
       if (attribute.location < 0) {
@@ -100,6 +106,8 @@ export class GLContext {
 
   apply(renderer:GL2Renderer) {
     this.uploadVariables(renderer)
+    renderer.enableFlags(this.enableFlags)
+    this.enableFlags.length = 0 // apply only once
     renderer.viewport(this.viewport)
     renderer.clearColor(this.clearColor)
     // TODO: texture

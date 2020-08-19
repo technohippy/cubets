@@ -37,9 +37,7 @@
         out vec2 v_texCoord;
 
         void main() {
-          vec2 zeroToOne = a_position / u_resolution;
-          vec2 zeroToTwo = zeroToOne * 2.0;
-          vec2 clipSpace = zeroToTwo - 1.0;
+          vec2 clipSpace = (a_position / u_resolution) * 2.0 - 1.0;
 
           gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
           v_texCoord = a_texCoord;
@@ -96,7 +94,7 @@
           1.0,  1.0,
         ])
 
-        const texture = new Cubets.GLTexture(Cubets.GL.TEXTURE_2D, image)
+        const texture = new Cubets.GLTexture2D(Cubets.GL.TEXTURE_2D, image)
         texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
         texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
         texture.minFilter = Cubets.GL.NEAREST
@@ -113,13 +111,8 @@
         const uKernelWeight = new Cubets.GLUniform("u_kernelWeight", "1f", 1)
 
         const context = new Cubets.GLContext()
-        context.addAttribute(aPosition)
-        context.addAttribute(aTexCoord)
-        context.addUniform(uImage)
-        context.addUniform(uResolution)
-        context.addUniform(uTextureSize)
-        context.addUniform(uKernel)
-        context.addUniform(uKernelWeight)
+        context.add(aPosition, aTexCoord)
+        context.add(uImage, uResolution, uTextureSize, uKernel, uKernelWeight)
 
         // run the program on the context
         const renderer = new Cubets.GL2Renderer("#cubets") 

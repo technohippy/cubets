@@ -51,6 +51,7 @@ import { GLAttribute } from "./gl/glattribute.js"
 import { GLUniform, GLUniformI1, GLUniformF1, GLUniformF2, GLUniformFv1 } from "./gl/gluniform.js"
 import { GLImage } from "./gl/glimage.js"
 import { GLTexture } from "./gl/gltexture.js"
+import { GLTexture2D } from "./gl/gltexture2d.js"
 import { GLTextureCube } from "./gl/gltexturecube.js"
 import { GLBuffer } from "./gl/glbuffer.js"
 import { GLContext } from "./gl/glcontext.js"
@@ -120,6 +121,7 @@ export default {
   GLUniformFv1: GLUniformFv1,
   GLImage: GLImage,
   GLTexture: GLTexture,
+  GLTexture2D: GLTexture2D,
   GLTextureCube: GLTextureCube,
   GLBuffer: GLBuffer,
   GLContext: GLContext,
