@@ -106,6 +106,11 @@ export class GL2Renderer {
     }
   }
 
+  clearFramebuffer(context:GLContext) {
+    context.setupFramebuffer(this)
+    this.clear()
+  }
+
   createProgram(vertexShaderSource:string, fragmentShaderSource:string):WebGLProgram {
     const vertexShader = this._createShader(this.#gl.VERTEX_SHADER, vertexShaderSource)
     const fragmentShader = this._createShader(this.#gl.FRAGMENT_SHADER, fragmentShaderSource)

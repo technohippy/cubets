@@ -54,7 +54,6 @@
 
         void main() {
           fragColor = texture(u_texture, v_texcoord) * u_colorMult;
-          fragColor = vec4(1,1,1,1);
         }`
 
       const positions = [
@@ -183,6 +182,7 @@
       const context = new Cubets.GLContext(Cubets.GL.CULL_FACE, Cubets.GL.DEPTH_TEST)
       context.add(aPosition, aTexcoord)
       context.add(uMatrix, uTexture, uColorMult)
+      context.needClear = false
 
       let fieldOfViewRadians = degToRad(60)
       let modelXRotationRadians = degToRad(0)
@@ -200,7 +200,6 @@
         const viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
         const viewProjectionMatrix = mat4.multiply(mat4.create(), projectionMatrix, viewMatrix)
 
-        //context.needClear = false
         for (let x = -1; x <= 1; ++x) {
           const matrix = mat4.translate(mat4.create(), viewProjectionMatrix, vec3.set(vec3.create(), x * .9, 0, 0))
           mat4.rotateX(matrix, matrix, modelXRotationRadians * x)
@@ -212,7 +211,6 @@
 
           renderer.draw(program, context)
         }
-        //context.needClear = true
       }
 
       function drawScene(time) {
@@ -223,11 +221,19 @@
         modelXRotationRadians += -0.4 * deltaTime
 
         context.framebuffer = framebuffer
+        context.clearColor = new Cubets.Color(0.5, 0.7, 1, 1)
+        context.viewport.width = targetTextureWidth
+        context.viewport.height = targetTextureHeight
         uTexture.updateValue(texture)
+        renderer.clearFramebuffer(context)
         drawCube(targetTextureWidth / targetTextureHeight)
 
         context.framebuffer = null
+        context.clearColor = Cubets.Color.White
+        context.viewport.width = undefined
+        context.viewport.height = undefined
         uTexture.updateValue(framebuffer.texture)
+        renderer.clearFramebuffer(context)
         drawCube(renderer.aspectRatio)
 
         requestAnimationFrame(drawScene)
