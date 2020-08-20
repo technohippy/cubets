@@ -209,6 +209,7 @@
           const c = x * .5 + .5
           uColorMult.updateValue([c, 1, 1 - c, 1])
 
+          context.needClear = x === -1
           renderer.draw(program, context)
         }
       }
@@ -225,7 +226,6 @@
         context.viewport.width = targetTextureWidth
         context.viewport.height = targetTextureHeight
         uTexture.updateValue(texture)
-        renderer.clearFramebuffer(context)
         drawCube(targetTextureWidth / targetTextureHeight)
 
         context.framebuffer = null
@@ -233,7 +233,6 @@
         context.viewport.width = undefined
         context.viewport.height = undefined
         uTexture.updateValue(framebuffer.texture)
-        renderer.clearFramebuffer(context)
         drawCube(renderer.aspectRatio)
 
         requestAnimationFrame(drawScene)
