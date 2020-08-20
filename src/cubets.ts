@@ -44,6 +44,19 @@ import { Fog } from "./core/fog.js"
 import { JSONGeometryLoader } from "./misc/jsongeometryloader.js"
 import { OBJGeometryLoader } from "./misc/objgeometryloader.js"
 
+import { GL2Renderer } from "./gl/gl2renderer.js"
+import { GLProgram } from "./gl/glprogram.js"
+import { GLIndex } from "./gl/glindex.js"
+import { GLAttribute } from "./gl/glattribute.js"
+import { GLUniform } from "./gl/gluniform.js"
+import { GLImage } from "./gl/glimage.js"
+import { GLTexture } from "./gl/gltexture.js"
+import { GLTexture2D } from "./gl/gltexture2d.js"
+import { GLTextureCube } from "./gl/gltexturecube.js"
+import { GLBuffer } from "./gl/glbuffer.js"
+import { GLContext } from "./gl/glcontext.js"
+import { GLFramebuffer } from "./gl/glframebuffer.js"
+
 export default {
   Scene: PhongScene,
   PhongScene: PhongScene,
@@ -96,4 +109,20 @@ export default {
   JSONGeometryLoader: JSONGeometryLoader,
   OBJGeometryLoader: OBJGeometryLoader,
   Fog: Fog,
+
+  GL2Renderer: GL2Renderer,
+  GLProgram: GLProgram,
+  GLIndex: GLIndex,
+  GLAttribute: GLAttribute,
+  GLUniform: GLUniform,
+  GLImage: GLImage,
+  GLTexture: GLTexture,
+  GLTexture2D: GLTexture2D,
+  GLTextureCube: GLTextureCube,
+  GLBuffer: GLBuffer,
+  GLContext: GLContext,
+  GLFramebuffer: GLFramebuffer,
+
+  GL: WebGLRenderingContext,
+  GL2: WebGL2RenderingContext,
 }

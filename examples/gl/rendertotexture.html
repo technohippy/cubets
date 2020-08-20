@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: </title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-render-to-texture.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-render-to-texture.html
+    </a><br>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets.js"
+      import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../js/gl-matrix/index.js"
+
+      // program
+      const vs = `#version 300 es
+        in vec4 a_position;
+        in vec2 a_texcoord;
+
+        uniform mat4 u_matrix;
+
+        out vec2 v_texcoord;
+
+        void main() {
+          gl_Position = u_matrix * a_position;
+          v_texcoord = a_texcoord;
+        }`
+
+      const fs = `#version 300 es
+        precision mediump float;
+
+        in vec2 v_texcoord;
+
+        uniform sampler2D u_texture;
+        uniform vec4 u_colorMult;
+
+        out vec4 fragColor;
+
+        void main() {
+          fragColor = texture(u_texture, v_texcoord) * u_colorMult;
+        }`
+
+      const positions = [
+        -0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+
+        -0.5, -0.5,   0.5,
+        0.5, -0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        0.5, -0.5,   0.5,
+        0.5,  0.5,   0.5,
+
+        -0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+
+        -0.5,  -0.5, -0.5,
+        0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,  -0.5,  0.5,
+        0.5,  -0.5, -0.5,
+        0.5,  -0.5,  0.5,
+
+        -0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5,  0.5,
+        -0.5,   0.5, -0.5,
+
+        0.5,  -0.5, -0.5,
+        0.5,   0.5, -0.5,
+        0.5,  -0.5,  0.5,
+        0.5,  -0.5,  0.5,
+        0.5,   0.5, -0.5,
+        0.5,   0.5,  0.5,
+      ]
+
+      const texcoords = [
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+      ]
+
+      const renderer = new Cubets.GL2Renderer("#cubets") 
+      //renderer.debug = true
+
+      const program = new Cubets.GLProgram(vs, fs)
+
+      // context
+      const aPosition = new Cubets.GLAttribute("a_position", 3, Cubets.GL.FLOAT)
+      aPosition.buffer = Cubets.GLBuffer.f32(positions)
+
+      const aTexcoord = new Cubets.GLAttribute("a_texcoord", 2, Cubets.GL.FLOAT)
+      aTexcoord.buffer = Cubets.GLBuffer.f32(texcoords)
+
+      const image = new Cubets.GLImage(new Uint8Array([
+        128,  64, 128,
+        0, 192,   0,
+      ]), {
+        internalFormat: Cubets.GL.LUMINANCE,
+        format: Cubets.GL.LUMINANCE,
+        width: 3,
+        height: 2,
+      })
+      const texture = new Cubets.GLTexture2D(Cubets.GL.TEXTURE_2D, image)
+      texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
+      texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
+      texture.minFilter = Cubets.GL.NEAREST
+      texture.magFilter = Cubets.GL.NEAREST
+        
+      /*
+      const uMatrix = new Cubets.GLUniform("u_matrix", "m4fv", mat4.create())
+      const uTexture = new Cubets.GLUniform("u_texture", "1i", texture)
+      const uColorMult = new Cubets.GLUniform("u_colorMult", "4fv", [0, 1, 1, 1])
+      */
+      const uMatrix = new Cubets.GLUniform("u_matrix", "m4fv")
+      const uTexture = new Cubets.GLUniform("u_texture", "1i")
+      const uColorMult = new Cubets.GLUniform("u_colorMult", "4fv")
+
+      const targetTextureWidth = 256
+      const targetTextureHeight = 256
+      const framebuffer = new Cubets.GLFramebuffer(targetTextureWidth, targetTextureHeight)
+
+      const context = new Cubets.GLContext(Cubets.GL.CULL_FACE, Cubets.GL.DEPTH_TEST)
+      context.add(aPosition, aTexcoord)
+      context.add(uMatrix, uTexture, uColorMult)
+      context.needClear = false
+
+      let fieldOfViewRadians = degToRad(60)
+      let modelXRotationRadians = degToRad(0)
+      let modelYRotationRadians = degToRad(0)
+      let then = 0
+
+      requestAnimationFrame(drawScene)
+
+      function drawCube(aspect) {
+        const projectionMatrix = mat4.perspective(mat4.create, fieldOfViewRadians, aspect, 1, 2000)
+        const cameraPosition = [0, 0, 2]
+        const up = [0, 1, 0]
+        const target = [0, 0, 0]
+        const cameraMatrix = mat4.targetTo(mat4.create(), cameraPosition, target, up)
+        const viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
+        const viewProjectionMatrix = mat4.multiply(mat4.create(), projectionMatrix, viewMatrix)
+
+        for (let x = -1; x <= 1; ++x) {
+          const matrix = mat4.translate(mat4.create(), viewProjectionMatrix, vec3.set(vec3.create(), x * .9, 0, 0))
+          mat4.rotateX(matrix, matrix, modelXRotationRadians * x)
+          mat4.rotateY(matrix, matrix, modelYRotationRadians * x)
+          uMatrix.updateValue(matrix)
+
+          const c = x * .5 + .5
+          uColorMult.updateValue([c, 1, 1 - c, 1])
+
+          context.needClear = x === -1
+          renderer.draw(program, context)
+        }
+      }
+
+      function drawScene(time) {
+        time *= 0.001
+        const deltaTime = time - then
+        then = time
+        modelYRotationRadians += -0.7 * deltaTime
+        modelXRotationRadians += -0.4 * deltaTime
+
+        context.framebuffer = framebuffer
+        context.clearColor = new Cubets.Color(0.5, 0.7, 1, 1)
+        context.viewport.width = targetTextureWidth
+        context.viewport.height = targetTextureHeight
+        uTexture.updateValue(texture)
+        drawCube(targetTextureWidth / targetTextureHeight)
+
+        context.framebuffer = null
+        context.clearColor = Cubets.Color.White
+        context.viewport.width = undefined
+        context.viewport.height = undefined
+        uTexture.updateValue(framebuffer.texture)
+        drawCube(renderer.aspectRatio)
+
+        requestAnimationFrame(drawScene)
+      }
+    </script>
+  </body>
+</html>

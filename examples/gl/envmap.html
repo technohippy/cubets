@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: </title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <a href="https://webglfundamentals.org/webgl/lessons/webgl-environment-maps.html">
+      https://webglfundamentals.org/webgl/lessons/webgl-environment-maps.html
+    </a><br>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets.js"
+      import { glMatrix, mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } from "../js/gl-matrix/index.js"
+
+      // program
+      const vs = `#version 300 es
+        in vec4 a_position;
+        in vec3 a_normal;
+        
+        uniform mat4 u_projection;
+        uniform mat4 u_view;
+        uniform mat4 u_world;
+        
+        out vec3 v_worldPosition;
+        out vec3 v_worldNormal;
+        
+        void main() {
+          gl_Position = u_projection * u_view * u_world * a_position;
+          v_worldPosition = (u_world * a_position).xyz;
+          v_worldNormal = mat3(u_world) * a_normal;
+
+          //gl_Position = u_world * a_position;
+        }`
+
+      const fs = `#version 300 es
+        precision highp float;
+  
+        in vec3 v_worldPosition;
+        in vec3 v_worldNormal;
+          
+        uniform samplerCube u_texture;
+        uniform vec3 u_worldCameraPosition;
+
+        out vec4 fragColor;
+          
+        void main() {
+          vec3 worldNormal = normalize(v_worldNormal);
+          vec3 eyeToSurfaceDir = normalize(v_worldPosition - u_worldCameraPosition);
+          vec3 direction = reflect(eyeToSurfaceDir,worldNormal);
+          
+          fragColor = texture(u_texture, direction);
+        }`
+
+      const cubeVertices = [
+        -0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+        -0.5,  0.5,  -0.5,
+        0.5,  0.5,  -0.5,
+        0.5, -0.5,  -0.5,
+
+        -0.5, -0.5,   0.5,
+        0.5, -0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        -0.5,  0.5,   0.5,
+        0.5, -0.5,   0.5,
+        0.5,  0.5,   0.5,
+
+        -0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+        -0.5,   0.5,  0.5,
+        0.5,   0.5,  0.5,
+        0.5,   0.5, -0.5,
+
+        -0.5,  -0.5, -0.5,
+        0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,  -0.5,  0.5,
+        0.5,  -0.5, -0.5,
+        0.5,  -0.5,  0.5,
+
+        -0.5,  -0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5, -0.5,
+        -0.5,  -0.5,  0.5,
+        -0.5,   0.5,  0.5,
+        -0.5,   0.5, -0.5,
+
+        0.5,  -0.5, -0.5,
+        0.5,   0.5, -0.5,
+        0.5,  -0.5,  0.5,
+        0.5,  -0.5,  0.5,
+        0.5,   0.5, -0.5,
+        0.5,   0.5,  0.5,
+      ]
+
+      const cubeNormals = [
+        0, 0, -1,
+        0, 0, -1,
+        0, 0, -1,
+        0, 0, -1,
+        0, 0, -1,
+        0, 0, -1,
+
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+        0, 1, 0,
+
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+        0, -1, 0,
+
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+        -1, 0, 0,
+
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+        1, 0, 0,
+      ]
+
+      loadImages([
+        "../images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posz.jpg",
+      ]).then(images => start(images))
+
+      function start(images) {
+        const image = images[0]
+        const program = new Cubets.GLProgram(vs, fs)
+
+        // context
+        const {width, height} = image
+        const aPosition = new Cubets.GLAttribute("a_position", 3, Cubets.GL.FLOAT)
+        aPosition.buffer = Cubets.GLBuffer.f32(cubeVertices)
+        const aNormal = new Cubets.GLAttribute("a_normal", 3, Cubets.GL.FLOAT)
+        aNormal.buffer = Cubets.GLBuffer.f32(cubeNormals)
+
+        const textureCube = new Cubets.GLTextureCube(Cubets.GL.TEXTURE_CUBE_MAP, images)
+        textureCube.wrapS = Cubets.GL.CLAMP_TO_EDGE
+        textureCube.wrapT = Cubets.GL.CLAMP_TO_EDGE
+        textureCube.minFilter = Cubets.GL.NEAREST
+        textureCube.magFilter = Cubets.GL.NEAREST
+        const uTexture = new Cubets.GLUniform("u_texture", "1i", textureCube)
+
+        const uProjection = new Cubets.GLUniform("u_projection", "m4fv", [
+          1,0,0,0,
+          0,1,0,0,
+          0,0,1,0,
+          0,0,0,1,
+        ])
+        const uView = new Cubets.GLUniform("u_view", "m4fv", [
+          1,0,0,0,
+          0,1,0,0,
+          0,0,1,0,
+          0,0,0,1,
+        ])
+        const uWorld = new Cubets.GLUniform("u_world", "m4fv", [
+          1,0,0,0,
+          0,1,0,0,
+          0,0,1,0,
+          0,0,0,1,
+        ])
+        const uWorldCameraPosition = new Cubets.GLUniform("u_worldCameraPosition", "3f", [0, 0, -5])
+
+        const context = new Cubets.GLContext(Cubets.GL.CULL_FACE, Cubets.GL.DEPTH_TEST)
+        context.add(aPosition, aNormal)
+        context.add(uTexture, uProjection, uView, uWorld, uWorldCameraPosition)
+
+        let fieldOfViewRadians = degToRad(60)
+        let modelXRotationRadians = degToRad(0)
+        let modelYRotationRadians = degToRad(0)
+        let cameraYRotationRadians = degToRad(0)
+
+        let spinCamera = true
+        let then = 0
+
+        // run the program on the context
+        const renderer = new Cubets.GL2Renderer("#cubets") 
+        requestAnimationFrame(drawScene)
+
+        function drawScene(time) {
+          time *= 0.001
+          let deltaTime = time - then
+          then = time
+
+          modelYRotationRadians += -0.7 * deltaTime
+          modelXRotationRadians += -0.4 * deltaTime
+
+          let projectionMatrix = mat4.perspective(mat4.create(), fieldOfViewRadians, renderer.aspectRatio, 1, 2000)
+          uProjection.updateValue(projectionMatrix)
+
+          let cameraPosition = [0, 0, 2]
+          uWorldCameraPosition.updateValue(cameraPosition)
+
+          let cameraMatrix = mat4.targetTo(mat4.create(), cameraPosition, [0, 0, 0], [0, 1, 0])
+          let viewMatrix = mat4.invert(mat4.create(), cameraMatrix)
+          uView.updateValue(viewMatrix)
+
+          let worldMatrix = mat4.create()
+          worldMatrix = mat4.rotateX(worldMatrix, worldMatrix, modelXRotationRadians)
+          worldMatrix = mat4.rotateY(worldMatrix, worldMatrix, modelYRotationRadians)
+          uWorld.updateValue(worldMatrix)
+
+          renderer.draw(program, context)
+
+          requestAnimationFrame(drawScene)
+        }
+      }
+    </script>
+  </body>
+</html>
