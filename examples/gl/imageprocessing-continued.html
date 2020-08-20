@@ -131,12 +131,12 @@
         texture.minFilter = Cubets.GL.NEAREST
         texture.magFilter = Cubets.GL.NEAREST
 
-        const uImage = new Cubets.GLUniformI1("u_image", texture)
-        const uResolution = new Cubets.GLUniformF2("u_resolution", [canvasWidth, canvasHeight])
-        const uFlipY = new Cubets.GLUniformF1("u_flipY", 1)
-        const uTextureSize = new Cubets.GLUniformF2("u_textureSize", [imageWidth, imageHeight])
-        const uKernel = new Cubets.GLUniformFv1("u_kernel[0]", [])
-        const uKernelWeight = new Cubets.GLUniformF1("u_kernelWeight", 0)
+        const uImage = new Cubets.GLUniform("u_image", "1i", texture)
+        const uResolution = new Cubets.GLUniform("u_resolution", "2f", [canvasWidth, canvasHeight])
+        const uFlipY = new Cubets.GLUniform("u_flipY", "1f", 1)
+        const uTextureSize = new Cubets.GLUniform("u_textureSize", "2f", [imageWidth, imageHeight])
+        const uKernel = new Cubets.GLUniform("u_kernel[0]", "1fv", [])
+        const uKernelWeight = new Cubets.GLUniform("u_kernelWeight", "1f", 0)
 
         const context = new Cubets.GLContext()
         context.add(aPosition, aTexCoord)
