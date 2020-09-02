@@ -1,10 +1,11 @@
 import { Vec3 } from "./vec3.js"
+import { ToArray } from "../misc/toarray.js"
 
 //@ts-ignore
 import { glMatrix, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
-export class Face3 {
+export class Face3 implements ToArray<number> {
   p1: number
   p2: number
   p3: number

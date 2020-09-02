@@ -171,11 +171,6 @@
       texture.minFilter = Cubets.GL.NEAREST
       texture.magFilter = Cubets.GL.NEAREST
         
-      /*
-      const uMatrix = new Cubets.GLUniform("u_matrix", "m4fv", mat4.create())
-      const uTexture = new Cubets.GLUniform("u_texture", "1i", texture)
-      const uColorMult = new Cubets.GLUniform("u_colorMult", "4fv", [0, 1, 1, 1])
-      */
       const uMatrix = new Cubets.GLUniform("u_matrix", "m4fv")
       const uTexture = new Cubets.GLUniform("u_texture", "1i")
       const uColorMult = new Cubets.GLUniform("u_colorMult", "4fv")

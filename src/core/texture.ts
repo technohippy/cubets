@@ -14,7 +14,7 @@ export class Texture {
   }
 
   loadImage():Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (typeof this.image === "string") {
         const image = new Image()
         image.onload = () => {

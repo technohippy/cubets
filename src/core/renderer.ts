@@ -3,7 +3,6 @@ import { FilteredCamera } from "./camera.js"
 import { Mesh } from "./mesh.js"
 import { Viewport } from "./viewport.js"
 import { RGBAColor } from "../math/rgbacolor.js"
-import { Transform3 } from "../math/transform3.js"
 import { Material } from "./material.js"
 import { RenderTarget } from "./rendertarget.js"
 

@@ -5,7 +5,7 @@ function loadCode(url, id) {
     const pre = document.createElement("pre")
     const code = document.createElement("code")
     code.className = "javascript"
-    const m1 = text.match(/<script\s+type=["']module["']>(\s+import Cubets from[\s\S]*?)<\/script>/m)
+    const m1 = text.match(/<script\s+type=["']module["']>(\s+import( \* as)? Cubets from[\s\S]*?)<\/script>/m)
     const source = m1[1]
     code.textContent = source
 

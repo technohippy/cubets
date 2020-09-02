@@ -404,13 +404,13 @@ export class GL2Renderer {
         this.#gl.uniform4fv(location, values)
         break
       case "m2fv":
-        this.#gl.uniformMatrix2fv(location, false, values) // TODO
+        this.#gl.uniformMatrix2fv(location, false, values) // transpose must be false
         break
       case "m3fv":
-        this.#gl.uniformMatrix3fv(location, false, values) // TODO
+        this.#gl.uniformMatrix3fv(location, false, values) // transpose must be false
         break
       case "m4fv":
-        this.#gl.uniformMatrix4fv(location, false, values) // TODO
+        this.#gl.uniformMatrix4fv(location, false, values) // transpose must be false
         break
       default:
         throw `unsupported type: ${type}`

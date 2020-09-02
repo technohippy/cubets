@@ -1,10 +1,11 @@
 import { PolarCoord } from "./polarcoord.js"
+import { ToArray } from "../misc/toarray.js"
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 glMatrix.setMatrixArrayType(Array)
 
-export class Vec3 {
+export class Vec3 implements ToArray<number> {
   x:number
   y:number
   z:number
