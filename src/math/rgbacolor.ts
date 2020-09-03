@@ -15,6 +15,10 @@ export class RGBAColor {
     return new RGBAColor(Math.random(), Math.random(), Math.random())
   }
 
+  static gray(val:number): RGBAColor {
+    return new RGBAColor(val, val, val)
+  }
+
   static fromNumber(n:number): RGBAColor {
     const r = (n & 0xff0000) >> 16
     const g = (n & 0x00ff00) >> 8 

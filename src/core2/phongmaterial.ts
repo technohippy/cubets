@@ -21,8 +21,7 @@ export class PhongMaterial extends Material {
   #uploaded = false
 
   constructor(
-    //diffuseColor: RGBAColor=RGBAColor.random(),
-    diffuseColor: RGBAColor=RGBAColor.White,
+    diffuseColor: RGBAColor=RGBAColor.random(),
     ambientColor: RGBAColor=RGBAColor.Gray,
     specularColor: RGBAColor=RGBAColor.White,
     shininess: number = 100,
