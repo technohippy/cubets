@@ -2,7 +2,7 @@ import { GL2Renderer } from "./gl2renderer.js"
 import { GLTexture2D } from "./gltexture2d.js"
 import { GLTextureCube } from "./gltexturecube.js"
 
-type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
+type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1iv" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
 
 export class GLUniform {
   name:string

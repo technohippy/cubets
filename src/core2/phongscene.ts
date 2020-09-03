@@ -1,22 +1,50 @@
 import { Scene } from "./scene.js"
 import { GeometryConfig } from "./geometry.js"
 import { GLAttribute } from "../gl/glattribute.js"
+import { Material } from "./material.js"
+import { Camera } from "./camera.js"
+import { Light } from "./light.js"
+import { PhongMaterial } from "./phongmaterial.js"
+import { GLUniform } from "../gl/gluniform.js"
+import { PhongDirectionalLight } from "./phongdirectionallight.js"
+import { PhongPerspectiveCamera } from "./phoneperspecivecamera.js"
+
+type PhongSceneMaterialParamKey = "type"
+type PhongSceneMaterialParam = {[key in PhongSceneMaterialParamKey]?:any}
 
 export class PhongScene extends Scene {
   hasParticles():boolean {
-    return false
+    return false // TODO
   }
 
   hasTexture():boolean {
-    return false
+    return false // TODO
   }
 
   hasNormalTexture():boolean {
-    return false
+    return false // TODO
   }
 
   hasCubeTexture():boolean {
-    return false
+    return false // TODO
+  }
+
+  createMaterial(params?:PhongSceneMaterialParam):Material {
+    return new PhongMaterial()
+  }
+
+  createLight(params:{[key:string]:any}):Light {
+    if (params["type"] === "directional") {
+      return new PhongDirectionalLight(params)
+    }
+    throw `invalid type:${params["type"]}`
+  }
+
+  createCamera(params:{[key:string]:any}):Camera {
+    if (params["type"] === "perspective") {
+      return new PhongPerspectiveCamera(params)
+    }
+    throw `invalid type:${params["type"]}`
   }
 
   getVertexShader():string {
@@ -331,6 +359,7 @@ export class PhongScene extends Scene {
           float fogAmount = smoothstep(uFogNear, uFogFar, vDepth);
           fragColor = mix(fragColor, uFogColor, fogAmount);  
         }
+        fragColor = vec4(1, 0, 0, 1);
       }
     `
   }
@@ -339,10 +368,38 @@ export class PhongScene extends Scene {
     return {
       "vertices":new GLAttribute("aVertexPosition", 3, WebGL2RenderingContext.FLOAT),
       "normals":new GLAttribute("aVertexNormal", 3, WebGL2RenderingContext.FLOAT),
-      "colors":new GLAttribute("aVertexColor", 4, WebGL2RenderingContext.FLOAT),
+      //"colors":new GLAttribute("aVertexColor", 4, WebGL2RenderingContext.FLOAT),
       //"offsets":new GLAttribute("aVertexOffset", 3, WebGL2RenderingContext.FLOAT),
       //"quats":new GLAttribute("aVertexQuat", 4, WebGL2RenderingContext.FLOAT),
       //"uvs":new GLAttribute("aVertexTextureCoords", 2, WebGL2RenderingContext.FLOAT),
+    }
+  }
+
+  materialConfig():{[key:string]:GLUniform} {
+    return {
+      "diffuse":new GLUniform("uMaterialDiffuse", "4f"),
+      "ambient":new GLUniform("uMaterialAmbient", "4f"),
+      "specular":new GLUniform("uMaterialSpecular", "4f"),
+      "shininess":new GLUniform("uShininess", "1f"),
+    }
+  }
+  
+  lightConfig():{[key:string]:GLUniform} {
+    return {
+      "followCamera":new GLUniform("uLightFollowCameraMode[0]", "1iv"),
+      "direction":new GLUniform("uLightDirection[0]", "3fv"),
+      "ambient":new GLUniform("uLightAmbient[0]", "4fv"),
+      "diffuse":new GLUniform("uLightDiffuse[0]", "4fv"),
+      //"specular":new GLUniform("uLightSpecular[0]", "4fv"),
+      "cutoff":new GLUniform("uCutoff[0]", "1fv"),
+    }
+  }
+
+  cameraConfig():{[key:string]:GLUniform} {
+    return {
+      "projectionMatrix":new GLUniform("uProjectionMatrix", "m4fv"),
+      "modelViewMatrix":new GLUniform("uModelViewMatrix", "m4fv"),
+      "normalMatrix":new GLUniform("uNormalMatrix", "m4fv"),
     }
   }
 }
