@@ -6,6 +6,7 @@ import { Quat } from "../math/quat.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
+import { Renderer } from "./renderer.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera implements ContextWriter {
@@ -60,6 +61,14 @@ export abstract class Camera implements ContextWriter {
     mat4.copy(this.normalMatrix, this.modelViewMatrix)
     mat4.invert(this.normalMatrix, this.normalMatrix)
     mat4.transpose(this.normalMatrix, this.normalMatrix)
+  }
+
+  isSetupContextVars():boolean {
+    return !!this.projectionMatrixUniform
+  }
+
+  setup(renderer:Renderer) {
+    // for subclass
   }
 
   setupContextVars(config:{[key:string]:GLUniform}) {

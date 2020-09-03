@@ -4,12 +4,15 @@ import { GLUniform } from "../gl/gluniform.js";
 
 //@ts-ignore
 import { glMatrix, mat4 } from "../../node_modules/gl-matrix/esm/index.js"
+import { Renderer } from "./renderer.js";
 glMatrix.setMatrixArrayType(Array)
 
 export class PhongPerspectiveCamera extends Camera {
   fov:number
   near:number
   far:number
+
+  aspectRatio?:number
 
   constructor(params:{[key:string]:any}) {
     super()
@@ -22,9 +25,12 @@ export class PhongPerspectiveCamera extends Camera {
     this.far = params["far"]
   }
 
+  setup(renderer:Renderer) {
+    this.aspectRatio = renderer.gl.aspectRatio
+  }
+
   writeContext(context:GLContext) {
-    const aspectRatio = 1
-    mat4.perspective(this.projectionMatrix, this.fov, aspectRatio, this.near, this.far)
+    mat4.perspective(this.projectionMatrix, this.fov, this.aspectRatio, this.near, this.far)
 
     super.writeContext(context)
   }

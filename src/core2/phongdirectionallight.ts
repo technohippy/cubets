@@ -17,6 +17,10 @@ export class PhongDirectionalLight extends Light {
   specularColorUniform?:GLUniform
   directionUniform?:GLUniform
 
+  isPositionalUniform?:GLUniform
+  positionUniform?:GLUniform
+  cutoffUniform?:GLUniform
+
   #uploaded = false
 
   constructor(params:{[key:string]:any}) {
@@ -28,18 +32,37 @@ export class PhongDirectionalLight extends Light {
   }
 
   setupContextVars(config:{[key:string]:GLUniform}) {
-    this.ambientColorUniform = config["abmient"]
+    this.isPositionalUniform = config["isPositional"]
+    this.positionUniform = config["position"]
+    this.cutoffUniform = config["cutoff"]
+
+    this.ambientColorUniform = config["ambient"]
     this.diffuseColorUniform = config["diffuse"]
     this.specularColorUniform = config["specular"]
     this.directionUniform = config["direction"]
   }
 
   writeContext(context:GLContext) {
-    if (this.diffuseColor) this.diffuseColorUniform?.updateValue(this.diffuseColor.toArray())
-    if (this.ambientColor) this.ambientColorUniform?.updateValue(this.ambientColor.toArray())
-    if (this.specularColor) this.specularColorUniform?.updateValue(this.specularColor.toArray())
-    if (this.direction) this.directionUniform?.updateValue(this.direction.toArray())
+    this.isPositionalUniform?.updateValue(0)
+    this.positionUniform?.updateValue([0, 0, 0])
+    this.cutoffUniform?.updateValue(1)
+    if (this.diffuseColor) {
+      this.diffuseColorUniform?.updateValue(this.diffuseColor.toArray())
+    }
+    if (this.ambientColor) {
+      this.ambientColorUniform?.updateValue(this.ambientColor.toArray())
+    }
+    if (this.specularColor) {
+      this.specularColorUniform?.updateValue(this.specularColor.toArray())
+    }
+    if (this.direction) {
+      this.directionUniform?.updateValue(this.direction.toArray())
+    }
+
     if (!this.#uploaded) {
+      context.addUniform(this.isPositionalUniform!)
+      context.addUniform(this.positionUniform!)
+      context.addUniform(this.cutoffUniform!)
       if (this.diffuseColorUniform) {
         context.addUniform(this.diffuseColorUniform)
       }
@@ -55,5 +78,4 @@ export class PhongDirectionalLight extends Light {
       this.#uploaded = true
     }
   }
-  
 }

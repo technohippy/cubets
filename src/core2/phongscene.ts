@@ -339,6 +339,12 @@ export class PhongScene extends Scene {
           }
 
           fragColor = fragColor + vec4(vec3(Ia + Id + Is), 1.0);
+          /*
+          float th = 0.0000001;
+          if (fragColor.r < th && fragColor.g < th && fragColor.b < th && 0.9 < fragColor.a) {
+            fragColor.r = 1.0;
+          }
+          */
         }
 
         #ifdef TEXTURE
@@ -359,7 +365,7 @@ export class PhongScene extends Scene {
           float fogAmount = smoothstep(uFogNear, uFogFar, vDepth);
           fragColor = mix(fragColor, uFogColor, fogAmount);  
         }
-        fragColor = vec4(1, 0, 0, 1);
+        //fragColor = vec4(1, 0, 0, 1);
       }
     `
   }
@@ -386,12 +392,14 @@ export class PhongScene extends Scene {
   
   lightConfig():{[key:string]:GLUniform} {
     return {
-      "followCamera":new GLUniform("uLightFollowCameraMode[0]", "1iv"),
-      "direction":new GLUniform("uLightDirection[0]", "3fv"),
-      "ambient":new GLUniform("uLightAmbient[0]", "4fv"),
-      "diffuse":new GLUniform("uLightDiffuse[0]", "4fv"),
-      //"specular":new GLUniform("uLightSpecular[0]", "4fv"),
-      "cutoff":new GLUniform("uCutoff[0]", "1fv"),
+      "isPositional":new GLUniform("uPositionalLight", "1i"),
+      "followCamera":new GLUniform("uLightFollowCameraMode", "1i"),
+      "direction":new GLUniform("uLightDirection", "3f"),
+      "position":new GLUniform("uLightPosition", "3f"),
+      "ambient":new GLUniform("uLightAmbient", "4f"),
+      "diffuse":new GLUniform("uLightDiffuse", "4f"),
+      "specular":new GLUniform("uLightSpecular", "4f"),
+      "cutoff":new GLUniform("uCutoff", "1f"),
     }
   }
 

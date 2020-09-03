@@ -29,14 +29,15 @@
 
       const geometry = new Cubets.CubeGeometry(10, 10, 10)
       const material = scene.createMaterial()
-      const mesh = new Cubets.Mesh(geometry)
+      const mesh = new Cubets.Mesh(geometry, material)
       scene.addMesh(mesh)
 
       const light = scene.createLight({
         type:"directional",
-        direction:new Cubets.Vec3(0, 0, -1),
+        direction:new Cubets.Vec3(-0.1, -0.3, -1),
         ambientColor:new Cubets.RGBAColor(0.3, 0.3, 0.3),  
         diffuseColor:new Cubets.RGBAColor(0.8, 0.8, 0.8),
+        specularColor:new Cubets.RGBAColor(1.0, 1.0, 1.0),
       })
       scene.addLight(light)
 
@@ -46,39 +47,13 @@
         near:0.1,
         far:1000,
       })
-      camera.setupContextVars(scene.cameraConfig()) // TODO: 中に隠す
       camera.position.z = 20
       camera.position.y = 10
+      camera.position.x = 5
       camera.target = new Cubets.Vec3()
 
       const renderer = new Cubets.Renderer("#cubets")
       renderer.render(scene, camera)
-
-      /*
-      const scene = new Cubets.Scene()
-
-      const light = new Cubets.Scene.Light(
-        new Cubets.Vec3(0, 0, -1),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.8)
-      )
-
-      const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry(10, 10, 10),
-        new Cubets.Scene.Material(),
-      )
-      mesh.rotation = Cubets.Quat.fromEulerDegrees(30, 30, 45)
-
-      scene.add(mesh)
-      scene.add(light)
-
-      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 1000)
-      camera.position.z = 20
-      camera.position.y = 10
-      camera.target = new Cubets.Vec3()
-
-      camera.start(scene)
-      */
     </script>
   </body>
 </html>

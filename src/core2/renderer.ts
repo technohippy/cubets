@@ -10,8 +10,17 @@ export class Renderer {
   }
 
   render(scene:Scene, camera?:Camera) {
-    if (!scene.program) scene.prepare()
+    if (!scene.program) {
+      scene.prepare()
+    }
+    if (camera) {
+      if (!camera.isSetupContextVars()) {
+        camera.setupContextVars(scene.cameraConfig())
+      }
+    }
+
     scene.each(w => w.writeContext(scene.context))
+    camera?.setup(this)
     camera?.writeContext(scene.context) 
     this.gl.draw(scene.program!, scene.context)
   }

@@ -10,7 +10,10 @@ import { GLUniform } from "../gl/gluniform.js";
 
 export abstract class Scene {
   program?:GLProgram
-  context = new GLContext()
+  context = new GLContext( // TODO:初期化時に設定可能に
+    WebGL2RenderingContext.CULL_FACE,
+    WebGL2RenderingContext.DEPTH_TEST,
+  )
   #meshes:Mesh[] = []
   #lights:Light[] = []
 
