@@ -9,6 +9,7 @@ import { Vec2 } from "./math/vec2.js";
 import { Vec3 } from "./math/vec3.js";
 import { GLAttribute } from "./gl/glattribute.js";
 import { RGBAColor } from "./math/rgbacolor.js"
+import { OrbitCameraControl } from "./core2/control/orbitcameracontrol.js";
 
 export default {
   Renderer:Renderer,
@@ -22,4 +23,5 @@ export default {
   Vec3:Vec3,
   GLAttribute:GLAttribute,
   RGBAColor:RGBAColor,
+  OrbitCameraControl:OrbitCameraControl,
 }

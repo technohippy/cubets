@@ -24,4 +24,12 @@ export class Renderer {
     camera?.writeContext(scene.context) 
     this.gl.draw(scene.program!, scene.context)
   }
+
+  renderAnim(scene:Scene, camera?:Camera) {
+    const anim = () => requestAnimationFrame(() => {
+      this.render(scene, camera)
+      anim()
+    })
+    anim()
+  }
 }

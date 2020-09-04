@@ -17,21 +17,31 @@ export abstract class Scene {
   #meshes:Mesh[] = []
   #lights:Light[] = []
 
-  abstract createMaterial(params?:{[key:string]:any}):Material
-
-  abstract createLight(params?:{[key:string]:any}):Light
-
-  abstract createCamera(params?:{[key:string]:any}):Camera
-
   abstract getVertexShader():string
  
   abstract getFragmentShader():string
 
   abstract geometryConfig():GeometryConfig
 
-  abstract materialConfig():{[key:string]:GLUniform}
+  createMaterial(params?:{[key:string]:any}):Material|null {
+    return null
+  }
+
+  createLight(params?:{[key:string]:any}):Light|null {
+    return null
+  }
+
+  createCamera(params?:{[key:string]:any}):Camera|null {
+    return null
+  }
+
+  materialConfig():{[key:string]:GLUniform} {
+    return {}
+  }
   
-  abstract lightConfig():{[key:string]:GLUniform}
+  lightConfig():{[key:string]:GLUniform} {
+    return {}
+  }
 
   abstract cameraConfig():{[key:string]:GLUniform}
 
