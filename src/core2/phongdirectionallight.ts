@@ -12,6 +12,7 @@ export class PhongDirectionalLight extends Light {
   specularColor:RGBAColor
   direction:Vec3
 
+  shouldFollowCameraUniform?:GLUniform
   ambientColorUniform?:GLUniform
   diffuseColorUniform?:GLUniform
   specularColorUniform?:GLUniform
@@ -36,6 +37,7 @@ export class PhongDirectionalLight extends Light {
     this.positionUniform = config["position"]
     this.cutoffUniform = config["cutoff"]
 
+    this.shouldFollowCameraUniform = config["followCamera"]
     this.ambientColorUniform = config["ambient"]
     this.diffuseColorUniform = config["diffuse"]
     this.specularColorUniform = config["specular"]
@@ -46,6 +48,7 @@ export class PhongDirectionalLight extends Light {
     this.isPositionalUniform?.updateValue(0)
     this.positionUniform?.updateValue([0, 0, 0])
     this.cutoffUniform?.updateValue(1)
+    this.shouldFollowCameraUniform?.updateValue(+this.shouldFollowCamera)
     if (this.diffuseColor) {
       this.diffuseColorUniform?.updateValue(this.diffuseColor.toArray())
     }
@@ -63,6 +66,9 @@ export class PhongDirectionalLight extends Light {
       context.addUniform(this.isPositionalUniform!)
       context.addUniform(this.positionUniform!)
       context.addUniform(this.cutoffUniform!)
+      if (this.shouldFollowCameraUniform) {
+        context.addUniform(this.shouldFollowCameraUniform)
+      }
       if (this.diffuseColorUniform) {
         context.addUniform(this.diffuseColorUniform)
       }

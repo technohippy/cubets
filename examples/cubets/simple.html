@@ -69,32 +69,6 @@
 
       const renderer = new Cubets.Renderer("#cubets")
       renderer.render(scene)
-
-      /*
-      const scene = new Cubets.Scene()
-
-      const light = new Cubets.Scene.Light(
-        new Cubets.Vec3(0, 0, -1),
-        new Cubets.Color(0.3, 0.3, 0.3),
-        new Cubets.Color(0.8, 0.8, 0.8)
-      )
-
-      const mesh = new Cubets.Mesh(
-        new Cubets.CubeGeometry(10, 10, 10),
-        new Cubets.Scene.Material(),
-      )
-      mesh.rotation = Cubets.Quat.fromEulerDegrees(30, 30, 45)
-
-      scene.add(mesh)
-      scene.add(light)
-
-      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 1000)
-      camera.position.z = 20
-      camera.position.y = 10
-      camera.target = new Cubets.Vec3()
-
-      camera.start(scene)
-      */
     </script>
   </body>
 </html>
