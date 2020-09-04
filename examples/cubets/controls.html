@@ -34,12 +34,12 @@
 
       const light = scene.createLight({
         type:"directional",
-        direction:new Cubets.Vec3(-0.1, -0.3, -1),
-        ambientColor:Cubets.RGBAColor.gray(0.3),  
+        direction:new Cubets.Vec3(0, 0, -1),
         diffuseColor:Cubets.RGBAColor.gray(0.8),
-        specularColor:Cubets.RGBAColor.White,
+        ambientColor:Cubets.RGBAColor.gray(0.3),  
+        specularColor:Cubets.RGBAColor.Gray,
+        followCamera:true,
       })
-      light.shouldFollowCamera = true
       scene.addLight(light)
 
       const camera = scene.createCamera({

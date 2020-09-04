@@ -66,6 +66,24 @@ export class GLContext {
     flags.forEach(flag => this.enable(flag))
   }
 
+  clone():GLContext {
+    const context = new GLContext(...this.enableFlags)
+    context.framebuffer = this.framebuffer
+    context.viewport = this.viewport
+    context.clearColor = this.clearColor
+    context.index = this.index
+    context.attributes = [...this.attributes]
+    context.uniforms = [...this.uniforms]
+    context.needClear = this.needClear
+    context.drawMode = this.drawMode
+    context.drawOffset = this.drawOffset
+    context.drawSize = this.drawSize
+    context.#instancing = this.#instancing
+    context.#instanceCount = this.#instanceCount
+    context.vao = this.vao
+    return context
+  }
+
   add(...params:(GLAttribute | GLUniform)[]) {
     params.forEach(param => {
       if (param instanceof GLIndex) {
@@ -146,6 +164,14 @@ export class GLContext {
     } else if (!this.framebuffer.prepared()) {
       this.framebuffer.prepare(renderer)
     }
+  }
+
+  hasUniform(name:string):boolean {
+    return !!this.uniform(name)
+  }
+
+  hasAttribute(name:string):boolean {
+    return !!this.attribute(name)
   }
 
   uniform(name:string):GLUniform | undefined {

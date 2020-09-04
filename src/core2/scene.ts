@@ -69,6 +69,14 @@ export abstract class Scene {
     this.#lights.push(light)
   }
 
+  add(e:Mesh|Light) {
+    if (e instanceof Mesh) {
+      this.addMesh(e)
+    } else if (e instanceof Light) {
+      this.addLight(e)
+    }
+  }
+
   each(fn:(w:ContextWriter) => void) {
     this.eachMesh(fn)
     this.eachLight(fn)

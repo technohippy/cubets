@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Animation</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets2.js"
+
+      const scene = new Cubets.PhongScene()
+
+      const light = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(0, 0, -1),
+        diffuseColor:new Cubets.RGBAColor(0.3, 0.3, 0.3),
+        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 0.8),
+      })
+
+      const mesh = new Cubets.Mesh(
+        new Cubets.CubeGeometry(10, 10, 10),
+        //scene.createMaterial(),
+        scene.createMaterial({
+          diffuseColor:Cubets.RGBAColor.Red,
+        }),
+      )
+
+      const mesh2 = new Cubets.Mesh(
+        new Cubets.CubeGeometry(5, 5, 5),
+        /*
+        scene.createMaterial({
+          diffuseColor:new Cubets.RGBAColor(0.1, 0.5, 1.0),
+        }),
+        */
+        scene.createMaterial({
+          diffuseColor:Cubets.RGBAColor.Green,
+        }),
+      )
+      mesh2.position = new Cubets.Vec3(-6, 0, 4)
+      mesh2.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 45)
+
+      scene.add(mesh)
+      scene.add(mesh2)
+      scene.add(light)
+
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/3,
+        near:0.1,
+        far:100,
+      })
+      camera.position.z = 20
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.render(scene, camera)
+
+      setInterval(() => {
+        mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
+        mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
+        renderer.render(scene, camera)
+      }, 10)
+    </script>
+  </body>
+</html>

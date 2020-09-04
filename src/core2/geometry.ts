@@ -9,11 +9,13 @@ import { ToArray } from "../misc/toarray.js";
 import { ContextWriter } from "./contextwriter.js";
 import { GLImage } from "../gl/glimage.js";
 import { GLIndex } from "../gl/glindex.js";
+import { Transform3 } from "../math/transform3.js";
 
 type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors"
 export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute}
 
 export class Geometry implements ContextWriter {
+  transform = new Transform3()
   indices:Face3[] = []
   vertices:Vec3[] = []
 
@@ -36,12 +38,46 @@ export class Geometry implements ContextWriter {
   }
 
   writeContext(context:GLContext) {
+    /*
+    if (0 < this.indices.length) {
+      if (!context.index) {
+        context.index = new GLIndex()
+        context.index.buffer = GLBuffer.ui16(this.toArray(this.indices))
+      }
+    }
+
+    if (0 < this.vertices.length && this.verticesAttr) {
+      const transformedVertices = this.transformVec3s(this.vertices)
+      if (context.hasAttribute(this.verticesAttr.name)) {
+        this.verticesAttr?.updateBufferData(this.toArray(transformedVertices))
+      } else {
+        this.verticesAttr.buffer = GLBuffer.f32(this.toArray(transformedVertices))
+        context.addAttribute(this.verticesAttr)
+      }
+    }
+    if (0 < this.normals.length && this.normalsAttr) {
+      const transformedNormals = this.transformVec3s(this.normals)
+      if (context.hasAttribute(this.normalsAttr.name)) {
+        this.normalsAttr?.updateBufferData(this.toArray(transformedNormals))
+      } else {
+        this.normalsAttr.buffer = GLBuffer.f32(this.toArray(transformedNormals))
+        context.addAttribute(this.normalsAttr)
+      }
+    }
+    */
+
+
+
+
+
     if (this.#uploaded) {
       if (0 < this.vertices.length) {
-        this.verticesAttr?.updateBufferData(this.toArray(this.vertices))
+        const transformedVertices = this.transformVec3s(this.vertices)
+        this.verticesAttr?.updateBufferData(this.toArray(transformedVertices))
       }
       if (0 < this.normals.length) {
-        this.normalsAttr?.updateBufferData(this.toArray(this.normals))
+        const transformedNormals = this.transformVec3s(this.normals)
+        this.normalsAttr?.updateBufferData(this.toArray(transformedNormals))
       }
       if (0 < this.uvs.length) {
         this.uvsAttr?.updateBufferData(this.toArray(this.uvs))
@@ -56,11 +92,13 @@ export class Geometry implements ContextWriter {
       }
 
       if (this.verticesAttr) {
-        this.verticesAttr.buffer = GLBuffer.f32(this.toArray(this.vertices))
+        const transformedVertices = this.transformVec3s(this.vertices)
+        this.verticesAttr.buffer = GLBuffer.f32(this.toArray(transformedVertices))
         context.addAttribute(this.verticesAttr)
       }
       if (this.normalsAttr) {
-        this.normalsAttr.buffer = GLBuffer.f32(this.toArray(this.normals))
+        const transformedNormals = this.transformVec3s(this.normals)
+        this.normalsAttr.buffer = GLBuffer.f32(this.toArray(transformedNormals))
         context.addAttribute(this.normalsAttr)
       }
       if (this.uvsAttr) {
@@ -73,6 +111,14 @@ export class Geometry implements ContextWriter {
       }
       this.#uploaded = true
     }
+  }
+
+  private transformVec3s(vs:Vec3[]): Vec3[] {
+    return vs.map(v => {
+      const vv = v.clone()
+      this.transform.apply(vv)
+      return vv
+    })
   }
 
   private toArray(ary:ToArray<number>[]):number[] {

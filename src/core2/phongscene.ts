@@ -8,9 +8,7 @@ import { PhongMaterial } from "./phongmaterial.js"
 import { GLUniform } from "../gl/gluniform.js"
 import { PhongDirectionalLight } from "./phongdirectionallight.js"
 import { PhongPerspectiveCamera } from "./phoneperspecivecamera.js"
-
-type PhongSceneMaterialParamKey = "type"
-type PhongSceneMaterialParam = {[key in PhongSceneMaterialParamKey]?:any}
+import { RGBAColor } from "../math/rgbacolor.js"
 
 export class PhongScene extends Scene {
   hasParticles():boolean {
@@ -29,13 +27,28 @@ export class PhongScene extends Scene {
     return false // TODO
   }
 
-  createMaterial(params?:PhongSceneMaterialParam):Material {
-    return new PhongMaterial()
+  createMaterial(params?:{[key:string]:any}):Material {
+    let diffuse = RGBAColor.random()
+    let ambient = RGBAColor.Gray
+    let specular = RGBAColor.White
+    if (params) {
+      if (params["diffuseColor"]) diffuse = params["diffuseColor"]
+      if (params["ambientColor"]) ambient = params["ambientColor"]
+      if (params["specularColor"]) specular = params["specularColor"]
+    }
+    return new PhongMaterial(diffuse, ambient, specular)
   }
 
   createLight(params:{[key:string]:any}):Light {
     if (params["type"] === "directional") {
-      return new PhongDirectionalLight(params)
+      const light = new PhongDirectionalLight(
+        params["direction"],
+        params["diffuseColor"],
+        params["ambientColor"],
+        params["specularColor"],
+      )
+      light.shouldFollowCamera = !!params["followCamera"]
+      return light
     }
     throw `invalid type:${params["type"]}`
   }

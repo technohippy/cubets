@@ -7,16 +7,16 @@ import { RGBAColor } from "../math/rgbacolor.js";
 export class PhongDirectionalLight extends Light {
   shouldFollowCamera = false
 
-  ambientColor:RGBAColor
-  diffuseColor:RGBAColor
-  specularColor:RGBAColor
   direction:Vec3
+  diffuseColor:RGBAColor
+  ambientColor:RGBAColor
+  specularColor:RGBAColor
 
   shouldFollowCameraUniform?:GLUniform
-  ambientColorUniform?:GLUniform
-  diffuseColorUniform?:GLUniform
-  specularColorUniform?:GLUniform
   directionUniform?:GLUniform
+  diffuseColorUniform?:GLUniform
+  ambientColorUniform?:GLUniform
+  specularColorUniform?:GLUniform
 
   isPositionalUniform?:GLUniform
   positionUniform?:GLUniform
@@ -24,12 +24,12 @@ export class PhongDirectionalLight extends Light {
 
   #uploaded = false
 
-  constructor(params:{[key:string]:any}) {
+  constructor(direction:Vec3, diffuse:RGBAColor, ambient:RGBAColor, specular:RGBAColor=RGBAColor.Gray) {
     super()
-    this.ambientColor = params["ambientColor"]
-    this.diffuseColor = params["diffuseColor"]
-    this.specularColor = params["specularColor"]
-    this.direction = params["direction"]
+    this.direction = direction
+    this.diffuseColor = diffuse
+    this.ambientColor = ambient
+    this.specularColor = specular
   }
 
   setupContextVars(config:{[key:string]:GLUniform}) {
