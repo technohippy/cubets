@@ -10,10 +10,7 @@ import { GLUniform } from "../gl/gluniform.js";
 
 export abstract class Scene {
   program?:GLProgram
-  context = new GLContext( // TODO:初期化時に設定可能に
-    WebGL2RenderingContext.CULL_FACE,
-    WebGL2RenderingContext.DEPTH_TEST,
-  )
+  context:GLContext
   #meshes:Mesh[] = []
   #lights:Light[] = []
 
@@ -22,6 +19,17 @@ export abstract class Scene {
   abstract getFragmentShader():string
 
   abstract geometryConfig():GeometryConfig
+
+  constructor(...flags:number[]) {
+    if (flags.length === 0) {
+      flags = [
+        WebGL2RenderingContext.CULL_FACE,
+        WebGL2RenderingContext.DEPTH_TEST,
+      ]
+    }
+    this.context = new GLContext(...flags)
+    this.context.needClear = false
+  }
 
   createMaterial(params?:{[key:string]:any}):Material|null {
     return null

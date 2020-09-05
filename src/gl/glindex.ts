@@ -14,11 +14,23 @@ export class GLIndex {
       this.#buffer = new GLBuffer(data)
     }
     this.#buffer.target = WebGLRenderingContext.ELEMENT_ARRAY_BUFFER
-    
   }
 
   constructor(type:number=WebGLRenderingContext.UNSIGNED_SHORT) {
     this.type = type
+  }
+
+  updateBufferData(dataOrFn:number[] | ((data:number[]) => number[])) {
+    if (!this.#buffer) throw 'no data'
+
+    let fn:(data:number[]) => number[]
+    if (Array.isArray(dataOrFn)) {
+      fn = () => dataOrFn
+    } else {
+      fn = dataOrFn
+    }
+    this.#buffer.update(fn)
+    this.updated = true
   }
 
   uploadBufferData(renderer:GL2Renderer) {

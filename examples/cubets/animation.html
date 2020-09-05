@@ -35,21 +35,13 @@
 
       const mesh = new Cubets.Mesh(
         new Cubets.CubeGeometry(10, 10, 10),
-        //scene.createMaterial(),
-        scene.createMaterial({
-          diffuseColor:Cubets.RGBAColor.Red,
-        }),
+        scene.createMaterial(),
       )
 
       const mesh2 = new Cubets.Mesh(
         new Cubets.CubeGeometry(5, 5, 5),
-        /*
         scene.createMaterial({
           diffuseColor:new Cubets.RGBAColor(0.1, 0.5, 1.0),
-        }),
-        */
-        scene.createMaterial({
-          diffuseColor:Cubets.RGBAColor.Green,
         }),
       )
       mesh2.position = new Cubets.Vec3(-6, 0, 4)
