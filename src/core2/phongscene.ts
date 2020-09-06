@@ -7,7 +7,8 @@ import { Light } from "./light.js"
 import { PhongMaterial } from "./phongmaterial.js"
 import { GLUniform } from "../gl/gluniform.js"
 import { PhongDirectionalLight } from "./phongdirectionallight.js"
-import { PhongPerspectiveCamera } from "./phoneperspecivecamera.js"
+import { PhongPerspectiveCamera } from "./phongperspecivecamera.js"
+import { PhongOrthogonalCamera } from "./phongorthogonalcamera.js"
 import { RGBAColor } from "../math/rgbacolor.js"
 
 export class PhongScene extends Scene {
@@ -55,7 +56,17 @@ export class PhongScene extends Scene {
 
   createCamera(params:{[key:string]:any}):Camera {
     if (params["type"] === "perspective") {
-      return new PhongPerspectiveCamera(params)
+      return new PhongPerspectiveCamera(
+        params["fov"],
+        params["near"],
+        params["far"],
+      )
+    } else if (params["type"] === "orthogonal") {
+      return new PhongOrthogonalCamera(
+        params["width"],
+        params["near"],
+        params["far"],
+      )
     }
     throw `invalid type:${params["type"]}`
   }
