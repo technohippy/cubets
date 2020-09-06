@@ -20,7 +20,7 @@ export class Renderer {
       }
     }
 
-    this.gl.clear()
+    this.gl.clear() // TODO: clear
     camera?.setup(this)
     camera?.writeContext(scene.context) 
     scene.each(w => {

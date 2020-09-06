@@ -28,7 +28,6 @@ export abstract class Scene {
       ]
     }
     this.context = new GLContext(...flags)
-    this.context.needClear = false
   }
 
   createMaterial(params?:{[key:string]:any}):Material|null {
@@ -70,6 +69,9 @@ export abstract class Scene {
   addMesh(mesh:Mesh) {
     mesh.setupContextVars(this.geometryConfig(), this.materialConfig())
     this.#meshes.push(mesh)
+    if (1 < this.#meshes.length) {
+      this.context.needClear = false // TODO: clear
+    }
   }
 
   addLight(light:Light) {

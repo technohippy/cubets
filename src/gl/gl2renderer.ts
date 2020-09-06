@@ -72,6 +72,7 @@ export class GL2Renderer {
       }
       program.use(this)
       this.lastProgram = program 
+      this.clear() // TODO: clear
     }
 
     context.storeLocations(this, program)
