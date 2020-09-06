@@ -1,0 +1,6 @@
+- geometryを座標変換したときの法線の扱い
+  - writeContextで設定値を無視して頂点座標から自動計算しているのをどうにかするべき
+- GLContext#needClearの扱い
+  - sceneとrendererでclearを無理やり設定しているけどどうにかするべき
+  - needClear=falseにすると、初回描画時だけ表示がおかしい模様
+  - GL2Renderer#drawの途中でclearするので、融通が効かなくなっている模様

@@ -53,7 +53,8 @@ export class Geometry implements ContextWriter {
         this.verticesAttr?.updateBufferData(this.toArray(transformedVertices))
       }
       if (0 < this.normals.length) {
-        const transformedNormals = this.transformVec3s(this.normals)
+        const transformedVertices = this.transformVec3s(this.vertices)
+        const transformedNormals = Geometry.computeNormals(this.indices, transformedVertices)
         this.normalsAttr?.updateBufferData(this.toArray(transformedNormals))
       }
       if (0 < this.uvs.length) {
@@ -74,7 +75,8 @@ export class Geometry implements ContextWriter {
         context.addAttribute(this.verticesAttr)
       }
       if (this.normalsAttr) {
-        const transformedNormals = this.transformVec3s(this.normals)
+        const transformedVertices = this.transformVec3s(this.vertices)
+        const transformedNormals = Geometry.computeNormals(this.indices, transformedVertices)
         this.normalsAttr.buffer = GLBuffer.f32(this.toArray(transformedNormals))
         context.addAttribute(this.normalsAttr)
       }
