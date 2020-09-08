@@ -28,6 +28,15 @@ export class PhongScene extends Scene {
     return false // TODO
   }
 
+  clone():Scene {
+    const scene = new PhongScene(...this.context.enableFlags)
+    scene.context.needClear = this.context.needClear // TODO
+    scene.program = this.program
+    scene.meshes = this.meshes
+    scene.lights = this.lights
+    return scene
+  }
+
   createMaterial(params?:{[key:string]:any}):Material {
     let diffuse = RGBAColor.random()
     let ambient = RGBAColor.Gray

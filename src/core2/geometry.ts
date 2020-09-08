@@ -10,6 +10,7 @@ import { ContextWriter } from "./contextwriter.js";
 import { GLImage } from "../gl/glimage.js";
 import { GLIndex } from "../gl/glindex.js";
 import { Transform3 } from "../math/transform3.js";
+import { GeometryContext } from "./context/geometrycontext.js";
 
 type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors"
 export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute}
@@ -29,6 +30,10 @@ export class Geometry implements ContextWriter {
   colorsAttr?:GLAttribute
 
   #uploaded = false
+
+  setupContext(config:GeometryConfig) {
+    return new GeometryContext(config)
+  }
 
   setupContextVars(config:GeometryConfig) {
     this.verticesAttr = config["vertices"]

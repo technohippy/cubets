@@ -2,6 +2,8 @@ import { Material } from "./material.js";
 import { RGBAColor } from "../math/rgbacolor.js";
 import { GLContext } from "../gl/glcontext.js";
 import { GLUniform } from "../gl/gluniform.js";
+import { PhongMaterialContext } from "./phongmaterialcontext.js";
+import { MaterialContext } from "./context/materialcontext.js";
 
 type PhongMaterialConfigKey = "diffuse" | "ambient" | "specular" | "shininess"
 export type PhongMaterialConfig = {[key in PhongMaterialConfigKey]?:GLUniform}
@@ -31,6 +33,10 @@ export class PhongMaterial extends Material {
     this.ambientColor = ambientColor
     this.specularColor = specularColor
     this.shininess = shininess
+  }
+
+  setupContext(config:PhongMaterialConfig):MaterialContext {
+    return new PhongMaterialContext(config)
   }
 
   setupContextVars(config:PhongMaterialConfig) {

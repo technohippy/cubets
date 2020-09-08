@@ -9,9 +9,10 @@ import { Material } from "./core2/material.js";
 import { Vec2 } from "./math/vec2.js";
 import { Vec3 } from "./math/vec3.js";
 import { Quat } from "./math/quat.js";
-import { GLAttribute } from "./gl/glattribute.js";
 import { RGBAColor } from "./math/rgbacolor.js"
 import { OrbitCameraControl } from "./core2/control/orbitcameracontrol.js";
+import { GLAttribute } from "./gl/glattribute.js";
+import { GLContext } from "./gl/glcontext.js";
 
 export default {
   Renderer:Renderer,
@@ -25,7 +26,8 @@ export default {
   Vec2:Vec2,
   Vec3:Vec3,
   Quat:Quat,
-  GLAttribute:GLAttribute,
   RGBAColor:RGBAColor,
   OrbitCameraControl:OrbitCameraControl,
+  GLAttribute:GLAttribute,
+  GLContext:GLContext,
 }

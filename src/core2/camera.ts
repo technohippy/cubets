@@ -7,6 +7,7 @@ import { Quat } from "../math/quat.js";
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
 import { Renderer } from "./renderer.js";
+import { CameraContext } from "./context/cameracontext.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera implements ContextWriter {
@@ -69,6 +70,10 @@ export abstract class Camera implements ContextWriter {
 
   setup(renderer:Renderer) {
     // for subclass
+  }
+
+  setupContext(config:{[key:string]:GLUniform}):CameraContext {
+    return new CameraContext(config)
   }
 
   setupContextVars(config:{[key:string]:GLUniform}) {
