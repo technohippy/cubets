@@ -11,7 +11,6 @@ import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
   program?:GLProgram
-  context:GLContext // TODO: 消す
   context2:SceneContext // TODO: -> context
   #meshes:Mesh[] = []
   #lights:Light[] = []
@@ -35,7 +34,6 @@ export abstract class Scene {
         WebGL2RenderingContext.DEPTH_TEST,
       ]
     }
-    this.context = new GLContext(...flags)
     this.context2 = new SceneContext(...flags)
   }
 
@@ -80,9 +78,6 @@ export abstract class Scene {
   addMesh(mesh:Mesh) {
     mesh.setupContextVars(this.geometryConfig(), this.materialConfig())
     this.#meshes.push(mesh)
-    if (1 < this.#meshes.length) {
-      this.context.needClear = false // TODO: clear
-    }
   }
 
   addLight(light:Light) {
