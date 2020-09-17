@@ -33,7 +33,6 @@ export class PhongScene extends Scene {
   clone():Scene {
     const scene = new PhongScene()
     scene.defaultContext = this.defaultContext.clone()
-    scene.program = this.program
     scene.meshes = this.meshes
     scene.lights = this.lights
     return scene

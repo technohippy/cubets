@@ -1,5 +1,3 @@
-import { GLProgram } from "../gl/glprogram.js";
-import { GLContext } from "../gl/glcontext.js";
 import { Mesh } from "./mesh.js";
 import { Light } from "./light.js";
 import { GeometryConfig } from "./geometry.js";
@@ -10,7 +8,6 @@ import { GLUniform } from "../gl/gluniform.js";
 import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
-  program?:GLProgram
   defaultContext:SceneContext
   #meshes:Mesh[] = []
   #lights:Light[] = []
