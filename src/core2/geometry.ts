@@ -7,7 +7,6 @@ import { GLAttribute } from "../gl/glattribute.js";
 import { GLBuffer } from "../gl/glbuffer.js"
 import { ToArray } from "../misc/toarray.js";
 import { ContextWriter } from "./contextwriter.js";
-import { GLImage } from "../gl/glimage.js";
 import { GLIndex } from "../gl/glindex.js";
 import { Transform3 } from "../math/transform3.js";
 import { GeometryContext } from "./context/geometrycontext.js";
@@ -54,13 +53,10 @@ export class Geometry implements ContextWriter {
       }
 
       if (0 < this.vertices.length) {
-        const transformedVertices = this.transformVec3s(this.vertices)
-        this.verticesAttr?.updateBufferData(this.toArray(transformedVertices))
+        this.verticesAttr?.updateBufferData(this.toArray(this.transformedVertices()))
       }
       if (0 < this.normals.length) {
-        const transformedVertices = this.transformVec3s(this.vertices)
-        const transformedNormals = Geometry.computeNormals(this.indices, transformedVertices)
-        this.normalsAttr?.updateBufferData(this.toArray(transformedNormals))
+        this.normalsAttr?.updateBufferData(this.toArray(this.transformedNormals()))
       }
       if (0 < this.uvs.length) {
         this.uvsAttr?.updateBufferData(this.toArray(this.uvs))
@@ -75,14 +71,11 @@ export class Geometry implements ContextWriter {
       }
 
       if (this.verticesAttr) {
-        const transformedVertices = this.transformVec3s(this.vertices)
-        this.verticesAttr.buffer = GLBuffer.f32(this.toArray(transformedVertices))
+        this.verticesAttr.buffer = GLBuffer.f32(this.toArray(this.transformedVertices()))
         context.addAttribute(this.verticesAttr)
       }
       if (this.normalsAttr) {
-        const transformedVertices = this.transformVec3s(this.vertices)
-        const transformedNormals = Geometry.computeNormals(this.indices, transformedVertices)
-        this.normalsAttr.buffer = GLBuffer.f32(this.toArray(transformedNormals))
+        this.normalsAttr.buffer = GLBuffer.f32(this.toArray(this.transformedNormals()))
         context.addAttribute(this.normalsAttr)
       }
       if (this.uvsAttr) {
@@ -95,6 +88,15 @@ export class Geometry implements ContextWriter {
       }
       this.#uploaded = true
     }
+  }
+
+  transformedVertices():Vec3[] {
+    return this.transformVec3s(this.vertices)
+  }
+
+  transformedNormals():Vec3[] {
+    const transformedVertices = this.transformVec3s(this.vertices)
+    return Geometry.computeNormals(this.indices, transformedVertices)
   }
 
   private transformVec3s(vs:Vec3[]): Vec3[] {

@@ -64,8 +64,12 @@ export class Mesh implements ContextWriter {
     this.material?.setupContextVars(materialConfig)
   }
 
-  writeContext(context:GLContext) {
+  applyTransform() {
     this.geometry.transform = this.getTransform()
+  }
+
+  writeContext(context:GLContext) {
+    this.applyTransform()
     this.geometry.writeContext(context)
     this.material?.writeContext(context)
   }

@@ -70,6 +70,8 @@
 
       const renderer = new Cubets.Renderer("#cubets")
 
+      const scene2 = scene.clone()
+      //const context2 = scene2.context2
       const camera2 = scene.createCamera({
         type:"orthogonal",
         width:40,
@@ -85,7 +87,8 @@
         mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
         mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
         renderer.render(scene, camera)
-        renderer2.render(scene, camera2)
+        //renderer2.render(scene2, camera2)
+        renderer2.render(scene, camera2, scene2.context2)
       }, 10)
     </script>
   </body>

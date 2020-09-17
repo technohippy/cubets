@@ -1,6 +1,7 @@
 import { GL2Renderer } from "../gl/gl2renderer.js"
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
+import { SceneContext } from "./context/scenecontext.js"
 
 export class Renderer {
   gl: GL2Renderer
@@ -9,25 +10,32 @@ export class Renderer {
     this.gl = new GL2Renderer(container)
   }
 
-  render(scene:Scene, camera?:Camera) {
-    if (!scene.prepared) {
-      scene.setup(camera)
+  render(scene:Scene, camera?:Camera, context:SceneContext=scene.context2) {
+    // for first render
+    if (!context.prepared) {
+     context.setup(scene, camera)
     }
+    if (camera && !camera.isSetupContextVars()) {
+      camera.setupContextVars(scene.cameraConfig())
+    }
+    //
+
+    this.gl.clear() // TODO: clear 背景色を設定するため
+
     if (camera) {
-      if (!camera.isSetupContextVars()) {
-        camera.setupContextVars(scene.cameraConfig())
-      }
+      camera.setup(this)
+      camera.setupModelViewMatrix()
+      context.writeCamera(camera)
     }
 
-    this.gl.clear() // TODO: clear
-    camera?.setup(this)
-    camera?.writeContext(scene.context) 
-    scene.eachLight((l, i) => {
-      l.writeContext(scene.context)
+    scene.eachLight((light, i) => {
+      context.writeLight(light)
     })
-    scene.eachMesh(m => {
-      m.writeContext(scene.context)
-      this.gl.draw(scene.program!, scene.context)
+    scene.eachMesh((mesh, i) => {
+      // TODO: ここの条件が微妙
+      context.context.needClear = scene.meshLength === 1 || i !== scene.meshLength - 1
+      context.writeMesh(mesh)
+      this.gl.draw(context.program!, context.context)
     })
   }
 

@@ -10,7 +10,6 @@ import { GLUniform } from "../gl/gluniform.js";
 import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
-  prepared = false
   program?:GLProgram
   context:GLContext // TODO: 消す
   context2:SceneContext // TODO: -> context
@@ -24,6 +23,10 @@ export abstract class Scene {
   abstract geometryConfig():GeometryConfig
 
   abstract clone():Scene
+
+  get meshLength():number {
+    return this.#meshes.length
+  }
 
   constructor(...flags:number[]) {
     if (flags.length === 0) {
@@ -72,25 +75,6 @@ export abstract class Scene {
 
   protected set lights(ls:Light[]) {
     this.#lights = ls
-  }
-
-  setup(camera?:Camera) {
-    if (!this.program) {
-      this.program = new GLProgram(this.getVertexShader(), this.getFragmentShader())
-    }
-    this.eachLight(l => {
-      this.context2.lights.set(l, l.setupContext(this.lightConfig()))
-    })
-    this.eachMesh(m => {
-      this.context2.geometries.set(m.geometry, m.geometry.setupContext(this.geometryConfig()))
-      if (m.material) {
-        this.context2.materials.set(m.material, m.material.setupContext(this.materialConfig()))
-      }
-    })
-    if (camera) {
-      this.context2.camera = camera.setupContext(this.cameraConfig())
-    }
-    this.prepared = true
   }
 
   addMesh(mesh:Mesh) {

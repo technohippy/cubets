@@ -10,6 +10,7 @@ import { PhongDirectionalLight } from "./phongdirectionallight.js"
 import { PhongPerspectiveCamera } from "./phongperspecivecamera.js"
 import { PhongOrthogonalCamera } from "./phongorthogonalcamera.js"
 import { RGBAColor } from "../math/rgbacolor.js"
+import { SceneContext } from "./context/scenecontext.js"
 
 export class PhongScene extends Scene {
   hasParticles():boolean {
@@ -31,6 +32,7 @@ export class PhongScene extends Scene {
   clone():Scene {
     const scene = new PhongScene(...this.context.enableFlags)
     scene.context.needClear = this.context.needClear // TODO
+    scene.context2 = new SceneContext(...this.context2.context.enableFlags)
     scene.program = this.program
     scene.meshes = this.meshes
     scene.lights = this.lights
