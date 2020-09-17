@@ -5,12 +5,21 @@ import { SceneContext } from "./context/scenecontext.js"
 
 export class Renderer {
   gl: GL2Renderer
+  defaultContext:SceneContext
 
-  constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext) {
+  constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext, flags:number[]=[]) {
     this.gl = new GL2Renderer(container)
+
+    if (flags.length === 0) {
+      flags = [
+        WebGL2RenderingContext.CULL_FACE,
+        WebGL2RenderingContext.DEPTH_TEST,
+      ]
+    }
+    this.defaultContext = new SceneContext(...flags)
   }
 
-  render(scene:Scene, camera?:Camera, context:SceneContext=scene.defaultContext) {
+  render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
     // for first render
     if (!context.prepared) {
      context.setup(scene, camera)

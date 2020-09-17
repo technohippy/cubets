@@ -29,10 +29,8 @@ export class PhongScene extends Scene {
     return false // TODO
   }
 
-  // contextは新規
   clone():Scene {
     const scene = new PhongScene()
-    scene.defaultContext = this.defaultContext.clone()
     scene.meshes = this.meshes
     scene.lights = this.lights
     return scene

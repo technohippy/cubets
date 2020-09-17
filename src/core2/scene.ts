@@ -8,7 +8,6 @@ import { GLUniform } from "../gl/gluniform.js";
 import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
-  defaultContext:SceneContext
   #meshes:Mesh[] = []
   #lights:Light[] = []
 
@@ -22,16 +21,6 @@ export abstract class Scene {
 
   get meshLength():number {
     return this.#meshes.length
-  }
-
-  constructor(...flags:number[]) {
-    if (flags.length === 0) {
-      flags = [
-        WebGL2RenderingContext.CULL_FACE,
-        WebGL2RenderingContext.DEPTH_TEST,
-      ]
-    }
-    this.defaultContext = new SceneContext(...flags)
   }
 
   createMaterial(params?:{[key:string]:any}):Material|null {

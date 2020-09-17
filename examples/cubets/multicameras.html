@@ -81,14 +81,11 @@
 
       const renderer2 = new Cubets.Renderer("#cubets2")
 
-      const context = new Cubets.SceneContext()
-      const context2 = new Cubets.SceneContext()
-
       setInterval(() => {
         mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
         mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
-        renderer.render(scene, camera, context)
-        renderer2.render(scene, camera2, context2)
+        renderer.render(scene, camera)
+        renderer2.render(scene, camera2)
       }, 10)
     </script>
   </body>
