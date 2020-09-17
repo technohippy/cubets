@@ -28,7 +28,10 @@ export class SceneContext {
       ]
     }
     this.context = new GLContext(...flags)
-    //this.context.needClear = false // TODO: meshが複数のときだけ？
+  }
+
+  clone():SceneContext {
+    return new SceneContext(...this.context.enableFlags)
   }
 
   setup(scene:Scene, camera?:Camera) {

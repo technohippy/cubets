@@ -31,8 +31,8 @@ export class PhongScene extends Scene {
 
   // contextは新規
   clone():Scene {
-    const scene = new PhongScene(...this.context2.context.enableFlags)
-    scene.context2 = new SceneContext(...this.context2.context.enableFlags)
+    const scene = new PhongScene()
+    scene.context = this.context.clone()
     scene.program = this.program
     scene.meshes = this.meshes
     scene.lights = this.lights

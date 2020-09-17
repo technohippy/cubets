@@ -10,7 +10,7 @@ export class Renderer {
     this.gl = new GL2Renderer(container)
   }
 
-  render(scene:Scene, camera?:Camera, context:SceneContext=scene.context2) {
+  render(scene:Scene, camera?:Camera, context:SceneContext=scene.context) {
     // for first render
     if (!context.prepared) {
      context.setup(scene, camera)
