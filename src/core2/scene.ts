@@ -11,7 +11,7 @@ import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
   program?:GLProgram
-  context:SceneContext
+  defaultContext:SceneContext
   #meshes:Mesh[] = []
   #lights:Light[] = []
 
@@ -34,7 +34,7 @@ export abstract class Scene {
         WebGL2RenderingContext.DEPTH_TEST,
       ]
     }
-    this.context = new SceneContext(...flags)
+    this.defaultContext = new SceneContext(...flags)
   }
 
   createMaterial(params?:{[key:string]:any}):Material|null {
