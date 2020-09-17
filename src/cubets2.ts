@@ -13,10 +13,12 @@ import { RGBAColor } from "./math/rgbacolor.js"
 import { OrbitCameraControl } from "./core2/control/orbitcameracontrol.js";
 import { GLAttribute } from "./gl/glattribute.js";
 import { GLContext } from "./gl/glcontext.js";
+import { SceneContext } from "./core2/context/scenecontext.js";
 
 export default {
   Renderer:Renderer,
   Scene:Scene,
+  SceneContext:SceneContext,
   PhongScene:PhongScene,
   PhongDirectionalLight:PhongDirectionalLight,
   Mesh:Mesh,
