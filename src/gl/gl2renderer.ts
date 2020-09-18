@@ -392,6 +392,18 @@ export class GL2Renderer {
       case "4f":
         this.#gl.uniform4f(location, values[0], values[1], values[2], values[3])
         break
+      case "1iv":
+        this.#gl.uniform1iv(location, values)
+        break
+      case "2iv":
+        this.#gl.uniform2iv(location, values)
+        break
+      case "3iv":
+        this.#gl.uniform3iv(location, values)
+        break
+      case "4iv":
+        this.#gl.uniform4iv(location, values)
+        break
       case "1fv":
         this.#gl.uniform1fv(location, values)
         break

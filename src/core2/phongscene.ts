@@ -424,14 +424,14 @@ export class PhongScene extends Scene {
   
   lightConfig():{[key:string]:GLUniform} {
     return {
-      "isPositional":new GLUniform("uPositionalLight", "1i"),
-      "followCamera":new GLUniform("uLightFollowCameraMode", "1i"),
-      "direction":new GLUniform("uLightDirection", "3f"),
-      "position":new GLUniform("uLightPosition", "3f"),
-      "ambient":new GLUniform("uLightAmbient", "4f"),
-      "diffuse":new GLUniform("uLightDiffuse", "4f"),
-      "specular":new GLUniform("uLightSpecular", "4f"),
-      "cutoff":new GLUniform("uCutoff", "1f"),
+      "isPositional":new GLUniform("uPositionalLight", "1iv"),
+      "followCamera":new GLUniform("uLightFollowCameraMode", "1iv"),
+      "direction":new GLUniform("uLightDirection", "3fv"),
+      "position":new GLUniform("uLightPosition", "3fv"),
+      "ambient":new GLUniform("uLightAmbient", "4fv"),
+      "diffuse":new GLUniform("uLightDiffuse", "4fv"),
+      "specular":new GLUniform("uLightSpecular", "4fv"),
+      "cutoff":new GLUniform("uCutoff", "1fv"),
     }
   }
 

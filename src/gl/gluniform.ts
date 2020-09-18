@@ -92,21 +92,23 @@ export class GLUniform {
     switch (this.type) {
       case "1i":
       case "1f": 
+      case "2i":
+      case "2f": 
+      case "3i":
+      case "3f": 
+      case "4i": 
+      case "4f": 
+        console.warn(`cannot set position: ${this.type}`)
+        return 0
       case "1iv": 
       case "1fv": 
         return 1
-      case "2i":
-      case "2f": 
       case "2iv": 
       case "2fv": 
         return 2
-      case "3i":
-      case "3f": 
       case "3iv": 
       case "3fv": 
         return 3
-      case "4i": 
-      case "4f": 
       case "4iv": 
       case "4fv": 
         return 4
