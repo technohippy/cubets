@@ -5,7 +5,6 @@ import { Material } from "./material.js";
 import { Camera } from "./camera.js";
 import { ContextWriter } from "./contextwriter.js";
 import { GLUniform } from "../gl/gluniform.js";
-import { SceneContext } from "./context/scenecontext.js";
 
 export abstract class Scene {
   #meshes:Mesh[] = []

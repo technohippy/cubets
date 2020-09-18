@@ -3,5 +3,5 @@ import { Light } from "../light.js";
 
 export abstract class LightContext {
   abstract upload(context:GLContext):void
-  abstract write(light:Light):void
+  abstract write(light:Light, position:number):void
 }

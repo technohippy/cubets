@@ -49,23 +49,23 @@ export class PhongLightContext extends LightContext {
     }
   }
 
-  write(light:Light) {
+  write(light:Light, position:number=0) {
     if (light instanceof PhongDirectionalLight) {
-      this.isPositionalUniform?.updateValue(0)
-      this.positionUniform?.updateValue([0, 0, 0])
-      this.cutoffUniform?.updateValue(1)
-      this.shouldFollowCameraUniform?.updateValue(+light.shouldFollowCamera)
+      this.isPositionalUniform?.updateValue(0, position)
+      this.positionUniform?.updateValue([0, 0, 0], position)
+      this.cutoffUniform?.updateValue(1, position)
+      this.shouldFollowCameraUniform?.updateValue(+light.shouldFollowCamera, position)
       if (light.diffuseColor) {
-        this.diffuseColorUniform?.updateValue(light.diffuseColor.toArray())
+        this.diffuseColorUniform?.updateValue(light.diffuseColor.toArray(), position)
       }
       if (light.ambientColor) {
-        this.ambientColorUniform?.updateValue(light.ambientColor.toArray())
+        this.ambientColorUniform?.updateValue(light.ambientColor.toArray(), position)
       }
       if (light.specularColor) {
-        this.specularColorUniform?.updateValue(light.specularColor.toArray())
+        this.specularColorUniform?.updateValue(light.specularColor.toArray(), position)
       }
       if (light.direction) {
-        this.directionUniform?.updateValue(light.direction.toArray())
+        this.directionUniform?.updateValue(light.direction.toArray(), position)
       }
     } else {
       throw `invalid type: ${light}`

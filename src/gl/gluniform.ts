@@ -2,7 +2,7 @@ import { GL2Renderer } from "./gl2renderer.js"
 import { GLTexture2D } from "./gltexture2d.js"
 import { GLTextureCube } from "./gltexturecube.js"
 
-type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1iv" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
+type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1iv" | "2iv" | "3iv" | "4iv" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
 
 export class GLUniform {
   name:string
@@ -26,20 +26,42 @@ export class GLUniform {
     }
   }
 
-  updateValue(value:number[] | number | GLTexture2D) {
+  updateValue(value:number[] | number | GLTexture2D, position:number=0) {
     if (value instanceof GLTexture2D) {
       if (this.#value && !(this.#value instanceof GLTexture2D)) {
         throw "current value is not a texture"
+      }
+      if (position !== 0) {
+        throw "position can not be set for texture"
       }
       this.#value = value
     } else {
       if (this.#value && this.#value instanceof GLTexture2D) {
         throw "current value is not numbers"
       }
-      if (typeof value === "number") {
-        this.#value = [value]
+      if (position === 0) {
+        if (typeof value === "number") {
+          this.#value = [value]
+        } else {
+          this.#value = [...value]
+        }
       } else {
-        this.#value = [...value]
+        const index = position * this.positionUnit()
+        if (!this.#value) this.#value = []
+        if (typeof value === "number") {
+          (this.#value as number[])[index] = value
+        } else {
+          for (let i = 0; i < value.length; i++) {
+            (this.#value as number[])[index + i] = value[i]
+          }
+        }
+
+        // fill 0 in empty slot
+        for (let i = 0; i < (this.#value as number[]).length; i++) {
+          if (!(this.#value as number[])[i]) {
+            (this.#value as number[])[i] = 0
+          }
+        }
       }
     }
     this.updated = true
@@ -64,5 +86,37 @@ export class GLUniform {
       renderer.uniform(this.type, this.location, this.#value)
     }
     this.updated = false
+  }
+
+  private positionUnit():number {
+    switch (this.type) {
+      case "1i":
+      case "1f": 
+      case "1iv": 
+      case "1fv": 
+        return 1
+      case "2i":
+      case "2f": 
+      case "2iv": 
+      case "2fv": 
+        return 2
+      case "3i":
+      case "3f": 
+      case "3iv": 
+      case "3fv": 
+        return 3
+      case "4i": 
+      case "4f": 
+      case "4iv": 
+      case "4fv": 
+        return 4
+      case "m2fv": 
+        return 4
+      case "m3fv": 
+        return 9
+      case "m4fv":
+        return 16
+    }
+    throw `invalid type: ${this.type}`
   }
 }

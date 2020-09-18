@@ -37,10 +37,13 @@ export class SceneContext {
   setup(scene:Scene, camera?:Camera) {
     this.program = new GLProgram(scene.getVertexShader(), scene.getFragmentShader())
 
+    let sharedLightContext:LightContext
     scene.eachLight(light => {
-      const lightContext = light.setupContext(scene.lightConfig())
-      lightContext.upload(this.context)
-      this.lightContexts.set(light, lightContext)
+      if (!sharedLightContext) {
+        sharedLightContext = light.setupContext(scene.lightConfig())
+        sharedLightContext.upload(this.context)
+      }
+      this.lightContexts.set(light, sharedLightContext)
     })
 
     scene.eachMesh(mesh => {
@@ -66,8 +69,8 @@ export class SceneContext {
     this.cameraContext?.write(this.context, camera)
   }
 
-  writeLight(light:Light) {
-    this.lightContexts.get(light)?.write(light)
+  writeLight(light:Light, position:number=0) {
+    this.lightContexts.get(light)?.write(light, position)
   }
 
   writeMesh(mesh:Mesh) {

@@ -21,11 +21,11 @@ export class Renderer {
 
   render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
     // for first render
-    if (!context.prepared) {
-     context.setup(scene, camera)
-    }
     if (camera && !camera.isSetupContextVars()) {
       camera.setupContextVars(scene.cameraConfig())
+    }
+    if (!context.prepared) {
+     context.setup(scene, camera)
     }
     //
 
@@ -38,7 +38,7 @@ export class Renderer {
     }
 
     scene.eachLight((light, i) => {
-      context.writeLight(light)
+      context.writeLight(light, i)
     })
     scene.eachMesh((mesh, i) => {
       // TODO: ここの条件が微妙
