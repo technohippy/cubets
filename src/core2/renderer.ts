@@ -19,6 +19,10 @@ export class Renderer {
     this.defaultContext = new SceneContext(...flags)
   }
 
+  setViewport(width:number, height:number, x:number=0, y:number=0) {
+    this.defaultContext.setViewport(width, height, x, y)
+  }
+
   render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
     // for first render
     if (camera && !camera.isSetupContextVars()) {

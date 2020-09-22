@@ -34,6 +34,13 @@ export class SceneContext {
     return new SceneContext(...this.context.enableFlags)
   }
 
+  setViewport(width:number, height:number, x:number=0, y:number=0) {
+    this.context.viewport.width = width
+    this.context.viewport.height = height
+    this.context.viewport.x = x
+    this.context.viewport.y = y
+  }
+
   setup(scene:Scene, camera?:Camera) {
     this.program = new GLProgram(scene.getVertexShader(), scene.getFragmentShader())
 

@@ -13,6 +13,11 @@ export abstract class PhongCamera extends Camera {
   }
 
   setup(renderer:Renderer) {
-    this.aspectRatio = renderer.gl.aspectRatio
+    const viewport = renderer.defaultContext.context.viewport
+    if (viewport && viewport.width && viewport.height) {
+      this.aspectRatio = viewport.width / viewport.height
+    } else {
+      this.aspectRatio = renderer.gl.aspectRatio
+    }
   }
 }

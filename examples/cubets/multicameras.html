@@ -70,6 +70,7 @@
 
       const renderer = new Cubets.Renderer("#cubets")
 
+      // 
       const camera2 = scene.createCamera({
         type:"orthogonal",
         width:40,
@@ -81,11 +82,35 @@
 
       const renderer2 = new Cubets.Renderer("#cubets2")
 
+      //
+      const camera3 = scene.createCamera({
+        type:"orthogonal",
+        width:40,
+        near:-50,
+        far:50,
+      })
+      camera3.position.z = -20
+      camera3.target = new Cubets.Vec3()
+
+      const renderer3 = new Cubets.Renderer("#cubets3")
+
       setInterval(() => {
         mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
         mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
+        /*
         renderer.render(scene, camera)
         renderer2.render(scene, camera2)
+        */
+
+        renderer3.defaultContext.context.needClear = true
+        renderer3.defaultContext.context.clearColor = Cubets.RGBAColor.Red
+        renderer3.setViewport(297, 200, 300, 0)
+        renderer3.render(scene, camera3)
+
+        renderer3.defaultContext.context.needClear = false
+        renderer3.defaultContext.context.clearColor = Cubets.RGBAColor.Blue
+        renderer3.setViewport(297, 200, 0, 0)
+        renderer3.render(scene, camera3)
       }, 10)
     </script>
   </body>
