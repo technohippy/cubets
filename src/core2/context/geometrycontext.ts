@@ -42,13 +42,21 @@ export class GeometryContext {
     }
   }
 
-  write(context:GLContext, geometry:Geometry) {
+  write(context:GLContext, geometry:Geometry, wireframe:boolean = false) {
     if (0 < geometry.indices.length) {
       if (context.index) {
-        context.index?.updateBufferData(this.toArray(geometry.indices))
+        if (wireframe) {
+          context.index?.updateBufferData(geometry.indices.map(face => face.toLineArray()).flat())
+        } else {
+          context.index?.updateBufferData(this.toArray(geometry.indices))
+        }
       } else {
         context.index = new GLIndex()
-        context.index.buffer = GLBuffer.ui16(this.toArray(geometry.indices))
+        if (wireframe) {
+          context.index.buffer = GLBuffer.ui16(geometry.indices.map(face => face.toLineArray()).flat())
+        } else {
+          context.index.buffer = GLBuffer.ui16(this.toArray(geometry.indices))
+        }
       }
     }
 
