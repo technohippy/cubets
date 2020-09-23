@@ -419,6 +419,8 @@ export class PhongScene extends Scene {
       "ambient":new GLUniform("uMaterialAmbient", "4f"),
       "specular":new GLUniform("uMaterialSpecular", "4f"),
       "shininess":new GLUniform("uShininess", "1f"),
+      "wireframe":new GLUniform("uWireframeMode", "1i"),
+      "normal":new GLUniform("uNormalMode", "1i"),
     }
   }
   

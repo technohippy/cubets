@@ -5,7 +5,7 @@ import { GLUniform } from "../gl/gluniform.js";
 import { PhongMaterialContext } from "./phongmaterialcontext.js";
 import { MaterialContext } from "./context/materialcontext.js";
 
-type PhongMaterialConfigKey = "diffuse" | "ambient" | "specular" | "shininess"
+type PhongMaterialConfigKey = "diffuse" | "ambient" | "specular" | "shininess" | "wireframe" | "normal"
 export type PhongMaterialConfig = {[key in PhongMaterialConfigKey]?:GLUniform}
 
 export class PhongMaterial extends Material {
@@ -39,6 +39,7 @@ export class PhongMaterial extends Material {
     return new PhongMaterialContext(config)
   }
 
+  // TODO: not used
   setupContextVars(config:PhongMaterialConfig) {
     this.diffuseColorUniform = config["diffuse"]
     this.ambientColorUniform = config["ambient"]
@@ -46,6 +47,7 @@ export class PhongMaterial extends Material {
     this.shininessUniform = config["shininess"]
   }
 
+  // TODO: not used
   writeContext(context:GLContext) {
     this.diffuseColorUniform?.updateValue(this.diffuseColor.toArray())
     this.ambientColorUniform?.updateValue(this.ambientColor.toArray())

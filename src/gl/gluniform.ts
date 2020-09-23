@@ -26,7 +26,7 @@ export class GLUniform {
     }
   }
 
-  updateValue(value:number[] | number | GLTexture2D, position:number=0) {
+  updateValue(value:number[] | number | boolean | GLTexture2D, position:number=0) {
     if (value instanceof GLTexture2D) {
       if (this.#value && !(this.#value instanceof GLTexture2D)) {
         throw "current value is not a texture"
@@ -42,6 +42,8 @@ export class GLUniform {
       if (position === 0) {
         if (typeof value === "number") {
           this.#value = [value]
+        } else if (typeof value === "boolean") {
+          this.#value = [value ? 1 : 0]
         } else {
           this.#value = [...value]
         }
@@ -50,6 +52,8 @@ export class GLUniform {
         if (!this.#value) this.#value = []
         if (typeof value === "number") {
           (this.#value as number[])[index] = value
+        } else if (typeof value === "boolean") {
+          (this.#value as number[])[index] = value ? 1 : 0
         } else {
           for (let i = 0; i < value.length; i++) {
             (this.#value as number[])[index + i] = value[i]

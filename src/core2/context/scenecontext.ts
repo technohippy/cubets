@@ -84,6 +84,6 @@ export class SceneContext {
   writeMesh(mesh:Mesh) {
     mesh.applyTransform()
     this.geometryContexts.get(mesh.geometry)?.write(this.context, mesh.geometry!)
-    this.materialContexts.get(mesh.material)?.write(mesh.material!)
+    this.materialContexts.get(mesh.material)?.write(this.context, mesh.material!)
   }
 }
