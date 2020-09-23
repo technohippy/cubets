@@ -128,9 +128,10 @@ export class GLContext {
 
   apply(renderer:GL2Renderer) {
     this.uploadVariables(renderer)
-    renderer.enableFlags(this.enableFlags)
+    renderer.enableAll(this.enableFlags)
     this.enableFlags.length = 0 // apply only once
     renderer.viewport(this.viewport)
+    renderer.scissor(this.viewport) // TODO: 必要ない場合もあるのでどうするか
     renderer.clearColor(this.clearColor)
     // TODO: texture
   }

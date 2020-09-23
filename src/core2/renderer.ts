@@ -9,13 +9,6 @@ export class Renderer {
 
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext, flags:number[]=[]) {
     this.gl = new GL2Renderer(container)
-
-    if (flags.length === 0) {
-      flags = [
-        WebGL2RenderingContext.CULL_FACE,
-        WebGL2RenderingContext.DEPTH_TEST,
-      ]
-    }
     this.defaultContext = new SceneContext(...flags)
   }
 
@@ -29,11 +22,9 @@ export class Renderer {
       camera.setupContextVars(scene.cameraConfig())
     }
     if (!context.prepared) {
-     context.setup(scene, camera)
+     context.setupLocations(scene, camera)
     }
     //
-
-    this.gl.clear() // TODO: clear 背景色を設定するため
 
     if (camera) {
       camera.setup(this)

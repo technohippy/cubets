@@ -60,6 +60,7 @@
       scene.add(light)
       scene.add(light2)
 
+      // top left
       const camera = scene.createCamera({
         type:"perspective",
         fov:Math.PI/3,
@@ -67,10 +68,9 @@
         far:100,
       })
       camera.position.z = 20
-
       const renderer = new Cubets.Renderer("#cubets")
 
-      // 
+      // top right
       const camera2 = scene.createCamera({
         type:"orthogonal",
         width:40,
@@ -79,38 +79,28 @@
       })
       camera2.position.z = -20
       camera2.target = new Cubets.Vec3()
-
       const renderer2 = new Cubets.Renderer("#cubets2")
 
-      //
-      const camera3 = scene.createCamera({
-        type:"orthogonal",
-        width:40,
-        near:-50,
-        far:50,
-      })
-      camera3.position.z = -20
-      camera3.target = new Cubets.Vec3()
-
+      // bottom
       const renderer3 = new Cubets.Renderer("#cubets3")
 
       setInterval(() => {
         mesh.rotate(Math.PI/300, new Cubets.Vec3(1,0.1,1))
         mesh2.rotate(-Math.PI/100, new Cubets.Vec3(1,0.1,1))
-        /*
+
+        // top left
         renderer.render(scene, camera)
+
+        // top right
         renderer2.render(scene, camera2)
-        */
 
-        renderer3.defaultContext.context.needClear = true
-        renderer3.defaultContext.context.clearColor = Cubets.RGBAColor.Red
-        renderer3.setViewport(297, 200, 300, 0)
-        renderer3.render(scene, camera3)
+        // bottom left
+        renderer3.setViewport(297, 200)
+        renderer3.render(scene, camera)
 
-        renderer3.defaultContext.context.needClear = false
-        renderer3.defaultContext.context.clearColor = Cubets.RGBAColor.Blue
-        renderer3.setViewport(297, 200, 0, 0)
-        renderer3.render(scene, camera3)
+        // bottom right
+        renderer3.setViewport(297, 200, 303, 0)
+        renderer3.render(scene, camera2)
       }, 10)
     </script>
   </body>

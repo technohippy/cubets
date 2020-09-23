@@ -321,11 +321,21 @@ export class GL2Renderer {
     )
   }
 
+  scissor(viewport:GLViewport) {
+    //this.#gl.enable(WebGL2RenderingContext.SCISSOR_TEST)
+    this.#gl.scissor(
+      viewport.x, 
+      viewport.y, 
+      viewport.width || this.#gl.canvas.width,
+      viewport.height || this.#gl.canvas.height,
+    )
+  }
+
   enable(flag:number) {
     this.#gl.enable(flag)
   }
 
-  enableFlags(flags:number[]) {
+  enableAll(flags:number[]) {
     flags.forEach(flag => this.enable(flag))
   }
 

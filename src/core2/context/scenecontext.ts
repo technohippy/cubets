@@ -25,6 +25,7 @@ export class SceneContext {
       flags = [
         WebGL2RenderingContext.CULL_FACE,
         WebGL2RenderingContext.DEPTH_TEST,
+        WebGL2RenderingContext.SCISSOR_TEST,
       ]
     }
     this.context = new GLContext(...flags)
@@ -41,7 +42,7 @@ export class SceneContext {
     this.context.viewport.y = y
   }
 
-  setup(scene:Scene, camera?:Camera) {
+  setupLocations(scene:Scene, camera?:Camera) {
     this.program = new GLProgram(scene.getVertexShader(), scene.getFragmentShader())
 
     let sharedLightContext:LightContext
