@@ -21,7 +21,7 @@
   <body>
     <canvas id="cubets" width="297" height="200"></canvas>
     <canvas id="cubets2" width="297" height="200"></canvas><br/>
-    <canvas id="cubets3" width="600" height="200"></canvas>
+    <canvas id="cubets3" width="594" height="200"></canvas>
     <div id="code"></div><script>loadCode()</script>
     <script type="module">
       import Cubets from "../../dist/cubets2.js"
@@ -99,7 +99,7 @@
         renderer3.render(scene, camera)
 
         // bottom right
-        renderer3.setViewport(297, 200, 303, 0)
+        renderer3.setViewport(297, 200, 297, 0)
         renderer3.render(scene, camera2)
       }, 10)
     </script>

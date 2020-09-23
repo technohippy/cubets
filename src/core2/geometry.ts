@@ -1,15 +1,15 @@
+import { ContextWriter } from "./contextwriter.js";
+import { GeometryContext } from "./context/geometrycontext.js";
+import { GLContext } from "../gl/glcontext.js";
+import { GLAttribute } from "../gl/glattribute.js";
+import { GLBuffer } from "../gl/glbuffer.js"
+import { GLIndex } from "../gl/glindex.js";
 import { Vec2 } from "../math/vec2.js";
 import { Vec3 } from "../math/vec3.js";
 import { Face3 } from "../math/face3.js";
 import { RGBAColor } from "../math/rgbacolor.js";
-import { GLContext } from "../gl/glcontext.js";
-import { GLAttribute } from "../gl/glattribute.js";
-import { GLBuffer } from "../gl/glbuffer.js"
-import { ToArray } from "../misc/toarray.js";
-import { ContextWriter } from "./contextwriter.js";
-import { GLIndex } from "../gl/glindex.js";
 import { Transform3 } from "../math/transform3.js";
-import { GeometryContext } from "./context/geometrycontext.js";
+import { ToArray } from "../misc/toarray.js";
 
 type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors"
 export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute}
@@ -97,6 +97,33 @@ export class Geometry implements ContextWriter {
   transformedNormals():Vec3[] {
     const transformedVertices = this.transformVec3s(this.vertices)
     return Geometry.computeNormals(this.indices, transformedVertices)
+  }
+
+  protected _computeUvs(): Vec2[] {
+    const min = new Vec3(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+    const max = new Vec3(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY)
+    this.indices.forEach(face => {
+      [
+        this.vertices[face.p1],
+        this.vertices[face.p2],
+        this.vertices[face.p3],
+      ].forEach(v => {
+        ["x", "y", "z"].forEach(axis => {
+          //@ts-ignore
+          if (v[axis] < min[axis]) min[axis] = v[axis]
+          //@ts-ignore
+          if (max[axis] < v[axis]) max[axis] = v[axis]
+        })
+      })
+    })
+
+    const w = max.x - min.x
+    const h = max.y - min.y
+    const uvs: Vec2[] = []
+    this.vertices.forEach(v => {
+      uvs.push(new Vec2((v.x - min.x) / w, (max.y - v.y) / h))
+    })
+    return uvs
   }
 
   private transformVec3s(vs:Vec3[]): Vec3[] {

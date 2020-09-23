@@ -1,7 +1,7 @@
-import { Geometry } from "./geometry.js"
-import { Vec2 } from "../math/vec2.js"
-import { Vec3 } from "../math/vec3.js"
-import { Face3} from "../math/face3.js"
+import { Geometry } from "../geometry.js"
+import { Vec2 } from "../../math/vec2.js"
+import { Vec3 } from "../../math/vec3.js"
+import { Face3} from "../../math/face3.js"
 
 export class CubeGeometry extends Geometry {
   x:number

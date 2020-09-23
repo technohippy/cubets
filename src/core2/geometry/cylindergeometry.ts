@@ -1,6 +1,6 @@
-import { Geometry } from "../core/geometry.js";
-import { Vec3 } from "../math/vec3.js";
-import { Face3 } from "../math/face3.js";
+import { Geometry } from "../geometry.js";
+import { Vec3 } from "../../math/vec3.js"
+import { Face3 } from "../../math/face3.js"
 
 export class CylinderGeometry extends Geometry {
   radius: number
@@ -44,4 +44,5 @@ export class CylinderGeometry extends Geometry {
     this.normals = Geometry.computeNormals(this.indices, this.vertices)
     this.uvs = this._computeUvs()
   }
+
 }
