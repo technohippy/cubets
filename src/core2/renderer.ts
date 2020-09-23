@@ -35,12 +35,14 @@ export class Renderer {
     scene.eachLight((light, i) => {
       context.writeLight(light, i)
     })
+
+    const needClear = context.context.needClear
     scene.eachMesh((mesh, i) => {
-      // TODO: ここの条件が微妙
-      context.context.needClear = scene.meshLength === 1 || i !== scene.meshLength - 1
+      context.context.needClear = needClear && i === 0
       context.writeMesh(mesh)
       this.gl.draw(context.program!, context.context)
     })
+    context.context.needClear = needClear
   }
 
   renderAnim(scene:Scene, camera?:Camera) {
