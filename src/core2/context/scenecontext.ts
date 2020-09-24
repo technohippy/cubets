@@ -23,7 +23,7 @@ export class SceneContext {
   constructor(...flags:number[]) {
     if (flags.length === 0) {
       flags = [
-        WebGL2RenderingContext.CULL_FACE,
+        //WebGL2RenderingContext.CULL_FACE,
         WebGL2RenderingContext.DEPTH_TEST,
         WebGL2RenderingContext.SCISSOR_TEST,
       ]

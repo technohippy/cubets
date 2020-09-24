@@ -3,7 +3,6 @@ import { Light } from "./light.js";
 import { GeometryConfig } from "./geometry.js";
 import { Material } from "./material.js";
 import { Camera } from "./camera.js";
-import { ContextWriter } from "./contextwriter.js";
 import { GLUniform } from "../gl/gluniform.js";
 
 export abstract class Scene {
@@ -61,12 +60,10 @@ export abstract class Scene {
   }
 
   addMesh(mesh:Mesh) {
-    mesh.setupContextVars(this.geometryConfig(), this.materialConfig())
     this.#meshes.push(mesh)
   }
 
   addLight(light:Light) {
-    light.setupContextVars(this.lightConfig())
     this.#lights.push(light)
   }
 
@@ -76,11 +73,6 @@ export abstract class Scene {
     } else if (e instanceof Light) {
       this.addLight(e)
     }
-  }
-
-  each(fn:(w:ContextWriter) => void) {
-    this.eachMesh(fn)
-    this.eachLight(fn)
   }
 
   eachMesh(fn:((m:Mesh, i:number) => void)) {

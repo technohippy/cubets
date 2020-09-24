@@ -3,6 +3,7 @@ import { GLTexture2D } from "./gltexture2d.js"
 import { GLTextureCube } from "./gltexturecube.js"
 
 type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1iv" | "2iv" | "3iv" | "4iv" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
+type GLUniformValueType = number[] | number | boolean | GLTexture2D | GLTextureCube
 
 export class GLUniform {
   name:string
@@ -12,21 +13,19 @@ export class GLUniform {
 
   updated = true
 
-  constructor(name:string, type:GLUniformType, value?:number[] | number | GLTexture2D | GLTextureCube) {
+  constructor(name:string, type:GLUniformType, value?:GLUniformValueType) {
     this.name = name
     this.type = type
     if (value) {
       if (value instanceof GLTexture2D || value instanceof GLTextureCube) {
         this.#value = value
-      } else if (typeof value === "number") {
-        this.#value = [value]
       } else {
-        this.#value = [...value]
+        this._setNumValue(value)
       }
     }
   }
 
-  updateValue(value:number[] | number | boolean | GLTexture2D, position:number=0) {
+  updateValue(value:GLUniformValueType, position:number=0) {
     if (value instanceof GLTexture2D) {
       if (this.#value && !(this.#value instanceof GLTexture2D)) {
         throw "current value is not a texture"
@@ -35,25 +34,27 @@ export class GLUniform {
         throw "position can not be set for texture"
       }
       this.#value = value
+    } else if (value instanceof GLTextureCube) {
+      if (this.#value && !(this.#value instanceof GLTextureCube)) {
+        throw "current value is not a texture"
+      }
+      if (position !== 0) {
+        throw "position can not be set for texture"
+      }
+      this.#value = value
     } else {
-      if (this.#value && this.#value instanceof GLTexture2D) {
+      if (this.#value && (this.#value instanceof GLTexture2D || this.#value instanceof GLTextureCube)) {
         throw "current value is not numbers"
       }
       if (position === 0) {
-        if (typeof value === "number") {
-          this.#value = [value]
-        } else if (typeof value === "boolean") {
-          this.#value = [value ? 1 : 0]
-        } else {
-          this.#value = [...value]
-        }
+        this._setNumValue(value)
       } else {
-        const index = position * this.positionUnit()
+        const index = position * this._positionUnit()
         if (!this.#value) this.#value = []
-        if (typeof value === "number") {
-          (this.#value as number[])[index] = value
-        } else if (typeof value === "boolean") {
+        if (typeof value === "boolean") {
           (this.#value as number[])[index] = value ? 1 : 0
+        } else if (typeof value === "number") {
+          (this.#value as number[])[index] = value
         } else {
           for (let i = 0; i < value.length; i++) {
             (this.#value as number[])[index + i] = value[i]
@@ -92,7 +93,17 @@ export class GLUniform {
     this.updated = false
   }
 
-  private positionUnit():number {
+  private _setNumValue(value:number | number[] | boolean) {
+    if (typeof value === "boolean") {
+      this.#value = [value ? 1 : 0]
+    } else if (typeof value === "number") {
+      this.#value = [value]
+    } else {
+      this.#value = [...value]
+    }
+  }
+
+  private _positionUnit():number {
     switch (this.type) {
       case "1i":
       case "1f": 

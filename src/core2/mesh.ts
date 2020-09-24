@@ -1,12 +1,10 @@
 import { Geometry, GeometryConfig } from "./geometry.js";
 import { Material } from "./material.js";
-import { ContextWriter } from "./contextwriter.js";
-import { GLContext } from "../gl/glcontext.js";
 import { Vec3 } from "../math/vec3.js";
 import { Quat } from "../math/quat.js";
 import { Transform3 } from "../math/transform3.js";
 
-export class Mesh implements ContextWriter {
+export class Mesh {
   geometry:Geometry
   material?:Material
 
@@ -59,18 +57,7 @@ export class Mesh implements ContextWriter {
     return transform
   }
 
-  setupContextVars(geometryConfig:GeometryConfig, materialConfig:{[key:string]:any}) {
-    this.geometry.setupContextVars(geometryConfig)
-    this.material?.setupContextVars(materialConfig)
-  }
-
   applyTransform() {
     this.geometry.transform = this.getTransform()
-  }
-
-  writeContext(context:GLContext) {
-    this.applyTransform()
-    this.geometry.writeContext(context)
-    this.material?.writeContext(context)
   }
 }

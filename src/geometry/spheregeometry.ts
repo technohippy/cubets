@@ -1,7 +1,6 @@
 import { Geometry } from "../core/geometry.js";
 import { Vec3 } from "../math/vec3.js";
 import { Face3 } from "../math/face3.js";
-import { Vec2 } from "../math/vec2.js";
 
 export class SphereGeometry extends Geometry {
   radius: number

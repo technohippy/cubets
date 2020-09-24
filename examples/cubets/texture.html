@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Texture</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas><br/>
+    <div style="width:128px; height:128px; float:left; text-align:center; line-height:128px;" title="../images/unk.png">URL</div>
+    <img id="image" width="128" src="../images/sunset.png" />
+    <!-- https://www.home-movie.biz/free_movie.html -->
+    <video id="video" width="128" height="128" src="../images/track.mp4" loop autoplay></video>
+    <canvas id="canvas" width="128" height="128"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      const canvas = document.getElementById("canvas")
+      const gc = canvas.getContext("2d")
+      canvas.addEventListener("click", (evt) => {
+        gc.fillStyle = "#" + Math.floor(0xffffff * Math.random()).toString(16).padStart(6, "0")
+        gc.beginPath()
+        gc.arc(evt.offsetX, evt.offsetY, 15, 0, 2 * Math.PI)
+        gc.closePath()
+        gc.fill()
+      })
+    </script>
+    <script type="module">
+      import Cubets from "../../dist/cubets2.js"
+
+      const scene = new Cubets.PhongScene()
+
+      const light = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(0, 0, -1),
+        diffuseColor:new Cubets.RGBAColor(0.3, 0.3, 0.3),
+        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 0.8)
+      })
+      light.shouldFollowCamera = true
+      scene.add(light)
+
+      const urlMaterial = scene.createMaterial({
+        diffuseColor:Cubets.RGBAColor.White
+      })
+      //urlMaterial.texture = new Cubets.Texture("../images/unk.png")
+
+      const imgMaterial = scene.createMaterial({
+        diffuseColor:Cubets.RGBAColor.White
+      })
+      //imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
+
+      const videoMaterial = scene.createMaterial({
+        diffuseColor:Cubets.RGBAColor.White
+      })
+      //videoMaterial.texture = new Cubets.Texture(document.getElementById("video"))
+
+      const canvasMaterial = scene.createMaterial({
+        diffuseColor:Cubets.RGBAColor.White
+      })
+      //canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
+
+      const geometries = [
+        new Cubets.CubeGeometry(10, 10, 10),
+        new Cubets.SphereGeometry(5),
+        new Cubets.CylinderGeometry(5, 10),
+        new Cubets.PlaneGeometry(10, 10),
+      ]
+      const materials = [
+        urlMaterial, 
+        imgMaterial, 
+        videoMaterial, 
+        canvasMaterial,
+      ]
+      const width = 15
+      const margin = 5
+      const base = -materials.length * 15 / 2
+      materials.forEach((m, i) => {
+        geometries.forEach((g, j) => {
+          const mesh = new Cubets.Mesh(g, m)
+          mesh.position.x = base + i * 15 + margin * materials.length/2
+          mesh.position.y = base + j * 15 + margin * geometries.length/2
+          scene.add(mesh)
+        })
+      })
+
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/3,
+        near:0.1,
+        far:1000,
+      })
+      camera.position.z = 25
+      camera.target = new Cubets.Vec3()
+
+      const control = new Cubets.OrbitCameraControl()
+      control.container = document.getElementById("cubets")
+      control.setCamera(camera)
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.renderAnim(scene, camera)
+    </script>
+  </body>
+</html>

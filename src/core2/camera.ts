@@ -1,4 +1,3 @@
-import { ContextWriter } from "./contextwriter.js";
 import { GLContext } from "../gl/glcontext.js";
 import { GLUniform } from "../gl/gluniform.js";
 import { Vec3 } from "../math/vec3.js";
@@ -10,7 +9,7 @@ import { Renderer } from "./renderer.js";
 import { CameraContext } from "./context/cameracontext.js";
 glMatrix.setMatrixArrayType(Array)
 
-export abstract class Camera implements ContextWriter {
+export abstract class Camera {
   projectionMatrix:number[] = mat4.create()
   modelViewMatrix:number[] = mat4.create()
   normalMatrix:number[] = mat4.create()

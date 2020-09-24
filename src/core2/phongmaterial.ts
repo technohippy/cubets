@@ -1,6 +1,5 @@
 import { Material } from "./material.js";
 import { RGBAColor } from "../math/rgbacolor.js";
-import { GLContext } from "../gl/glcontext.js";
 import { GLUniform } from "../gl/gluniform.js";
 import { PhongMaterialContext } from "./phongmaterialcontext.js";
 import { MaterialContext } from "./context/materialcontext.js";
@@ -14,13 +13,6 @@ export class PhongMaterial extends Material {
   specularColor: RGBAColor
   shininess: number
   pointSize?: number // only for particles
-
-  diffuseColorUniform?:GLUniform
-  ambientColorUniform?:GLUniform
-  specularColorUniform?:GLUniform
-  shininessUniform?:GLUniform
-  
-  #uploaded = false
 
   constructor(
     diffuseColor: RGBAColor=RGBAColor.random(),
@@ -37,36 +29,5 @@ export class PhongMaterial extends Material {
 
   setupContext(config:PhongMaterialConfig):MaterialContext {
     return new PhongMaterialContext(config)
-  }
-
-  // TODO: not used
-  setupContextVars(config:PhongMaterialConfig) {
-    this.diffuseColorUniform = config["diffuse"]
-    this.ambientColorUniform = config["ambient"]
-    this.specularColorUniform = config["specular"]
-    this.shininessUniform = config["shininess"]
-  }
-
-  // TODO: not used
-  writeContext(context:GLContext) {
-    this.diffuseColorUniform?.updateValue(this.diffuseColor.toArray())
-    this.ambientColorUniform?.updateValue(this.ambientColor.toArray())
-    this.specularColorUniform?.updateValue(this.specularColor.toArray())
-    this.shininessUniform?.updateValue(this.shininess)
-    if (!this.#uploaded) {
-      if (this.diffuseColorUniform) {
-        context.addUniform(this.diffuseColorUniform)
-      }
-      if (this.ambientColorUniform) {
-        context.addUniform(this.ambientColorUniform)
-      }
-      if (this.specularColorUniform) {
-        context.addUniform(this.specularColorUniform)
-      }
-      if (this.shininessUniform) {
-        context.addUniform(this.shininessUniform)
-      }
-      this.#uploaded = true
-    }
   }
 }
