@@ -77,15 +77,12 @@ export class PhongMaterialContext extends MaterialContext {
       this.wireframeUniform?.updateValue(material.wireframe)
       this.normalUniform?.updateValue(material.normal)
 
-      /*
-      if (this.textureUniform && material.texture) {
-        const texture = new GLTexture2D(WebGL2RenderingContext.TEXTURE_2D, material.texture.image, {
-          minFilter:WebGL2RenderingContext.NEAREST,
-          magFilter:WebGL2RenderingContext.NEAREST,
-        })
-        this.textureUniform.updateValue(texture)
+      if (this.textureUniform && material?.texture?.image) {
+        const texture = this.texture2Ds.get(material.texture)
+        if (texture) {
+          this.textureUniform.updateValue(texture)
+        }
       }
-      */
 
       if (material.wireframe) {
         context.drawMode = WebGL2RenderingContext.LINES
