@@ -1,4 +1,3 @@
-import { ContextWriter } from "./contextwriter.js";
 import { GeometryContext } from "./context/geometrycontext.js";
 import { GLContext } from "../gl/glcontext.js";
 import { GLAttribute } from "../gl/glattribute.js";
@@ -14,7 +13,7 @@ import { ToArray } from "../misc/toarray.js";
 type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors"
 export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute}
 
-export class Geometry implements ContextWriter {
+export class Geometry {
   transform = new Transform3()
   indices:Face3[] = []
   vertices:Vec3[] = []

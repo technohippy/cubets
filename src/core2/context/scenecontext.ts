@@ -20,6 +20,14 @@ export class SceneContext {
 
   prepared = false
 
+  get needClear():boolean {
+    return this.context.needClear
+  }
+
+  set needClear(value:boolean) {
+    this.context.needClear = value
+  }
+
   constructor(...flags:number[]) {
     if (flags.length === 0) {
       flags = [
@@ -55,13 +63,18 @@ export class SceneContext {
     })
 
     scene.eachMesh(mesh => {
-      const geometryContext = mesh.geometry.setupContext(scene.geometryConfig())
-      geometryContext.upload(this.context, mesh.geometry)
-      this.geometryContexts.set(mesh.geometry, geometryContext)
+      if (!this.geometryContexts.has(mesh.geometry)) {
+        const geometryContext = mesh.geometry.setupContext(scene.geometryConfig())
+        geometryContext.upload(this.context, mesh.geometry)
+        this.geometryContexts.set(mesh.geometry, geometryContext)
+      }
+
       if (mesh.material) {
-        const materialContext = mesh.material.setupContext(scene.materialConfig())
-        materialContext.upload(this.context)
-        this.materialContexts.set(mesh.material, materialContext)
+        if (!this.materialContexts.has(mesh.material)) {
+          const materialContext = mesh.material.setupContext(scene.materialConfig())
+          materialContext.upload(this.context, mesh.material)
+          this.materialContexts.set(mesh.material, materialContext)
+        }
       }
     })
 

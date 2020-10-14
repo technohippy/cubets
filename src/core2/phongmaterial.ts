@@ -4,7 +4,7 @@ import { GLUniform } from "../gl/gluniform.js";
 import { PhongMaterialContext } from "./phongmaterialcontext.js";
 import { MaterialContext } from "./context/materialcontext.js";
 
-type PhongMaterialConfigKey = "diffuse" | "ambient" | "specular" | "shininess" | "wireframe" | "normal"
+type PhongMaterialConfigKey = "diffuse" | "ambient" | "specular" | "shininess" | "wireframe" | "normal" | "texture" | "skipTexture"
 export type PhongMaterialConfig = {[key in PhongMaterialConfigKey]?:GLUniform}
 
 export class PhongMaterial extends Material {

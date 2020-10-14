@@ -10,6 +10,7 @@ import { CubeGeometry } from "./core2/geometry/cubegeometry.js";
 import { SphereGeometry } from "./core2/geometry/spheregeometry.js";
 import { CylinderGeometry } from "./core2/geometry/cylindergeometry.js";
 import { Material } from "./core2/material.js";
+import { Texture } from "./core2/texture.js";
 import { Vec2 } from "./math/vec2.js";
 import { Vec3 } from "./math/vec3.js";
 import { Quat } from "./math/quat.js";
@@ -33,6 +34,7 @@ export default {
   SphereGeometry:SphereGeometry,
   CylinderGeometry:CylinderGeometry,
   Material:Material,
+  Texture:Texture,
   Vec2:Vec2,
   Vec3:Vec3,
   Quat:Quat,

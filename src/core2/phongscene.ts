@@ -10,7 +10,8 @@ import { PhongDirectionalLight } from "./phongdirectionallight.js"
 import { PhongPerspectiveCamera } from "./phongperspecivecamera.js"
 import { PhongOrthogonalCamera } from "./phongorthogonalcamera.js"
 import { RGBAColor } from "../math/rgbacolor.js"
-import { SceneContext } from "./context/scenecontext.js"
+
+const GL = WebGL2RenderingContext
 
 export class PhongScene extends Scene {
   hasParticles():boolean {
@@ -18,7 +19,12 @@ export class PhongScene extends Scene {
   }
 
   hasTexture():boolean {
-    return false // TODO
+    const texturedMesh = this.meshes.find(m => m.material?.texture)
+    if (texturedMesh) {
+      return true
+    } else {
+      return false
+    }
   }
 
   hasNormalTexture():boolean {
@@ -403,25 +409,33 @@ export class PhongScene extends Scene {
   }
 
   geometryConfig():GeometryConfig {
-    return {
-      "vertices":new GLAttribute("aVertexPosition", 3, WebGL2RenderingContext.FLOAT),
-      "normals":new GLAttribute("aVertexNormal", 3, WebGL2RenderingContext.FLOAT),
-      //"colors":new GLAttribute("aVertexColor", 4, WebGL2RenderingContext.FLOAT),
-      //"offsets":new GLAttribute("aVertexOffset", 3, WebGL2RenderingContext.FLOAT),
-      //"quats":new GLAttribute("aVertexQuat", 4, WebGL2RenderingContext.FLOAT),
-      //"uvs":new GLAttribute("aVertexTextureCoords", 2, WebGL2RenderingContext.FLOAT),
+    const config:GeometryConfig = {
+      "vertices":new GLAttribute("aVertexPosition", 3, GL.FLOAT),
+      "normals":new GLAttribute("aVertexNormal", 3, GL.FLOAT),
+      //"colors":new GLAttribute("aVertexColor", 4, GL.FLOAT),
+      //"offsets":new GLAttribute("aVertexOffset", 3, GL.FLOAT),
+      //"quats":new GLAttribute("aVertexQuat", 4, GL.FLOAT),
     }
+    if (this.hasTexture()) {
+      config["uvs"] = new GLAttribute("aVertexTextureCoords", 2, GL.FLOAT)
+    }
+    return config
   }
 
   materialConfig():{[key:string]:GLUniform} {
-    return {
+    const config:{[key:string]:GLUniform} = {
+      "wireframe":new GLUniform("uWireframeMode", "1i"),
+      "normal":new GLUniform("uNormalMode", "1i"),
       "diffuse":new GLUniform("uMaterialDiffuse", "4f"),
       "ambient":new GLUniform("uMaterialAmbient", "4f"),
       "specular":new GLUniform("uMaterialSpecular", "4f"),
       "shininess":new GLUniform("uShininess", "1f"),
-      "wireframe":new GLUniform("uWireframeMode", "1i"),
-      "normal":new GLUniform("uNormalMode", "1i"),
     }
+    if (this.hasTexture()) {
+      config["texture"] = new GLUniform("uSampler", "1i")
+      config["skipTexture"] = new GLUniform("uIgnoreTexture", "1i")
+    }
+    return config
   }
   
   lightConfig():{[key:string]:GLUniform} {

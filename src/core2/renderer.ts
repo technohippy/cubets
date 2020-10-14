@@ -2,10 +2,13 @@ import { GL2Renderer } from "../gl/gl2renderer.js"
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { SceneContext } from "./context/scenecontext.js"
+import { Material } from "./material.js"
+import { Texture } from "./texture.js"
 
 export class Renderer {
   gl: GL2Renderer
   defaultContext:SceneContext
+  prepared = false
 
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext, flags:number[]=[]) {
     this.gl = new GL2Renderer(container)
@@ -16,15 +19,32 @@ export class Renderer {
     this.defaultContext.setViewport(width, height, x, y)
   }
 
+  prepare(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext):Promise<void> {
+    const textures:Texture[] = []
+    scene.eachMesh(mesh => {
+      if (mesh.material?.texture) {
+        textures.push(mesh.material.texture)
+      }
+    })
+    return Promise.all(textures.map(t => t.loadImage())).then(() => {
+      if (camera && !camera.isSetupContextVars()) {
+        camera.setupContextVars(scene.cameraConfig())
+      }
+
+      if (!context.prepared) {
+      context.setupLocations(scene, camera)
+      }
+    })
+  }
+
   render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
-    // for first render
-    if (camera && !camera.isSetupContextVars()) {
-      camera.setupContextVars(scene.cameraConfig())
+    if (!this.prepared) {
+      this.prepare(scene, camera, context).then(() => {
+        this.prepared = true
+        this.render(scene, camera, context)
+      })
+      return
     }
-    if (!context.prepared) {
-     context.setupLocations(scene, camera)
-    }
-    //
 
     if (camera) {
       camera.setup(this)
@@ -36,20 +56,24 @@ export class Renderer {
       context.writeLight(light, i)
     })
 
-    const needClear = context.context.needClear
+    const needClear = context.needClear
     scene.eachMesh((mesh, i) => {
-      context.context.needClear = needClear && i === 0
+      context.needClear = needClear && i === 0
       context.writeMesh(mesh)
-      this.gl.draw(context.program!, context.context)
+      this.draw(context)
     })
-    context.context.needClear = needClear
+    context.needClear = needClear
   }
 
-  renderAnim(scene:Scene, camera?:Camera) {
+  renderLoop(scene:Scene, camera?:Camera) {
     const anim = () => requestAnimationFrame(() => {
       this.render(scene, camera)
       anim()
     })
     anim()
+  }
+
+  draw(context:SceneContext) {
+    this.gl.draw(context.program!, context.context)
   }
 }

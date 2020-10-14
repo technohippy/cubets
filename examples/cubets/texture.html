@@ -17,6 +17,12 @@
     <script src="../js/highlight.min.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="../js/utils.js"></script>
+
+    <!--
+    <link rel="preload" href="../images/unk.png" as="image">
+    <link rel="preload" href="../images/sunset.png" as="image">
+    <link rel="preload" href="../images/track.mp4" as="video">
+    -->
   </head>
   <body>
     <canvas id="cubets" width="600" height="400"></canvas><br/>
@@ -54,22 +60,22 @@
       const urlMaterial = scene.createMaterial({
         diffuseColor:Cubets.RGBAColor.White
       })
-      //urlMaterial.texture = new Cubets.Texture("../images/unk.png")
+      urlMaterial.texture = new Cubets.Texture("../images/unk.png")
 
       const imgMaterial = scene.createMaterial({
         diffuseColor:Cubets.RGBAColor.White
       })
-      //imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
+      imgMaterial.texture = new Cubets.Texture(document.getElementById("image"))
 
       const videoMaterial = scene.createMaterial({
         diffuseColor:Cubets.RGBAColor.White
       })
-      //videoMaterial.texture = new Cubets.Texture(document.getElementById("video"))
+      videoMaterial.texture = new Cubets.Texture(document.getElementById("video"))
 
       const canvasMaterial = scene.createMaterial({
         diffuseColor:Cubets.RGBAColor.White
       })
-      //canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
+      canvasMaterial.texture = new Cubets.Texture(document.getElementById("canvas"))
 
       const geometries = [
         new Cubets.CubeGeometry(10, 10, 10),
@@ -80,17 +86,18 @@
       const materials = [
         urlMaterial, 
         imgMaterial, 
-        videoMaterial, 
-        canvasMaterial,
+        //videoMaterial, 
+        //canvasMaterial,
       ]
       const width = 15
       const margin = 5
-      const base = -materials.length * 15 / 2
+      const baseX = -materials.length * 15 / 2
+      const baseY = -geometries.length * 15 / 2
       materials.forEach((m, i) => {
         geometries.forEach((g, j) => {
           const mesh = new Cubets.Mesh(g, m)
-          mesh.position.x = base + i * 15 + margin * materials.length/2
-          mesh.position.y = base + j * 15 + margin * geometries.length/2
+          mesh.position.x = baseX + i * 15 + margin * materials.length/2
+          mesh.position.y = baseY + j * 15 + margin * geometries.length/2
           scene.add(mesh)
         })
       })
@@ -109,7 +116,9 @@
       control.setCamera(camera)
 
       const renderer = new Cubets.Renderer("#cubets")
-      renderer.renderAnim(scene, camera)
+      renderer.renderLoop(scene, camera)
+      //renderer.gl.debug = true
+      //renderer.render(scene, camera)
     </script>
   </body>
 </html>

@@ -4,12 +4,10 @@ import { Vec3 } from "../../math/vec3.js"
 import { Face3} from "../../math/face3.js"
 
 export class PlaneGeometry extends Geometry {
-  x:number
-  y:number
+  x!:number
+  y!:number
   constructor(x:number=1, y:number=1) {
     super()
-    this.x = x
-    this.y = y
     this.setSize(x, y)
   }
 
