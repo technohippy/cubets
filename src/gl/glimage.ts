@@ -25,6 +25,12 @@ export class GLImage {
       if (!height) throw `height must be set`
       this.width = width
       this.height = height
+    } else if (source instanceof HTMLImageElement) {
+      this.width = width || source.naturalWidth || source.width
+      this.height = height || source.naturalHeight || source.height
+    } else if (source instanceof HTMLVideoElement) {
+      this.width = width || source.videoWidth || source.width
+      this.height = height || source.videoHeight || source.height
     } else {
       this.width = width || source.width
       this.height = height || source.height
