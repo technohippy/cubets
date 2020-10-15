@@ -32,15 +32,16 @@ export class Renderer {
       }
 
       if (!context.prepared) {
-      context.setupLocations(scene, camera)
+        context.setupLocations(scene, camera)
       }
+
+      this.prepared = true
     })
   }
 
   render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
     if (!this.prepared) {
       this.prepare(scene, camera, context).then(() => {
-        this.prepared = true
         this.render(scene, camera, context)
       })
       return
@@ -66,11 +67,14 @@ export class Renderer {
   }
 
   renderLoop(scene:Scene, camera?:Camera) {
-    const anim = () => requestAnimationFrame(() => {
-      this.render(scene, camera)
+    const context = this.defaultContext
+    this.prepare(scene, camera, context).then(() => {
+      const anim = () => requestAnimationFrame(() => {
+        this.render(scene, camera, context)
+        anim()
+      })
       anim()
     })
-    anim()
   }
 
   draw(context:SceneContext) {
