@@ -127,7 +127,7 @@ export class GL2Renderer {
     return program!
   }
 
-  _createShader(type:number, shaderSource:string):WebGLShader {
+  private _createShader(type:number, shaderSource:string):WebGLShader {
     const shader = this.#gl.createShader(type)
     if (!shader) {
       throw `fail to create shader: ${type}`
@@ -440,9 +440,7 @@ export class GL2Renderer {
     }
   }
 
-  // private
-
-  _reserveTextureUnit():number {
+  private _reserveTextureUnit():number {
     for (let i = 0; i < this.#textureUnitUsage.length; i++) {
       if (this.#textureUnitUsage[i]) continue
       this.#textureUnitUsage[i] = true
@@ -451,7 +449,7 @@ export class GL2Renderer {
     throw "texture unit overflow"
   }
 
-  _debug(...args: any[]) {
+  private _debug(...args: any[]) {
     args.unshift("[")
     args.push("]")
     if (this.debug) console.log(...args)

@@ -6,6 +6,7 @@ import { Face3} from "../../math/face3.js"
 export class PlaneGeometry extends Geometry {
   x!:number
   y!:number
+
   constructor(x:number=1, y:number=1) {
     super()
     this.setSize(x, y)
@@ -34,14 +35,6 @@ export class PlaneGeometry extends Geometry {
       new Vec3(0, 0, 1),
       new Vec3(0, 0, 1),
     ]
-    /*
-    this.normals = [
-      new Vec3(0, 0, -1),
-      new Vec3(0, 0, -1),
-      new Vec3(0, 0, -1),
-      new Vec3(0, 0, -1),
-    ]
-    */
     this.uvs = [
       new Vec2(1,1), new Vec2(0,1), new Vec2(1,0), new Vec2(0,0),
     ]

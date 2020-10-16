@@ -6,6 +6,8 @@ import { RGBAColor } from "../math/rgbacolor.js"
 import { GLProgram } from "./glprogram.js"
 import { GLFramebuffer } from "./glframebuffer.js"
 import { GLIndex } from "./glindex.js"
+import { GLTexture } from "./gltexture.js"
+import { GLTexture2D } from "./gltexture2d.js"
 
 export class GLContext {
   framebuffer:GLFramebuffer | null = null
@@ -13,6 +15,7 @@ export class GLContext {
   viewport = new GLViewport()
   clearColor = new RGBAColor(0, 0, 0)
 
+  textures:GLTexture[] = []
   index?:GLIndex
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
@@ -127,16 +130,26 @@ export class GLContext {
   }
 
   apply(renderer:GL2Renderer) {
-    this.uploadVariables(renderer)
+    //this.uploadTextures(renderer)
+    this.uploadAttributes(renderer)
+    this.uploadUniforms(renderer)
     renderer.enableAll(this.enableFlags)
     this.enableFlags.length = 0 // apply only once
     renderer.viewport(this.viewport)
     renderer.scissor(this.viewport) // TODO: 必要ない場合もあるのでどうするか
     renderer.clearColor(this.clearColor)
-    // TODO: texture
   }
-    
-  uploadVariables(renderer:GL2Renderer) {
+
+  // not used
+  uploadTextures(renderer:GL2Renderer) {
+    this.textures.forEach(texture => {
+      if (texture instanceof GLTexture2D) {
+        renderer.uploadTexture(texture)
+      }
+    })
+  }
+
+  uploadAttributes(renderer:GL2Renderer) {
     // index
     if (this.index?.updated) {
       renderer.uploadIndex(this.index)
@@ -152,7 +165,9 @@ export class GLContext {
       })
     }
     renderer.bindVertexArray(this.vao)
-
+  }
+    
+  uploadUniforms(renderer:GL2Renderer) {
     // uniforms
     this.uniforms.forEach(uniform => {
       if (uniform.updated) renderer.uploadUniform(uniform)

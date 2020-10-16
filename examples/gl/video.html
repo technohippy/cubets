@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: </title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <video id="video" width="256" src="../images/Trees-48892.mp4" loop autoplay></video><br>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets.js"
+
+      // program
+      const vs = `#version 300 es
+        in vec4 a_position;
+        in vec2 a_texcoords;
+        out vec2 v_texcoords;
+        void main() {
+          v_texcoords = a_texcoords;
+          gl_Position = a_position;
+        }`
+      const fs = `#version 300 es
+        precision mediump float;
+        uniform sampler2D u_video;
+        in vec2 v_texcoords;
+        out vec4 fragColor;
+        void main() {
+          fragColor = texture(u_video, v_texcoords);
+        }`
+      const program = new Cubets.GLProgram(vs, fs)
+
+      // context
+      const index = new Cubets.GLIndex()
+      index.buffer = Cubets.GLBuffer.ui16([
+        0, 1, 2,
+        2, 0, 3,
+      ])
+      const aPosition = new Cubets.GLAttribute("a_position", 2, Cubets.GL.FLOAT)
+      aPosition.buffer = Cubets.GLBuffer.f32([
+        -0.5, -0.8,
+         0.5, -0.8,
+         0.5,  0.8,
+        -0.5,  0.8,
+      ])
+      const aTexCoords = new Cubets.GLAttribute("a_texcoords", 2, Cubets.GL.FLOAT)
+      aTexCoords.buffer = Cubets.GLBuffer.f32([
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+      ])
+
+      const video = document.getElementById("video")
+      const texture = new Cubets.GLTexture2D(Cubets.GL.TEXTURE_2D, video)
+      texture.wrapS = Cubets.GL.CLAMP_TO_EDGE
+      texture.wrapT = Cubets.GL.CLAMP_TO_EDGE
+      texture.minFilter = Cubets.GL.NEAREST
+      texture.magFilter = Cubets.GL.NEAREST
+      const uVideo = new Cubets.GLUniform("u_video", "1i", texture)
+
+      const context = new Cubets.GLContext()
+      context.setIndex(index)
+      context.addAttribute(aPosition)
+      context.addAttribute(aTexCoords)
+      context.addUniform(uVideo)
+
+      // run the program on the context
+      const renderer = new Cubets.GL2Renderer("#cubets") 
+      renderer.debug = true
+      setInterval(() => {
+        renderer.uploadTexture(texture)
+        renderer.draw(program, context)
+      }, 100)
+    </script>
+  </body>
+</html>
