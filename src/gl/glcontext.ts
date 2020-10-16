@@ -15,7 +15,6 @@ export class GLContext {
   viewport = new GLViewport()
   clearColor = new RGBAColor(0, 0, 0)
 
-  textures:GLTexture[] = []
   index?:GLIndex
   attributes:GLAttribute[] = []
   uniforms:GLUniform[] = []
@@ -130,7 +129,7 @@ export class GLContext {
   }
 
   apply(renderer:GL2Renderer) {
-    //this.uploadTextures(renderer)
+    this.uploadTextures(renderer)
     this.uploadAttributes(renderer)
     this.uploadUniforms(renderer)
     renderer.enableAll(this.enableFlags)
@@ -142,8 +141,10 @@ export class GLContext {
 
   // not used
   uploadTextures(renderer:GL2Renderer) {
-    this.textures.forEach(texture => {
-      if (texture instanceof GLTexture2D) {
+    this.uniforms.forEach(uniform => {
+      const texture = uniform.texture
+      if (texture?.image?.source instanceof HTMLVideoElement ||
+        texture?.image?.source instanceof HTMLCanvasElement) {
         renderer.uploadTexture(texture)
       }
     })

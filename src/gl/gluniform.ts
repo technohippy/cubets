@@ -1,6 +1,7 @@
 import { GL2Renderer } from "./gl2renderer.js"
 import { GLTexture2D } from "./gltexture2d.js"
 import { GLTextureCube } from "./gltexturecube.js"
+import { GLTexture } from "./gltexture.js"
 
 type GLUniformType = "1i" | "2i" | "3i" | "4i" | "1f" | "2f" | "3f" | "4f" | "1iv" | "2iv" | "3iv" | "4iv" | "1fv" | "2fv" | "3fv" | "4fv" | "m2fv" | "m3fv" | "m4fv"
 type GLUniformValueType = number[] | number | boolean | GLTexture2D | GLTextureCube
@@ -12,6 +13,13 @@ export class GLUniform {
   #value?:number[] | GLTexture2D | GLTextureCube
 
   updated = true
+
+  get texture():GLTexture2D | undefined {
+    if (this.#value instanceof GLTexture2D) {
+      return this.#value
+    }
+    return undefined
+  }
 
   constructor(name:string, type:GLUniformType, value?:GLUniformValueType) {
     this.name = name
