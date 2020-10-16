@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Lights</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div>
+    <script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets2.js"
+
+      class SimpleScene extends Cubets.Scene {
+        getVertexShader() {
+          return `#version 300 es
+            precision mediump float;
+            precision mediump int;
+            in vec3 aVertexPosition;
+
+            void main(void) {
+              gl_Position = vec4(aVertexPosition, 1);
+            }
+          `
+        }
+
+        getFragmentShader() {
+          return `#version 300 es
+            precision mediump float;
+            precision mediump int;
+            out vec4 fragColor;
+
+            void main(void) {
+              fragColor = vec4(1);
+            }
+          `
+        }
+
+        geometryConfig() {
+          return {
+            "vertices":new Cubets.GLAttribute("aVertexPosition", 3, WebGL2RenderingContext.FLOAT)
+          }
+        }
+      }
+
+      const geometry = new Cubets.Geometry()
+      geometry.vertices = [
+        new Cubets.Vec3(-0.8, -0.8, 0),
+        new Cubets.Vec3(0.8, -0.8, 0),
+        new Cubets.Vec3(0, 0.8, 0)
+      ]
+      const mesh = new Cubets.Mesh(geometry)
+      const scene = new SimpleScene()
+      scene.addMesh(mesh)
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.render(scene)
+    </script>
+  </body>
+</html>

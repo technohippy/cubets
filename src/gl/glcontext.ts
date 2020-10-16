@@ -139,7 +139,6 @@ export class GLContext {
     renderer.clearColor(this.clearColor)
   }
 
-  // not used
   uploadTextures(renderer:GL2Renderer) {
     this.uniforms.forEach(uniform => {
       const texture = uniform.texture
