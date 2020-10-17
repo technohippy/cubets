@@ -2,7 +2,7 @@ import { LightContext } from "./context/lightcontext.js";
 import { GLUniform } from "../gl/gluniform.js";
 import { GLContext } from "../gl/glcontext.js";
 import { Light } from "./light.js";
-import { PhongDirectionalLight } from "./phongdirectionallight.js";
+import { PhongLight } from "./phonglight.js";
 
 export class PhongLightContext extends LightContext {
   shouldFollowCameraUniform?:GLUniform
@@ -50,10 +50,11 @@ export class PhongLightContext extends LightContext {
   }
 
   write(light:Light, position:number=0) {
-    if (light instanceof PhongDirectionalLight) {
+    if (light instanceof PhongLight) {
       this.isPositionalUniform?.updateValue(0, position)
       this.positionUniform?.updateValue([0, 0, 0], position)
       this.cutoffUniform?.updateValue(1, position)
+
       this.shouldFollowCameraUniform?.updateValue(+light.shouldFollowCamera, position)
       if (light.diffuseColor) {
         this.diffuseColorUniform?.updateValue(light.diffuseColor.toArray(), position)

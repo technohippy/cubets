@@ -8,6 +8,7 @@ import { PhongLightContext } from "./phonglightcontext.js";
 export abstract class PhongLight extends Light {
   shouldFollowCamera = false
 
+  position = new Vec3()
   direction = new Vec3()
 
   diffuseColor:RGBAColor

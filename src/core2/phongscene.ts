@@ -7,6 +7,8 @@ import { Light } from "./light.js"
 import { PhongMaterial } from "./phongmaterial.js"
 import { GLUniform } from "../gl/gluniform.js"
 import { PhongDirectionalLight } from "./phongdirectionallight.js"
+import { PhongPositionalLight } from "./phongpositionallight.js";
+import { PhongSpotLight } from "./phongspotlight.js";
 import { PhongPerspectiveCamera } from "./phongperspecivecamera.js"
 import { PhongOrthogonalCamera } from "./phongorthogonalcamera.js"
 import { RGBAColor } from "../math/rgbacolor.js"
@@ -64,8 +66,30 @@ export class PhongScene extends Scene {
       )
       light.shouldFollowCamera = !!params["followCamera"]
       return light
+
+    } else if (params["type"] === "positional") {
+      const light = new PhongPositionalLight(
+        params["position"],
+        params["diffuseColor"],
+        params["ambientColor"],
+        params["specularColor"],
+      )
+      light.shouldFollowCamera = !!params["followCamera"]
+      return light
+
+    } else if (params["type"] === "spot") {
+      const light = new PhongSpotLight(
+        params["position"],
+        params["direction"],
+        params["diffuseColor"],
+        params["ambientColor"],
+        params["specularColor"],
+      )
+      light.shouldFollowCamera = !!params["followCamera"]
+      return light
     }
-    throw `invalid type:${params["type"]}`
+
+    throw `invalid light type:${params["type"]}`
   }
 
   createCamera(params:{[key:string]:any}):Camera {

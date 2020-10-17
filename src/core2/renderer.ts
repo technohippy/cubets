@@ -2,7 +2,6 @@ import { GL2Renderer } from "../gl/gl2renderer.js"
 import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { SceneContext } from "./context/scenecontext.js"
-import { Material } from "./material.js"
 import { Texture } from "./texture.js"
 
 export class Renderer {

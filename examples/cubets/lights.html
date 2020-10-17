@@ -25,50 +25,70 @@
     <script type="module">
       import Cubets from "../../dist/cubets2.js"
 
-      class SimpleScene extends Cubets.Scene {
-        getVertexShader() {
-          return `#version 300 es
-            precision mediump float;
-            precision mediump int;
-            in vec3 aVertexPosition;
+      const scene = new Cubets.PhongScene()
 
-            void main(void) {
-              gl_Position = vec4(aVertexPosition, 1);
-            }
-          `
-        }
+      const positionalLight = scene.createLight({
+        type:"positional",
+        position:new Cubets.Vec3(-0.1, -0.3, -1),
+        ambientColor:Cubets.RGBAColor.Black,
+        diffuseColor:Cubets.RGBAColor.Red,
+      })
 
-        getFragmentShader() {
-          return `#version 300 es
-            precision mediump float;
-            precision mediump int;
-            out vec4 fragColor;
+      const directionalLight = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(1, -0.5, 0.2),
+        ambientColor:Cubets.RGBAColor.Black,
+        diffuseColor:Cubets.RGBAColor.Green,
+      })
 
-            void main(void) {
-              fragColor = vec4(1);
-            }
-          `
-        }
+      const spotLight = scene.createLight({
+        type:"spot",
+        position:new Cubets.Vec3(-0.1, -0.3, -1),
+        direction:new Cubets.Vec3(-0.1, -0.3, -1),
+        ambientColor:Cubets.RGBAColor.Black,
+        diffuseColor:Cubets.RGBAColor.Blue,
+      })
 
-        geometryConfig() {
-          return {
-            "vertices":new Cubets.GLAttribute("aVertexPosition", 3, WebGL2RenderingContext.FLOAT)
-          }
-        }
-      }
+      const sphere = new Cubets.Mesh(
+        new Cubets.SphereGeometry(8),
+        scene.createMaterial(),
+      )
+      sphere.position.x = -10
 
-      const geometry = new Cubets.Geometry()
-      geometry.vertices = [
-        new Cubets.Vec3(-0.8, -0.8, 0),
-        new Cubets.Vec3(0.8, -0.8, 0),
-        new Cubets.Vec3(0, 0.8, 0)
-      ]
-      const mesh = new Cubets.Mesh(geometry)
-      const scene = new SimpleScene()
-      scene.addMesh(mesh)
+      const cube = new Cubets.Mesh(
+        new Cubets.CubeGeometry(16, 16, 16),
+        scene.createMaterial(),
+      )
+      cube.position.x = 10
+
+      scene.addMesh(sphere)
+      scene.addMesh(cube)
+      scene.addLight(positionalLight)
+      scene.addLight(directionalLight)
+      scene.addLight(spotLight)
+
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/4,
+        near:0.1,
+        far:100,
+      })
+      camera.position.z = 20
+      camera.target = new Cubets.Vec3()
+
+      const control = new Cubets.OrbitCameraControl()
+      control.container = document.getElementById("cubets")
+      control.setCamera(camera)
 
       const renderer = new Cubets.Renderer("#cubets")
-      renderer.render(scene)
+
+      let t = 0
+      setInterval(() => {
+        //positionalLight.position.z = 15 * Math.sin(t)
+        //positionalLight.position.y = 10 * Math.cos(0.7 * t)
+        t += 0.02
+        renderer.render(scene, camera)
+      }, 10)
     </script>
   </body>
 </html>
