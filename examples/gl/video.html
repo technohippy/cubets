@@ -82,10 +82,13 @@
       // run the program on the context
       const renderer = new Cubets.GL2Renderer("#cubets") 
       renderer.debug = true
-      setInterval(() => {
+      
+      const draw = () => {
         renderer.uploadTexture(texture)
         renderer.draw(program, context)
-      }, 100)
+        requestAnimationFrame(draw)
+      }
+      draw()
     </script>
   </body>
 </html>

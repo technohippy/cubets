@@ -29,7 +29,7 @@
 
       const positionalLight = scene.createLight({
         type:"positional",
-        position:new Cubets.Vec3(-0.1, -0.3, -1),
+        position:new Cubets.Vec3(0, 0, 0),
         ambientColor:Cubets.RGBAColor.Black,
         diffuseColor:Cubets.RGBAColor.Red,
       })
@@ -43,8 +43,8 @@
 
       const spotLight = scene.createLight({
         type:"spot",
-        position:new Cubets.Vec3(-0.1, -0.3, -1),
-        direction:new Cubets.Vec3(-0.1, -0.3, -1),
+        position:new Cubets.Vec3(0, 20, 0),
+        direction:new Cubets.Vec3(0, -1, 0),
         ambientColor:Cubets.RGBAColor.Black,
         diffuseColor:Cubets.RGBAColor.Blue,
       })
@@ -84,8 +84,8 @@
 
       let t = 0
       setInterval(() => {
-        //positionalLight.position.z = 15 * Math.sin(t)
-        //positionalLight.position.y = 10 * Math.cos(0.7 * t)
+        positionalLight.position.z = 15 * Math.sin(t)
+        positionalLight.position.y = 10 * Math.cos(0.7 * t)
         t += 0.02
         renderer.render(scene, camera)
       }, 10)
