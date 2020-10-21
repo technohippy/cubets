@@ -21,8 +21,8 @@ export class GLImage {
     const width = params["width"]
     const height = params["height"]
     if (!source || source instanceof Uint8Array) {
-      if (!width) throw `width must be set`
-      if (!height) throw `height must be set`
+      if (!width) throw `width must be set: ${source}`
+      if (!height) throw `height must be set: ${source}`
       this.width = width
       this.height = height
     } else if (source instanceof HTMLImageElement) {

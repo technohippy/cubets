@@ -14,6 +14,7 @@ import { SphereGeometry } from "./core2/geometry/spheregeometry.js";
 import { CylinderGeometry } from "./core2/geometry/cylindergeometry.js";
 import { Material } from "./core2/material.js";
 import { Texture } from "./core2/texture.js";
+import { CubeTexture } from "./core2/cubetexture.js";
 import { OrbitCameraControl } from "./core2/control/orbitcameracontrol.js";
 import { SceneContext } from "./core2/context/scenecontext.js";
 
@@ -44,6 +45,7 @@ export default {
   CylinderGeometry:CylinderGeometry,
   Material:Material,
   Texture:Texture,
+  CubeTexture:CubeTexture,
   Vec2:Vec2,
   Vec3:Vec3,
   Quat:Quat,

@@ -5,6 +5,10 @@ import { GLContext } from "../gl/glcontext.js";
 import { Material } from "./material.js";
 import { GLTexture2D } from "../gl/gltexture2d.js";
 import { Texture } from "./texture.js";
+import { GLTextureCube } from "../gl/gltexturecube.js";
+import { CubeTexture } from "./cubetexture.js";
+import { GLIndex } from "../gl/glindex.js";
+import { GLImage } from "../gl/glimage.js";
 
 export class PhongMaterialContext extends MaterialContext {
   diffuseColorUniform?:GLUniform
@@ -13,6 +17,7 @@ export class PhongMaterialContext extends MaterialContext {
   shininessUniform?:GLUniform
 
   texture2Ds:WeakMap<Texture, GLTexture2D> = new WeakMap() 
+  textureCubes:WeakMap<CubeTexture, GLTextureCube> = new WeakMap() 
 
   constructor(config:PhongMaterialConfig) {
     super()
@@ -25,31 +30,34 @@ export class PhongMaterialContext extends MaterialContext {
     this.normalUniform = config["normal"]
     this.textureUniform = config["texture"]
     this.skipTextureUniform = config["skipTexture"]
+    this.cubeTextureUniform = config["cubeTexture"]
+    this.skipCubeTextureUniform = config["skipCubeTexture"]
+    this.skyboxUniform = config["skybox"]
   }
 
   upload(context:GLContext, material:Material) {
     if (this.diffuseColorUniform) {
-      this.diffuseColorUniform?.updateValue([1, 1, 1, 1]) // TODO: default
+      this.diffuseColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.diffuseColorUniform)
     }
     if (this.ambientColorUniform) {
-      this.ambientColorUniform?.updateValue([1, 1, 1, 1]) // TODO: default
+      this.ambientColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.ambientColorUniform)
     }
     if (this.specularColorUniform) {
-      this.specularColorUniform?.updateValue([1, 1, 1, 1]) // TODO: default
+      this.specularColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.specularColorUniform)
     }
     if (this.shininessUniform) {
-      this.shininessUniform?.updateValue(0) // TODO: default
+      this.shininessUniform.updateValue(0) // TODO: default
       context.addUniform(this.shininessUniform)
     }
     if (this.wireframeUniform) {
-      this.wireframeUniform?.updateValue(0) // TODO: default
+      this.wireframeUniform.updateValue(0) // TODO: default
       context.addUniform(this.wireframeUniform)
     }
     if (this.normalUniform) {
-      this.normalUniform?.updateValue(0) // TODO: default
+      this.normalUniform.updateValue(0) // TODO: default
       context.addUniform(this.normalUniform)
     }
     if (this.textureUniform && material?.texture?.image) {
@@ -65,6 +73,33 @@ export class PhongMaterialContext extends MaterialContext {
       const texture = this.texture2Ds.get(material.texture)
       this.textureUniform?.updateValue(texture!)
       context.addUniform(this.textureUniform)
+    }
+    if (this.cubeTextureUniform && material?.cubeTexture?.images) {
+      if (!this.textureCubes.has(material.cubeTexture)) {
+        const images = material.cubeTexture.images
+          .filter(image => typeof image !== "string")
+          .map(image => {
+            if (typeof image !== "string") {
+              return new GLImage(image)
+            } else {
+              throw "never reach"
+            }
+          })
+        this.textureCubes.set(
+          material.cubeTexture,
+          new GLTextureCube(WebGL2RenderingContext.TEXTURE_CUBE_MAP, images, {
+            magFilter:WebGL2RenderingContext.LINEAR,
+            minFilter:WebGL2RenderingContext.LINEAR,
+          })
+        )
+      }
+      const cubeTexture = this.textureCubes.get(material.cubeTexture)
+      this.cubeTextureUniform?.updateValue(cubeTexture!)
+      context.addUniform(this.cubeTextureUniform)
+    }
+    if (this.skyboxUniform) {
+      this.skyboxUniform.updateValue(0) // TODO: default
+      context.addUniform(this.skyboxUniform)
     }
   }
 
@@ -83,6 +118,15 @@ export class PhongMaterialContext extends MaterialContext {
           this.textureUniform.updateValue(texture)
         }
       }
+
+      if (this.cubeTextureUniform && material?.cubeTexture?.images) {
+        const cubeTexture = this.textureCubes.get(material.cubeTexture)
+        if (cubeTexture) {
+          this.cubeTextureUniform.updateValue(cubeTexture)
+        }
+      }
+
+      this.skyboxUniform?.updateValue(!!material.cubeTexture?.isSkybox)
 
       if (material.wireframe) {
         context.drawMode = WebGL2RenderingContext.LINES

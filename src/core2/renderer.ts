@@ -3,6 +3,7 @@ import { Scene } from "./scene.js"
 import { Camera } from "./camera.js"
 import { SceneContext } from "./context/scenecontext.js"
 import { Texture } from "./texture.js"
+import { CubeTexture } from "./cubetexture.js"
 
 export class Renderer {
   gl: GL2Renderer
@@ -19,10 +20,13 @@ export class Renderer {
   }
 
   prepare(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext):Promise<void> {
-    const textures:Texture[] = []
+    const textures:(Texture | CubeTexture)[] = []
     scene.eachMesh(mesh => {
       if (mesh.material?.texture) {
         textures.push(mesh.material.texture)
+      }
+      if (mesh.material?.cubeTexture) {
+        textures.push(mesh.material.cubeTexture)
       }
     })
     return Promise.all(textures.map(t => t.loadImage())).then(() => {

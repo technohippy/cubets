@@ -244,6 +244,7 @@ export class GL2Renderer {
     })
 
     textureCube.updated = false
+    this._debug("uploaded textureCube", textureCube)
   }
 
   setupFramebuffer(glfb:GLFramebuffer | null): WebGLFramebuffer | null {

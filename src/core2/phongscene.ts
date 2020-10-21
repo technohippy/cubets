@@ -34,7 +34,12 @@ export class PhongScene extends Scene {
   }
 
   hasCubeTexture():boolean {
-    return false // TODO
+    const texturedMesh = this.meshes.find(m => m.material?.cubeTexture)
+    if (texturedMesh) {
+      return true
+    } else {
+      return false
+    }
   }
 
   clone():Scene {
@@ -458,6 +463,11 @@ export class PhongScene extends Scene {
     if (this.hasTexture()) {
       config["texture"] = new GLUniform("uSampler", "1i")
       config["skipTexture"] = new GLUniform("uIgnoreTexture", "1i")
+    }
+    if (this.hasCubeTexture()) {
+      config["skybox"] = new GLUniform("uSkybox", "1i")
+      config["cubeTexture"] = new GLUniform("uCubeSampler", "1i")
+      config["skipCubeTexture"] = new GLUniform("uIgnoreCubeTexture", "1i")
     }
     return config
   }

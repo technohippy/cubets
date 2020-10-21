@@ -24,15 +24,16 @@
     <a href="https://opengameart.org/content/sky-box-sunny-day">https://opengameart.org/content/sky-box-sunny-day</a>
 
     <script type="module">
-      import Cubets from "../../dist/cubets.js"
+      import Cubets from "../../dist/cubets2.js"
 
-      const scene = new Cubets.Scene()
+      const scene = new Cubets.PhongScene()
 
-      const light = new Cubets.PhongDirectionalLight(
-        new Cubets.Vec3(0.5, -0.2, -1.0),
-        new Cubets.Color(0.8, 0.8, 1.0),
-        new Cubets.Color(0.5, 0.5, 1.0)
-      )
+      const light = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(0.5, -0.2, -1.0),
+        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 1.0),
+        diffuseColor:new Cubets.RGBAColor(0.5, 0.5, 1.0)
+      })
 
       const cubeImages = [
         "../images/skybox/DaylightBox/DaylightBox_Left.png",
@@ -43,7 +44,7 @@
         "../images/skybox/DaylightBox/DaylightBox_Front.png",
       ]
 
-      const skyboxMaterial = new Cubets.Scene.Material(Cubets.Color.White)
+      const skyboxMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
       skyboxMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
       skyboxMaterial.cubeTexture.isSkybox = true
       const skyMesh = new Cubets.Mesh(
@@ -51,7 +52,7 @@
         skyboxMaterial,
       )
 
-      const reflectionMaterial = new Cubets.Scene.Material(Cubets.Color.White)
+      const reflectionMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
       reflectionMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
       const mesh = new Cubets.Mesh(
         new Cubets.SphereGeometry(0.3),
@@ -62,10 +63,23 @@
       scene.add(mesh)
       scene.add(light)
 
-      const camera = new Cubets.PerspectiveCamera("cubets", Math.PI/4, 0.1, 2000)
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/4,
+        near:0.1,
+        far:2000
+      })
       camera.position.z = 1
-      camera.addControl(new Cubets.OrbitCameraControl())
-      camera.start(scene)
+      camera.target = new Cubets.Vec3()
+
+      const control = new Cubets.OrbitCameraControl()
+      control.container = document.getElementById("cubets")
+      control.setCamera(camera)
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.renderLoop(scene, camera)
+      //renderer.gl.debug = true
+      //renderer.render(scene, camera)
     </script>
   </body>
 </html>

@@ -51,13 +51,13 @@
 
       const sphere = new Cubets.Mesh(
         new Cubets.SphereGeometry(8),
-        scene.createMaterial(),
+        scene.createMaterial({diffuseColor:Cubets.RGBAColor.White}),
       )
       sphere.position.x = -10
 
       const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry(16, 16, 16),
-        scene.createMaterial(),
+        scene.createMaterial({diffuseColor:Cubets.RGBAColor.White}),
       )
       cube.position.x = 10
 
