@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Environment Map</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <a href="https://opengameart.org/content/sky-box-sunny-day">https://opengameart.org/content/sky-box-sunny-day</a>
+
+    <script type="module">
+      import Cubets from "../../dist/cubets2.js"
+
+      const scene = new Cubets.PhongScene()
+
+      const light = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(0.5, -0.2, -1.0),
+        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 1.0),
+        diffuseColor:new Cubets.RGBAColor(0.5, 0.5, 1.0)
+      })
+
+      const cubeImages = [
+        "../images/skybox/DaylightBox/DaylightBox_Left.png",
+        "../images/skybox/DaylightBox/DaylightBox_Right.png",
+        "../images/skybox/DaylightBox/DaylightBox_Bottom.png",
+        "../images/skybox/DaylightBox/DaylightBox_Top.png",
+        "../images/skybox/DaylightBox/DaylightBox_Back.png",
+        "../images/skybox/DaylightBox/DaylightBox_Front.png",
+      ]
+
+      const skyboxMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
+      skyboxMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
+      skyboxMaterial.cubeTexture.isSkybox = true
+      const skyMesh = new Cubets.Mesh(
+        new Cubets.CubeGeometry(1000, 1000, 1000),
+        skyboxMaterial,
+      )
+
+      const reflectionMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
+      reflectionMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
+      const mesh = new Cubets.Mesh(
+        new Cubets.SphereGeometry(0.3),
+        reflectionMaterial
+      )
+
+      scene.add(skyMesh)
+      scene.add(mesh)
+      scene.add(light)
+
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/4,
+        near:0.1,
+        far:2000
+      })
+      camera.position.z = 1
+      camera.target = new Cubets.Vec3()
+
+      const control = new Cubets.OrbitCameraControl()
+      control.container = document.getElementById("cubets")
+      control.setCamera(camera)
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.renderLoop(scene, camera)
+      //renderer.gl.debug = true
+      //renderer.render(scene, camera)
+    </script>
+  </body>
+</html>
