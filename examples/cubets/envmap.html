@@ -21,7 +21,9 @@
   <body>
     <canvas id="cubets" width="600" height="400"></canvas>
     <div id="code"></div><script>loadCode()</script>
+    <!--
     <a href="https://opengameart.org/content/sky-box-sunny-day">https://opengameart.org/content/sky-box-sunny-day</a>
+    -->
 
     <script type="module">
       import Cubets from "../../dist/cubets2.js"
@@ -30,20 +32,26 @@
 
       const light = scene.createLight({
         type:"directional",
-        direction:new Cubets.Vec3(0.5, -0.2, -1.0),
-        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 1.0),
-        diffuseColor:new Cubets.RGBAColor(0.5, 0.5, 1.0)
+        direction:new Cubets.Vec3(0.1, -1.0, -0.4),
+        ambientColor:Cubets.RGBAColor.Black,
+        diffuseColor:Cubets.RGBAColor.White,
+      })
+
+      const light2 = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(-0.2, 1.0, 0.2),
+        ambientColor:Cubets.RGBAColor.Gray,
+        diffuseColor:Cubets.RGBAColor.Gray,
       })
 
       const cubeImages = [
-        "../images/skybox/DaylightBox/DaylightBox_Left.png",
-        "../images/skybox/DaylightBox/DaylightBox_Right.png",
-        "../images/skybox/DaylightBox/DaylightBox_Bottom.png",
-        "../images/skybox/DaylightBox/DaylightBox_Top.png",
-        "../images/skybox/DaylightBox/DaylightBox_Back.png",
-        "../images/skybox/DaylightBox/DaylightBox_Front.png",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posx.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posy.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/negz.jpg",
+        "../images/skybox/mountain-skyboxes/Maskonaive/posz.jpg"
       ]
-
       const skyboxMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
       skyboxMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
       skyboxMaterial.cubeTexture.isSkybox = true
@@ -52,20 +60,47 @@
         skyboxMaterial,
       )
 
-      const reflectionMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
-      reflectionMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
-      const mesh = new Cubets.Mesh(
-        new Cubets.SphereGeometry(0.3),
-        reflectionMaterial
+      const envMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
+      envMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
+      /*
+      const envMaterial = new Cubets.PhongReflectionMaterial(
+        Cubets.Color.White,
+        Cubets.Color.White,
+        Cubets.Color.White
+      )
+      envMaterial.reflectionScene = scene
+      const viewport = new Cubets.Viewport(new Cubets.Vec2(0, 0), new Cubets.Vec2(512, 512))
+      envMaterial.reflectionCamera = new Cubets.PerspectiveCamera(viewport, Math.PI/2, 0.001, 2000)
+      */
+      const cube = new Cubets.Mesh(
+        new Cubets.CubeGeometry(0.5, 0.5, 0.5),
+        envMaterial,
       )
 
+      const sphere = new Cubets.Mesh(
+        new Cubets.SphereGeometry(0.3),
+        scene.createMaterial(),
+      )
+      sphere.position.x = 1
+      sphere.position.y = 0.5
+
+      const cylinder = new Cubets.Mesh(
+        new Cubets.CylinderGeometry(0.3, 0.5),
+        scene.createMaterial(),
+      )
+      cylinder.position.x = -1
+      cylinder.position.y = 0.5
+
       scene.add(skyMesh)
-      scene.add(mesh)
+      scene.add(cube)
+      scene.add(sphere)
+      scene.add(cylinder)
       scene.add(light)
+      scene.add(light2)
 
       const camera = scene.createCamera({
         type:"perspective",
-        fov:Math.PI/4,
+        fov:Math.PI/3,
         near:0.1,
         far:2000
       })
@@ -78,8 +113,12 @@
 
       const renderer = new Cubets.Renderer("#cubets")
       renderer.renderLoop(scene, camera)
-      //renderer.gl.debug = true
-      //renderer.render(scene, camera)
+
+      let counter = 0
+      setInterval(() => {
+        cube.rotation = Cubets.Quat.fromEulerDegrees(3 * counter, 2 * counter, counter)
+        counter += 0.1
+      }, 5)
     </script>
   </body>
 </html>
