@@ -4,3 +4,6 @@
   - sceneとrendererでclearを無理やり設定しているけどどうにかするべき
   - needClear=falseにすると、初回描画時だけ表示がおかしい模様
   - GL2Renderer#drawの途中でclearするので、融通が効かなくなっている模様
+- Filter
+  - 背景色が反映されない
+  - シェーダーの共通部分を共有できるように
