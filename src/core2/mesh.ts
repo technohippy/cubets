@@ -17,6 +17,8 @@ export class Mesh {
   parent?: Mesh
   children: Mesh[] = []
 
+  hidden = false
+
   constructor(geometry:Geometry, material?:Material) {
     this.geometry = geometry
     this.material = material

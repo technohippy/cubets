@@ -60,6 +60,14 @@ export class PhongReflectionMaterial extends PhongMaterial {
     }
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
 
+    const renderbuffer = gl.createRenderbuffer()!
+    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer)
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer)
+
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null)
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+
     const cubeTexture = gl.createTexture()!
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexture)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -71,14 +79,7 @@ export class PhongReflectionMaterial extends PhongMaterial {
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, size, size, 0, gl.RGBA, gl.UNSIGNED_BYTE, null)
 
-    const renderbuffer = gl.createRenderbuffer()!
-    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer)
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, size, size)
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer)
-
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, null)
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null)
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
 
     return {frameBuffer, cubeTexture}
   }

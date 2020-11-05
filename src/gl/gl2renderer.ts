@@ -72,7 +72,7 @@ export class GL2Renderer {
       }
       program.use(this)
       this.lastProgram = program 
-      this.clear() // TODO: clear
+      //this.clear() // TODO: clear
     }
 
     context.storeLocations(this, program)
@@ -94,15 +94,19 @@ export class GL2Renderer {
     if (context.index) {
       context.index.bind(this)
       if (context.instanceing) {
+        this._debug("DRAW ELEMENTS INSTANCED")
         this.#gl.drawElementsInstanced(context.drawMode, context.assuredDrawSize, context.index.type, 0, context.instanceCount)
       } else {
+        this._debug("DRAW ELEMENTS")
         this.#gl.drawElements(context.drawMode, context.assuredDrawSize, context.index.type, 0)
       }
     } else {
       if (context.instanceing) {
+        this._debug("DRAW ARRAYS INSTANCED")
         this.#gl.drawArraysInstanced(context.drawMode, context.drawOffset, context.assuredDrawSize, context.instanceCount)
       } else {
-        this.#gl.drawArrays( context.drawMode, context.drawOffset, context.assuredDrawSize)
+        this._debug("DRAW ARRAYS")
+        this.#gl.drawArrays(context.drawMode, context.drawOffset, context.assuredDrawSize)
       }
     }
   }
@@ -250,6 +254,7 @@ export class GL2Renderer {
   setupFramebuffer(glfb:GLFramebuffer | null): WebGLFramebuffer | null {
     if (!glfb) {
       this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, null)
+      this._debug("skip set framebuffer")
       return null
     }
 
@@ -284,6 +289,7 @@ export class GL2Renderer {
       renderbuffer,
     )
 
+    this._debug("setup framebuffer", framebuffer)
     return framebuffer
   }
 

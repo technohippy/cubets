@@ -15,8 +15,12 @@ import { CylinderGeometry } from "./core2/geometry/cylindergeometry.js";
 import { Material } from "./core2/material.js";
 import { Texture } from "./core2/texture.js";
 import { CubeTexture } from "./core2/cubetexture.js";
+import { ReflectionTexture } from "./core2/reflectiontexture.js"
 import { OrbitCameraControl } from "./core2/control/orbitcameracontrol.js";
 import { SceneContext } from "./core2/context/scenecontext.js";
+import { Filter } from "./core2/filter/filter.js"
+import { BlurFilter } from "./core2/filter/blurfilter.js"
+import { InvertFilter } from "./core2/filter/invertfilter.js"
 
 // gl
 import { GLAttribute } from "./gl/glattribute.js";
@@ -46,6 +50,7 @@ export default {
   Material:Material,
   Texture:Texture,
   CubeTexture:CubeTexture,
+  ReflectionTexture:ReflectionTexture,
   Vec2:Vec2,
   Vec3:Vec3,
   Quat:Quat,
@@ -53,4 +58,7 @@ export default {
   OrbitCameraControl:OrbitCameraControl,
   GLAttribute:GLAttribute,
   GLContext:GLContext,
+  Filter:Filter,
+  BlurFilter:BlurFilter,
+  InvertFilter:InvertFilter,
 }

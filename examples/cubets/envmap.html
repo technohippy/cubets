@@ -60,18 +60,11 @@
         skyboxMaterial,
       )
 
+      //const envMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
+      //envMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
       const envMaterial = scene.createMaterial({diffuseColor:Cubets.RGBAColor.White})
-      envMaterial.cubeTexture = new Cubets.CubeTexture(...cubeImages)
-      /*
-      const envMaterial = new Cubets.PhongReflectionMaterial(
-        Cubets.Color.White,
-        Cubets.Color.White,
-        Cubets.Color.White
-      )
-      envMaterial.reflectionScene = scene
-      const viewport = new Cubets.Viewport(new Cubets.Vec2(0, 0), new Cubets.Vec2(512, 512))
-      envMaterial.reflectionCamera = new Cubets.PerspectiveCamera(viewport, Math.PI/2, 0.001, 2000)
-      */
+      envMaterial.cubeTexture = new Cubets.ReflectionTexture()
+
       const cube = new Cubets.Mesh(
         new Cubets.CubeGeometry(0.5, 0.5, 0.5),
         envMaterial,

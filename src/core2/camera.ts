@@ -2,11 +2,11 @@ import { GLContext } from "../gl/glcontext.js";
 import { GLUniform } from "../gl/gluniform.js";
 import { Vec3 } from "../math/vec3.js";
 import { Quat } from "../math/quat.js";
+import { Renderer } from "./renderer.js";
+import { CameraContext } from "./context/cameracontext.js";
 
 //@ts-ignore
 import { glMatrix, mat4, vec3 } from "../../node_modules/gl-matrix/esm/index.js"
-import { Renderer } from "./renderer.js";
-import { CameraContext } from "./context/cameracontext.js";
 glMatrix.setMatrixArrayType(Array)
 
 export abstract class Camera {
@@ -24,6 +24,8 @@ export abstract class Camera {
   target?:Vec3
 
   #uploaded = false
+
+  abstract clone():Camera
 
   setupModelViewMatrix() {
     const translationMat = mat4.create()

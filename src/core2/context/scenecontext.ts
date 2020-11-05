@@ -32,6 +32,7 @@ export class SceneContext {
     if (flags.length === 0) {
       flags = [
         //WebGL2RenderingContext.CULL_FACE,
+        WebGL2RenderingContext.BLEND,
         WebGL2RenderingContext.DEPTH_TEST,
         WebGL2RenderingContext.SCISSOR_TEST,
       ]

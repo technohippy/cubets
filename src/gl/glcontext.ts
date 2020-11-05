@@ -6,8 +6,6 @@ import { RGBAColor } from "../math/rgbacolor.js"
 import { GLProgram } from "./glprogram.js"
 import { GLFramebuffer } from "./glframebuffer.js"
 import { GLIndex } from "./glindex.js"
-import { GLTexture } from "./gltexture.js"
-import { GLTexture2D } from "./gltexture2d.js"
 
 export class GLContext {
   framebuffer:GLFramebuffer | null = null

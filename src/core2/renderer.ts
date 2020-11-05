@@ -4,15 +4,29 @@ import { Camera } from "./camera.js"
 import { SceneContext } from "./context/scenecontext.js"
 import { Texture } from "./texture.js"
 import { CubeTexture } from "./cubetexture.js"
+import { ReflectionTexture } from "./reflectiontexture.js"
+import { Filter } from "./filter/filter.js"
+import { GLFramebuffer } from "../gl/glframebuffer.js"
+import { ToScreenFilter } from "./filter/toscreenfilter.js"
 
 export class Renderer {
   gl: GL2Renderer
+  framebuffers?:GLFramebuffer[]
   defaultContext:SceneContext
   prepared = false
+  filters:Filter[] = []
+  toscreen?:Filter
 
   constructor(container:string | HTMLCanvasElement | OffscreenCanvas | WebGL2RenderingContext, flags:number[]=[]) {
     this.gl = new GL2Renderer(container)
     this.defaultContext = new SceneContext(...flags)
+  }
+
+  addFilter(filter:Filter) {
+    this.filters.push(filter)
+    if (!this.toscreen) {
+      this.toscreen = new ToScreenFilter()
+    }
   }
 
   setViewport(width:number, height:number, x:number=0, y:number=0) {
@@ -41,14 +55,54 @@ export class Renderer {
       this.prepared = true
     })
   }
+  
+  preprocess(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
+    scene.eachMesh((mesh, i) => {
+      if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
+        const reflectionTexture = mesh.material.cubeTexture
+        if (camera) {
+          reflectionTexture.render(scene, camera, context, mesh)
+        } else {
+          console.warn("no camera")
+        }
+      }
+    })
+  }
 
-  render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
-    if (!this.prepared) {
+  render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext, ignoreFilter:boolean=false) {
+    if (!this.prepared) { // call only the first time
       this.prepare(scene, camera, context).then(() => {
-        this.render(scene, camera, context)
+        this.render(scene, camera, context, ignoreFilter)
       })
       return
     }
+
+    if (!ignoreFilter && 0 < this.filters.length) {
+      if (!this.framebuffers) {
+        this.framebuffers = [
+          new GLFramebuffer(this.gl.container.width, this.gl.container.height),
+          new GLFramebuffer(this.gl.container.width, this.gl.container.height),
+        ]
+      }
+
+      let cursor = 0
+      context.context.framebuffer = this.framebuffers[cursor]
+      context.needClear = false
+      this.render(scene, camera, context, true)
+
+      /*
+      this.filters.forEach(filter => {
+        cursor++
+        context.context.framebuffer = this.framebuffers![cursor % 2]
+        filter.render(this.gl, context.context)
+      })
+      */
+
+      this.toscreen!.render(this.gl, context.context)
+      return
+    }
+
+    this.preprocess(scene, camera, context)
 
     if (camera) {
       camera.setup(this)
@@ -62,6 +116,7 @@ export class Renderer {
 
     const needClear = context.needClear
     scene.eachMesh((mesh, i) => {
+      if (mesh.hidden) return
       context.needClear = needClear && i === 0
       context.writeMesh(mesh)
       this.draw(context)

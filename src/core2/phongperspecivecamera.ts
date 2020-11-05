@@ -17,6 +17,10 @@ export class PhongPerspectiveCamera extends PhongCamera {
     this.fov = fov
   }
 
+  clone():PhongPerspectiveCamera {
+    return new PhongPerspectiveCamera(this.fov, this.near, this.far)
+  }
+
   writeContext(context:GLContext) {
     mat4.perspective(this.projectionMatrix, this.fov, this.aspectRatio, this.near, this.far)
 

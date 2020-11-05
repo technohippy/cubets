@@ -18,6 +18,10 @@ export class PhongOrthogonalCamera extends PhongCamera {
     this.width = width
   }
 
+  clone():PhongOrthogonalCamera {
+    return new PhongOrthogonalCamera(this.width, this.near, this.far)
+  }
+
   setup(renderer:Renderer) {
     super.setup(renderer)
 
