@@ -2,20 +2,20 @@ import { GLProgram } from "../../gl/glprogram.js";
 import { GLBuffer } from "../../gl/glbuffer.js";
 import { GLAttribute } from "../../gl/glattribute.js";
 import { GLUniform } from "../../gl/gluniform.js";
-import { GL2Renderer } from "../../gl/gl2renderer";
-import { GLContext } from "../../gl/glcontext";
+import { GL2Renderer } from "../../gl/gl2renderer.js";
+import { GLContext } from "../../gl/glcontext.js";
+import { GLTexture } from "../../gl/gltexture.js";
+import { GLTexture2D } from "../../gl/gltexture2d.js";
+import { GLFramebuffer } from "../../gl/glframebuffer.js";
 
 export abstract class Filter {
-  /*
   program:GLProgram
   aPosition:GLAttribute
   aTexCoord:GLAttribute
   uImage:GLUniform
   context:GLContext
-  */
 
   constructor(fs:string) {
-    /*
     const vs = `#version 300 es
       in vec2 a_position;
       in vec2 a_texCoord;
@@ -50,8 +50,11 @@ export abstract class Filter {
 
     this.context = new GLContext()
     this.context.add(this.aPosition, this.aTexCoord, this.uImage)
-    */
   }
 
-  abstract render(renderer:GL2Renderer, context:GLContext): void
+  render(renderer:GL2Renderer, framebuffer:GLFramebuffer|null, texture:GLTexture2D) {
+    this.context.framebuffer = framebuffer
+    this.uImage.updateValue(texture)
+    renderer.draw(this.program, this.context)
+  }
 }

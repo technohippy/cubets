@@ -90,15 +90,15 @@ export class Renderer {
       context.needClear = false
       this.render(scene, camera, context, true)
 
-      /*
       this.filters.forEach(filter => {
         cursor++
+        const texture = context.context.framebuffer?.texture
         context.context.framebuffer = this.framebuffers![cursor % 2]
-        filter.render(this.gl, context.context)
+        filter.render(this.gl, this.framebuffers![cursor % 2], texture!)
       })
-      */
 
-      this.toscreen!.render(this.gl, context.context)
+      const texture = context.context.framebuffer?.texture
+      this.toscreen!.render(this.gl, null, texture)
       return
     }
 
