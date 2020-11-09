@@ -75,8 +75,10 @@ export abstract class Scene {
     }
   }
 
-  eachMesh(fn:((m:Mesh, i:number) => void)) {
-    this.#meshes.forEach(fn)
+  eachMesh(fn:((m:Mesh, i:number) => void), includeHidden:boolean = false) {
+    this.#meshes.forEach((m, i) => {
+      if (includeHidden || !m.hidden) fn(m, i)
+    })
   }
 
   eachLight(fn:((l:Light, i:number) => void)) {

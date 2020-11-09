@@ -72,7 +72,6 @@ export class GL2Renderer {
       }
       program.use(this)
       this.lastProgram = program 
-      //this.clear() // TODO: clear
     }
 
     context.storeLocations(this, program)
@@ -277,7 +276,7 @@ export class GL2Renderer {
     this.#gl.framebufferTexture2D(
       this.#gl.FRAMEBUFFER,
       this.#gl.COLOR_ATTACHMENT0,
-      this.#gl.TEXTURE_2D,
+      glfb.texture.type,
       glfb.texture.texture,
       0
     )

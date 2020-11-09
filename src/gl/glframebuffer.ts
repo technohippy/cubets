@@ -6,6 +6,7 @@ export class GLFramebuffer {
   framebuffer: WebGLFramebuffer | null = null
 
   texture:GLTexture2D
+  target = WebGL2RenderingContext.TEXTURE_2D
 
   constructor(width:number, height:number) {
     const image = new GLImage(null, {

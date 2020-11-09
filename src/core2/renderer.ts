@@ -33,6 +33,7 @@ export class Renderer {
     this.defaultContext.setViewport(width, height, x, y)
   }
 
+  // run once
   prepare(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext):Promise<void> {
     const textures:(Texture | CubeTexture)[] = []
     scene.eachMesh(mesh => {
@@ -49,26 +50,27 @@ export class Renderer {
       }
 
       if (!context.prepared) {
-        context.setupLocations(scene, camera)
+        context.setupVars(scene, camera)
       }
 
       this.prepared = true
     })
   }
   
+  // run everytime
   preprocess(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
     scene.eachMesh((mesh, i) => {
       if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
         const reflectionTexture = mesh.material.cubeTexture
         if (camera) {
-          reflectionTexture.render(scene, camera, context, mesh)
+          reflectionTexture.render(this, scene, camera, context, mesh)
         } else {
           console.warn("no camera")
         }
       }
     })
-  }
-
+  } 
+ 
   render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext, ignoreFilter:boolean=false) {
     if (!this.prepared) { // call only the first time
       this.prepare(scene, camera, context).then(() => {
@@ -115,7 +117,6 @@ export class Renderer {
 
     const needClear = context.needClear
     scene.eachMesh((mesh, i) => {
-      if (mesh.hidden) return
       context.needClear = needClear && i === 0
       context.writeMesh(mesh)
       this.draw(context)

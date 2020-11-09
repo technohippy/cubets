@@ -9,6 +9,7 @@ import { GLTextureCube } from "../gl/gltexturecube.js";
 import { CubeTexture } from "./cubetexture.js";
 import { GLIndex } from "../gl/glindex.js";
 import { GLImage } from "../gl/glimage.js";
+import { ReflectionTexture } from "./reflectiontexture.js";
 
 export class PhongMaterialContext extends MaterialContext {
   diffuseColorUniform?:GLUniform
@@ -40,10 +41,12 @@ export class PhongMaterialContext extends MaterialContext {
       this.diffuseColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.diffuseColorUniform)
     }
+
     if (this.ambientColorUniform) {
       this.ambientColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.ambientColorUniform)
     }
+
     if (this.specularColorUniform) {
       this.specularColorUniform.updateValue([1, 1, 1, 1]) // TODO: default
       context.addUniform(this.specularColorUniform)
@@ -52,14 +55,18 @@ export class PhongMaterialContext extends MaterialContext {
       this.shininessUniform.updateValue(0) // TODO: default
       context.addUniform(this.shininessUniform)
     }
+
     if (this.wireframeUniform) {
       this.wireframeUniform.updateValue(0) // TODO: default
       context.addUniform(this.wireframeUniform)
     }
+
     if (this.normalUniform) {
       this.normalUniform.updateValue(0) // TODO: default
       context.addUniform(this.normalUniform)
     }
+
+    let skipTexture = true
     if (this.textureUniform && material?.texture?.image) {
       if (!this.texture2Ds.has(material.texture)) {
         this.texture2Ds.set(
@@ -73,7 +80,14 @@ export class PhongMaterialContext extends MaterialContext {
       const texture = this.texture2Ds.get(material.texture)
       this.textureUniform?.updateValue(texture!)
       context.addUniform(this.textureUniform)
+      skipTexture = false
     }
+    if (this.skipTextureUniform) {
+      this.skipTextureUniform.updateValue(skipTexture)
+      context.addUniform(this.skipTextureUniform)
+    }
+
+    let skipCubeTexture = true
     if (this.cubeTextureUniform && material?.cubeTexture?.images) {
       if (!this.textureCubes.has(material.cubeTexture)) {
         const images = material.cubeTexture.images
@@ -96,9 +110,15 @@ export class PhongMaterialContext extends MaterialContext {
       const cubeTexture = this.textureCubes.get(material.cubeTexture)
       this.cubeTextureUniform?.updateValue(cubeTexture!)
       context.addUniform(this.cubeTextureUniform)
+      skipCubeTexture = true
     }
+    if (this.skipCubeTextureUniform) {
+      this.skipCubeTextureUniform.updateValue(skipCubeTexture)
+      context.addUniform(this.skipCubeTextureUniform)
+    }
+
     if (this.skyboxUniform) {
-      this.skyboxUniform.updateValue(0) // TODO: default
+      this.skyboxUniform.updateValue(false) // TODO: default
       context.addUniform(this.skyboxUniform)
     }
   }
@@ -119,12 +139,16 @@ export class PhongMaterialContext extends MaterialContext {
         }
       }
 
+      let skipCubeTexture = true
       if (this.cubeTextureUniform && material?.cubeTexture?.images) {
         const cubeTexture = this.textureCubes.get(material.cubeTexture)
         if (cubeTexture) {
           this.cubeTextureUniform.updateValue(cubeTexture)
+          skipCubeTexture = false
         }
       }
+      console.log(">>>>> skip cube texture", skipCubeTexture, this.skipCubeTextureUniform)
+      this.skipCubeTextureUniform?.updateValue(skipCubeTexture)
 
       this.skyboxUniform?.updateValue(!!material.cubeTexture?.isSkybox)
 

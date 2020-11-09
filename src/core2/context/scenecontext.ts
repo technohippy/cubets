@@ -51,7 +51,7 @@ export class SceneContext {
     this.context.viewport.y = y
   }
 
-  setupLocations(scene:Scene, camera?:Camera) {
+  setupVars(scene:Scene, camera?:Camera) {
     this.program = new GLProgram(scene.getVertexShader(), scene.getFragmentShader())
 
     let sharedLightContext:LightContext
