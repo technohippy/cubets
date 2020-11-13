@@ -175,8 +175,9 @@ export class GLContext {
   setupFramebuffer(renderer:GL2Renderer) {
     if (!this.framebuffer) { // to screen
       renderer.setupFramebuffer(null)
-    } else if (!this.framebuffer.prepared()) {
+    } else if (this.framebuffer.updated || !this.framebuffer.prepared()) {
       this.framebuffer.prepare(renderer)
+      this.framebuffer.updated = false
     }
   }
 

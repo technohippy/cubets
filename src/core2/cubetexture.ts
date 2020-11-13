@@ -2,7 +2,7 @@ export class CubeTexture {
   /** if true, this cube texture is used for skybox. */
   isSkybox = false
 
-  images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement)[]
+  images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function)[]
 
   /**
    * Constructs a cube texture
@@ -14,12 +14,12 @@ export class CubeTexture {
    * @param imagePz image source for positive Z plane
    */
   constructor(
-    imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
-    imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
-    imageNy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
-    imagePy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
-    imageNz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
-    imagePz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement,
+    imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imageNy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imagePy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imageNz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imagePz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
   ) {
     this.images = [ imageNx, imagePx, imageNy, imagePy, imageNz, imagePz ]
   }

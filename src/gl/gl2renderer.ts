@@ -78,10 +78,13 @@ export class GL2Renderer {
     context.apply(this)
 
     if (context.framebuffer !== this.lastFramebuffer) {
-      this._debug("setup framebuffer")
+      this._debug("delete and setup framebuffer")
       this.deleteFramebuffer(this.lastFramebuffer)
       context.setupFramebuffer(this)
       this.lastFramebuffer = context.framebuffer
+    } else if (context.framebuffer?.updated) {
+      this._debug("setup framebuffer")
+      context.setupFramebuffer(this)
     }
 
     if (context.needClear) {
@@ -171,13 +174,13 @@ export class GL2Renderer {
   }
 
   uploadIndex(index:GLIndex) {
-    this._debug("upload index")
+    this._debug2("upload index")
 
     index.uploadBufferData(this)
   }
 
   uploadAttribute(attribute:GLAttribute) {
-    this._debug(`upload attribute: ${attribute.name}`)
+    this._debug2(`upload attribute: ${attribute.name}`)
 
     attribute.uploadBufferData(this)
     if (attribute.location < 0) throw `no attribute location: ${attribute.name}`
@@ -189,13 +192,14 @@ export class GL2Renderer {
   }
 
   uploadUniform(uniform:GLUniform) {
-    this._debug(`upload uniform: ${uniform.name}`)
+    this._debug2(`upload uniform: ${uniform.name}`)
 
     uniform.upload(this)
   }
 
   uploadTexture(texture:GLTexture2D) {
     this._debug("upload texture", texture, texture.image?.source)
+    this._debug("texture type", this._textureType(texture.type))
 
     if (!texture.texture) {
       this._debug("create texture")
@@ -209,10 +213,23 @@ export class GL2Renderer {
       texture.textureUnit = this._reserveTextureUnit()
     }
 
+    let textureType = texture.type
+    if ([
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X,
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    ].indexOf(textureType) >= 0) {
+      this._debug("use TEXTURE_CUBE_MAP")
+      textureType = WebGL2RenderingContext.TEXTURE_CUBE_MAP
+    }
     this.#gl.activeTexture(this.#gl.TEXTURE0 + texture.textureUnit)
-    this.#gl.bindTexture(texture.type, texture.texture)
+    this.#gl.bindTexture(textureType, texture.texture)
+    
     texture.params.forEach((v, k) => {
-      this.#gl.texParameteri(texture.type, k, v)
+      this.#gl.texParameteri(textureType, k, v)
     })
     const image = texture.image
     if (!image) throw 'texture has no image'
@@ -306,7 +323,7 @@ export class GL2Renderer {
 
   getAttributeLocation(program:GLProgram, name:string):number {
     const loc = this.#gl.getAttribLocation(program.program!, name)
-    this._debug(`${name} location: ${loc}`)
+    this._debug2(`${name} location: ${loc}`)
     return loc
   }
 
@@ -353,8 +370,11 @@ export class GL2Renderer {
     this.#gl.clear(flag)
   }
 
-  texImage2D(target:number, image:GLImage) {
-    if (image.source instanceof Uint8Array) {
+  texImage2D(target:number, image:GLImage | Function) {
+    if (typeof image === "function") {
+      this._debug("image is a function")
+      image()
+    } else if (image.source instanceof Uint8Array) {
       this.#gl.texImage2D(
         target,
         image.level,
@@ -456,8 +476,43 @@ export class GL2Renderer {
   }
 
   private _debug(...args: any[]) {
+    if (+this.debug <= 0) return
+
     args.unshift("[")
+    const e = new Error()
+    if (e.stack) {
+      args.push("@")
+      args.push(e.stack.split("\n")[2].replace(/^ +at +/, ""))
+    }
     args.push("]")
-    if (this.debug) console.log(...args)
+    console.log(...args)
+  }
+
+  private _debug2(...args: any[]) {
+    if (2 <= +this.debug) this._debug(...args)
+  }
+
+  private _textureType(type:number):string | undefined {
+    return new Map<number, string>([
+      [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X,
+        "TEXTURE_CUBE_MAP_NEGATIVE_X",
+      ], [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X,
+        "TEXTURE_CUBE_MAP_POSITIVE_X",
+      ], [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+        "TEXTURE_CUBE_MAP_NEGATIVE_Y",
+      ], [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y,
+        "TEXTURE_CUBE_MAP_POSITIVE_Y",
+      ], [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+        "TEXTURE_CUBE_MAP_NEGATIVE_Z",
+      ], [
+        WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z,
+        "TEXTURE_CUBE_MAP_POSITIVE_Z",
+      ],
+    ]).get(type)
   }
 }

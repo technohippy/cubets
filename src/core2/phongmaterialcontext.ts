@@ -7,9 +7,7 @@ import { GLTexture2D } from "../gl/gltexture2d.js";
 import { Texture } from "./texture.js";
 import { GLTextureCube } from "../gl/gltexturecube.js";
 import { CubeTexture } from "./cubetexture.js";
-import { GLIndex } from "../gl/glindex.js";
 import { GLImage } from "../gl/glimage.js";
-import { ReflectionTexture } from "./reflectiontexture.js";
 
 export class PhongMaterialContext extends MaterialContext {
   diffuseColorUniform?:GLUniform
@@ -94,7 +92,11 @@ export class PhongMaterialContext extends MaterialContext {
           .filter(image => typeof image !== "string")
           .map(image => {
             if (typeof image !== "string") {
-              return new GLImage(image)
+              if (image instanceof Function) {
+                return image
+              } else {
+                return new GLImage(image)
+              }
             } else {
               throw "never reach"
             }
@@ -147,7 +149,6 @@ export class PhongMaterialContext extends MaterialContext {
           skipCubeTexture = false
         }
       }
-      console.log(">>>>> skip cube texture", skipCubeTexture, this.skipCubeTextureUniform)
       this.skipCubeTextureUniform?.updateValue(skipCubeTexture)
 
       this.skyboxUniform?.updateValue(!!material.cubeTexture?.isSkybox)

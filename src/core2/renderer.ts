@@ -63,7 +63,7 @@ export class Renderer {
       if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
         const reflectionTexture = mesh.material.cubeTexture
         if (camera) {
-          reflectionTexture.render(this, scene, camera, context, mesh)
+          reflectionTexture.prepare(this, scene, camera, context, mesh)
         } else {
           console.warn("no camera")
         }

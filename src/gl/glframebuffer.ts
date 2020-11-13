@@ -7,13 +7,14 @@ export class GLFramebuffer {
 
   texture:GLTexture2D
   target = WebGL2RenderingContext.TEXTURE_2D
+  updated = true
 
-  constructor(width:number, height:number) {
+  constructor(width:number, height:number, textureType:GLenum = WebGLRenderingContext.TEXTURE_2D) {
     const image = new GLImage(null, {
       width: width,
       height: height,
     })
-    this.texture = new GLTexture2D(WebGLRenderingContext.TEXTURE_2D, image)
+    this.texture = new GLTexture2D(textureType, image)
     this.texture.minFilter = WebGLRenderingContext.NEAREST
     this.texture.magFilter = WebGLRenderingContext.NEAREST
     this.texture.wrapS = WebGLRenderingContext.CLAMP_TO_EDGE
