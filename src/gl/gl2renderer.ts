@@ -10,12 +10,16 @@ import { GLFramebuffer } from "./glframebuffer.js"
 import { GLIndex } from "./glindex.js"
 import { GLTextureCube } from "./gltexturecube.js"
 import { GLImage } from "./glimage.js"
+import { GLTexture } from "./gltexture.js"
 
 export class GL2Renderer {
   debug = false
 
   container:HTMLCanvasElement | OffscreenCanvas
   #gl:WebGL2RenderingContext
+
+  currentProgram?:GLProgram
+  currentContext?:GLContext
 
   lastProgram?:GLProgram
   lastFramebuffer:GLFramebuffer | null = null
@@ -64,7 +68,9 @@ export class GL2Renderer {
     this.#gl.pixelStorei(this.#gl.UNPACK_ALIGNMENT, 1)
   }
 
-  draw(program:GLProgram, context:GLContext) {
+  draw(program:GLProgram, context:GLContext, keepFramebffer:boolean = false) {
+    this.currentProgram = program
+    this.currentContext = context
     if (this.lastProgram !== program || !program.prepared()) {
       if (!program.prepared()) {
         this._debug("prepare program")
@@ -80,8 +86,8 @@ export class GL2Renderer {
     if (context.framebuffer !== this.lastFramebuffer) {
       this._debug("delete and setup framebuffer")
       this.deleteFramebuffer(this.lastFramebuffer)
-      context.setupFramebuffer(this)
       this.lastFramebuffer = context.framebuffer
+      context.setupFramebuffer(this)
     } else if (context.framebuffer?.updated) {
       this._debug("setup framebuffer")
       context.setupFramebuffer(this)
@@ -197,8 +203,16 @@ export class GL2Renderer {
     uniform.upload(this)
   }
 
-  uploadTexture(texture:GLTexture2D) {
-    this._debug("upload texture", texture, texture.image?.source)
+  uploadTexture(texture:GLTexture) {
+    if (texture instanceof GLTexture2D) {
+      this.uploadTexture2D(texture)
+    } else if (texture instanceof GLTextureCube) {
+      this.uploadTextureCube(texture)
+    }
+  }
+
+  uploadTexture2D(texture:GLTexture2D) {
+    this._debug("upload texture 2d", texture, texture.image?.source)
     this._debug("texture type", this._textureType(texture.type))
 
     if (!texture.texture) {
@@ -239,7 +253,7 @@ export class GL2Renderer {
   }
 
   uploadTextureCube(textureCube:GLTextureCube) {
-    this._debug("upload textureCube", textureCube)
+    this._debug("start uploading textureCube", textureCube)
 
     if (!textureCube.texture) {
       this._debug("create texture")
@@ -278,7 +292,7 @@ export class GL2Renderer {
     this.uploadTexture(glfb.texture)
 
     // renderbuffer
-    const {width, height} = glfb.texture.image!
+    const {width, height} = glfb
     const renderbuffer = this.#gl.createRenderbuffer()
     if (!renderbuffer) throw "fail to create renderbuffer"
     this.#gl.bindRenderbuffer(this.#gl.RENDERBUFFER, renderbuffer)
@@ -288,15 +302,10 @@ export class GL2Renderer {
     const framebuffer = this.#gl.createFramebuffer()
     if (!framebuffer) throw "fail to create framebuffer"
     this.#gl.bindFramebuffer(this.#gl.FRAMEBUFFER, framebuffer)
+    this._debug("bind framebuffer", framebuffer)
 
     if (!glfb.texture.texture) throw "framebuffer has no texture"
-    this.#gl.framebufferTexture2D(
-      this.#gl.FRAMEBUFFER,
-      this.#gl.COLOR_ATTACHMENT0,
-      glfb.texture.type,
-      glfb.texture.texture,
-      0
-    )
+    glfb.texture.setupFramebufferTexture(this)
 
     this.#gl.framebufferRenderbuffer(
       this.#gl.FRAMEBUFFER,
@@ -305,7 +314,7 @@ export class GL2Renderer {
       renderbuffer,
     )
 
-    this._debug("setup framebuffer", framebuffer)
+    this._debug("done setup framebuffer", framebuffer)
     return framebuffer
   }
 
@@ -313,6 +322,17 @@ export class GL2Renderer {
     if (!glfb) return
     this.#gl.deleteFramebuffer(glfb.framebuffer)
     glfb.framebuffer = null
+  }
+
+  setupFramebufferTexture(texture:GLTexture2D) {
+    this._debug("framebufferTexture2D", texture.type, texture.texture)
+    this.#gl.framebufferTexture2D(
+      this.#gl.FRAMEBUFFER,
+      this.#gl.COLOR_ATTACHMENT0,
+      texture.type,
+      texture.texture!,
+      0
+    )
   }
 
   // wrap

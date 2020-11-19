@@ -1,3 +1,5 @@
+import { GL2Renderer } from "./gl2renderer"
+
 type GLTextureParamKey = "magFilter" | "minFilter" | "wrapS" | "wrapT" | "wrapR" | "baseLevel" | "compareFunc" | "compareMode" | "maxLevel" | "maxLod" | "minLod"
 export type GLTextureParam = {[key in GLTextureParamKey]?:number}
 
@@ -31,6 +33,8 @@ export abstract class GLTexture {
       this._setParam(name, value!)
     }
   }
+
+  abstract setupFramebufferTexture(gl:GL2Renderer):void
 
   set magFilter(val:number) { this._setParam("magFilter", val) }
   set minFilter(val:number) { this._setParam("minFilter", val) }

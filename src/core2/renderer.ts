@@ -8,6 +8,9 @@ import { ReflectionTexture } from "./reflectiontexture.js"
 import { Filter } from "./filter/filter.js"
 import { GLFramebuffer } from "../gl/glframebuffer.js"
 import { ToScreenFilter } from "./filter/toscreenfilter.js"
+import { GLTexture2D } from "../gl/gltexture2d.js"
+import { GLTextureCube } from "../gl/gltexturecube.js"
+import { GLImage } from "../gl/glimage.js"
 
 export class Renderer {
   gl: GL2Renderer
@@ -41,6 +44,14 @@ export class Renderer {
         textures.push(mesh.material.texture)
       }
       if (mesh.material?.cubeTexture) {
+        if (mesh.material.cubeTexture instanceof ReflectionTexture) {
+          const reflectionTexture = mesh.material.cubeTexture
+          if (camera) {
+            reflectionTexture.prepare(this, scene, camera, context, mesh)
+          } else {
+            console.warn("no camera")
+          }
+        }
         textures.push(mesh.material.cubeTexture)
       }
     })
@@ -56,22 +67,8 @@ export class Renderer {
       this.prepared = true
     })
   }
-  
-  // run everytime
-  preprocess(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext) {
-    scene.eachMesh((mesh, i) => {
-      if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
-        const reflectionTexture = mesh.material.cubeTexture
-        if (camera) {
-          reflectionTexture.prepare(this, scene, camera, context, mesh)
-        } else {
-          console.warn("no camera")
-        }
-      }
-    })
-  } 
  
-  render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext, ignoreFilter:boolean=false) {
+  render(scene:Scene, camera?:Camera, context:SceneContext=this.defaultContext, ignoreFilter:boolean=false, ignoreReflect:boolean=false) {
     if (!this.prepared) { // call only the first time
       this.prepare(scene, camera, context).then(() => {
         this.render(scene, camera, context, ignoreFilter)
@@ -93,17 +90,42 @@ export class Renderer {
       this.render(scene, camera, context, true)
 
       this.filters.forEach(filter => {
-        const texture = this.framebuffers![+cursor].texture
+        const texture = this.framebuffers![+cursor].texture as GLTexture2D
         cursor = !cursor
         filter.render(this.gl, this.framebuffers![+cursor], texture!)
       })
 
-      const texture = this.framebuffers![+cursor].texture
+      const texture = this.framebuffers![+cursor].texture as GLTexture2D
       this.toscreen!.render(this.gl, null, texture)
       return
     }
 
-    this.preprocess(scene, camera, context)
+    if (!ignoreReflect) {
+      scene.eachMesh((mesh, i) => {
+        if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
+          //mesh.material.cubeTexture.renderToTextures(this)
+          const tex = mesh.material.cubeTexture
+          const glTex = new GLTextureCube(WebGL2RenderingContext.TEXTURE_CUBE_MAP, [
+            new GLImage(null, {width:tex.size, height:tex.size}),
+            new GLImage(null, {width:tex.size, height:tex.size}),
+            new GLImage(null, {width:tex.size, height:tex.size}),
+            new GLImage(null, {width:tex.size, height:tex.size}),
+            new GLImage(null, {width:tex.size, height:tex.size}),
+            new GLImage(null, {width:tex.size, height:tex.size}),
+          ], {
+            magFilter:WebGL2RenderingContext.LINEAR,
+            minFilter:WebGL2RenderingContext.LINEAR,
+          })
+          context.context.framebuffer = new GLFramebuffer(tex.size, tex.size, glTex)
+          context.context.framebuffer.updated = true
+          context.needClear = false
+          scene.removeMesh(mesh)
+          this.render(scene, camera, context, ignoreFilter, true)
+          scene.addMesh(mesh)
+        }
+      })
+      context.context.framebuffer = null
+    }
 
     if (camera) {
       camera.setup(this)

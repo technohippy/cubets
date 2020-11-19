@@ -94,6 +94,8 @@ export class PhongMaterialContext extends MaterialContext {
             if (typeof image !== "string") {
               if (image instanceof Function) {
                 return image
+              } else if (image instanceof GLImage) {
+                return image
               } else {
                 return new GLImage(image)
               }

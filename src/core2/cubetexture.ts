@@ -1,8 +1,10 @@
+import { GLImage } from "../gl/glimage"
+
 export class CubeTexture {
   /** if true, this cube texture is used for skybox. */
   isSkybox = false
 
-  images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function)[]
+  images: (string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function)[]
 
   /**
    * Constructs a cube texture
@@ -14,12 +16,12 @@ export class CubeTexture {
    * @param imagePz image source for positive Z plane
    */
   constructor(
-    imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
-    imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
-    imageNy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
-    imagePy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
-    imageNz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
-    imagePz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | Function,
+    imageNx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
+    imagePx:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
+    imageNy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
+    imagePy:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
+    imageNz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
+    imagePz:string | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement | GLImage | Function,
   ) {
     this.images = [ imageNx, imagePx, imageNy, imagePy, imageNz, imagePz ]
   }

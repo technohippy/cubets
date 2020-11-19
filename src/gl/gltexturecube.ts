@@ -1,5 +1,8 @@
 import { GLImage, GLImageSource } from "./glimage.js"
 import { GLTexture, GLTextureParam } from "./gltexture.js"
+import { GL2Renderer } from "./gl2renderer.js"
+import { GLTexture2D } from "./gltexture2d.js"
+import { GLIndex } from "./glindex.js"
 
 export class GLTextureCube extends GLTexture {
   images:Map<number, GLImage | Function>
@@ -28,5 +31,22 @@ export class GLTextureCube extends GLTexture {
         this.images.set(target, new GLImage(image))
       }
     })
+  }
+  
+  setupFramebufferTexture(gl:GL2Renderer) {
+    this.images.forEach((image, type) => {
+      if (image instanceof GLImage) {
+        const texture = new GLTexture2D(type, image)
+        texture.texture = this.texture
+        gl.setupFramebufferTexture(texture)
+        if (gl.currentContext?.framebuffer) {
+          gl.currentContext.framebuffer.updated = false
+        }
+        gl.draw(gl.currentProgram!, gl.currentContext!)
+      } else if (image instanceof Function) {
+        // TODO
+      }
+    })
+    gl.uploadTextureCube(this)
   }
 }

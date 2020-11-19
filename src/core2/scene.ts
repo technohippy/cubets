@@ -18,7 +18,7 @@ export abstract class Scene {
   abstract clone():Scene
 
   get meshLength():number {
-    return this.#meshes.length
+    return this.meshes.length
   }
 
   createMaterial(params?:{[key:string]:any}):Material|null {
@@ -44,7 +44,7 @@ export abstract class Scene {
   abstract cameraConfig():{[key:string]:GLUniform}
 
   protected get meshes():Mesh[] {
-    return this.#meshes
+    return this.#meshes.filter(m => !m.hidden)
   }
 
   protected set meshes(ms:Mesh[]) {
@@ -61,6 +61,10 @@ export abstract class Scene {
 
   addMesh(mesh:Mesh) {
     this.#meshes.push(mesh)
+  }
+
+  removeMesh(mesh:Mesh) {
+    this.#meshes.splice(this.#meshes.indexOf(mesh), 1)
   }
 
   addLight(light:Light) {

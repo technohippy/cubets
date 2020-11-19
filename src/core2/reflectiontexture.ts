@@ -6,6 +6,9 @@ import { Camera } from "./camera.js";
 import { SceneContext } from "./context/scenecontext.js";
 import { Vec3 } from "../math/vec3.js";
 import { GLFramebuffer } from "../gl/glframebuffer.js";
+import { GLTextureCube } from "../gl/gltexturecube.js";
+import { GLImage } from "../gl/glimage.js";
+import { GLTexture2D } from "../gl/gltexture2d.js";
 
 export class ReflectionTexture extends CubeTexture {
   size:number
@@ -19,15 +22,26 @@ export class ReflectionTexture extends CubeTexture {
 
   constructor(size:number=256) {
     super(
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X, new Vec3(-1, 0, 0)) },
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, new Vec3(1, 0, 0)) },
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y, new Vec3(0, -1, 0)) },
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, new Vec3(0, 1, 0)) },
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z, new Vec3(0, 0, -1)) },
-      () => { this.drawTexture(WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, new Vec3(0, 0, 1)) },
+      new GLImage(null, {width:size, height:size}),
+      new GLImage(null, {width:size, height:size}),
+      new GLImage(null, {width:size, height:size}),
+      new GLImage(null, {width:size, height:size}),
+      new GLImage(null, {width:size, height:size}),
+      new GLImage(null, {width:size, height:size}),
     )
     this.size = size
-    this.framebuffer = new GLFramebuffer(this.size, this.size, WebGL2RenderingContext.TEXTURE_CUBE_MAP)
+    const texturecube = new GLTextureCube(
+      WebGL2RenderingContext.TEXTURE_CUBE_MAP, [
+        new GLImage(null, {width:size, height:size}),
+        new GLImage(null, {width:size, height:size}),
+        new GLImage(null, {width:size, height:size}),
+        new GLImage(null, {width:size, height:size}),
+        new GLImage(null, {width:size, height:size}),
+        new GLImage(null, {width:size, height:size}),
+      ], 
+      {magFilter:WebGL2RenderingContext.LINEAR, minFilter:WebGL2RenderingContext.LINEAR}
+    )
+    this.framebuffer = new GLFramebuffer(this.size, this.size, texturecube)
   }
 
   loadImage():Promise<any> {
@@ -41,24 +55,33 @@ export class ReflectionTexture extends CubeTexture {
     this.baseCamera = baseCamera
     this.context = context
     this.mesh = thisMesh
-this.context.context.clearColor.b = 1
   }
 
-  drawTexture(textureType:number, direction:Vec3) {
-    const camera = this.baseCamera.clone()
-
+  renderToTextures(renderer:Renderer) {
     this.mesh.hidden = true
+    this.scene.removeMesh(this.mesh)
 
-    camera.target = camera.position.clone().add(direction)
-
-    this.framebuffer.texture.type = textureType
-    this.framebuffer.updated = true
-    this.context.context.framebuffer = this.framebuffer
-
-    this.renderer.render(this.scene, camera, this.context)
+    const directions = new Map([
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_X, new Vec3(-1, 0, 0)],
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_X, new Vec3(1, 0, 0)],
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Y, new Vec3(0, -1, 0)],
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Y, new Vec3(0, 1, 0)],
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_NEGATIVE_Z, new Vec3(0, 0, -1)],
+      [WebGLRenderingContext.TEXTURE_CUBE_MAP_POSITIVE_Z, new Vec3(0, 0, 1)],
+    ])
+    directions.forEach((vec, type) => {
+      console.log("<<<<<<<")
+      const camera = this.baseCamera.clone()
+      camera.target = camera.position.clone().add(vec)
+      const texture = new GLTexture2D(type, new GLImage(null, {width:this.size, height:this.size}))
+      this.framebuffer.texture = texture
+      this.context.context.framebuffer = this.framebuffer
+      this.framebuffer.updated = true
+      this.renderer.render(this.scene, camera, this.context)
+    })
 
     this.context.context.framebuffer = null
     this.mesh.hidden = false
-
+    this.scene.addMesh(this.mesh)
   }
 }
