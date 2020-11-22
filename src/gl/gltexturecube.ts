@@ -2,7 +2,6 @@ import { GLImage, GLImageSource } from "./glimage.js"
 import { GLTexture, GLTextureParam } from "./gltexture.js"
 import { GL2Renderer } from "./gl2renderer.js"
 import { GLTexture2D } from "./gltexture2d.js"
-import { GLIndex } from "./glindex.js"
 
 export class GLTextureCube extends GLTexture {
   images:Map<number, GLImage | Function>
@@ -38,11 +37,12 @@ export class GLTextureCube extends GLTexture {
       if (image instanceof GLImage) {
         const texture = new GLTexture2D(type, image)
         texture.texture = this.texture
+        console.log("before setup fb", this.id)
         gl.setupFramebufferTexture(texture)
         if (gl.currentContext?.framebuffer) {
           gl.currentContext.framebuffer.updated = false
         }
-        gl.draw(gl.currentProgram!, gl.currentContext!)
+        gl.draw(gl.currentProgram!, gl.currentContext!, true)
       } else if (image instanceof Function) {
         // TODO
       }

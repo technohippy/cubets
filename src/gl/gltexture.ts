@@ -19,6 +19,7 @@ export abstract class GLTexture {
     //"maxAnisotropyExt"
   ])
 
+  id:string // TODO: use UUID
   texture?:WebGLTexture
   type:number
   params:Map<number, number>
@@ -27,6 +28,7 @@ export abstract class GLTexture {
   textureUnit:number = -1
 
   constructor(type:number, params:GLTextureParam={}) {
+    this.id = ("" + Math.ceil(Math.random() * 99999)).padStart(6, "0")
     this.type = type
     this.params = new Map()
     for (const [name, value] of Object.entries(params)) {

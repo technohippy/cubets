@@ -85,7 +85,9 @@ export class GL2Renderer {
 
     if (context.framebuffer !== this.lastFramebuffer) {
       this._debug("delete and setup framebuffer")
-      this.deleteFramebuffer(this.lastFramebuffer)
+      if (!keepFramebffer) {
+        this.deleteFramebuffer(this.lastFramebuffer)
+      }
       this.lastFramebuffer = context.framebuffer
       context.setupFramebuffer(this)
     } else if (context.framebuffer?.updated) {
