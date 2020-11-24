@@ -136,6 +136,7 @@ export class PhongScene extends Scene {
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
+      ${this.hasVertexColor() ? "#define VERTEXCOLOR" : ""}
 
       precision mediump float;
       precision mediump int;
@@ -154,7 +155,9 @@ export class PhongScene extends Scene {
 
       in vec3 aVertexPosition;
       in vec3 aVertexNormal;
+      #ifdef VERTEXCOLOR
       in vec4 aVertexColor;
+      #endif
 
       // for instance
       in vec3 aVertexOffset;
@@ -181,8 +184,11 @@ export class PhongScene extends Scene {
       out vec3 vEyeVector;
       out vec3 vLightNormal[numLights];
       out vec3 vLightVector[numLights];
-      out vec4 vVertexColor;
       out float vDepth;
+
+      #ifdef VERTEXCOLOR
+      out vec4 vVertexColor;
+      #endif
 
       #if defined(TEXTURE) || defined(NORMALTEXTURE)
       out vec2 vTextureCoords;
@@ -254,9 +260,11 @@ export class PhongScene extends Scene {
         }
         #endif
 
+        #ifdef VERTEXCOLOR
         if (uVertexColorMode) {
           vVertexColor = aVertexColor;
         }
+        #endif
 
         vDepth = -vertex.z;
 
@@ -278,6 +286,7 @@ export class PhongScene extends Scene {
       ${this.hasTexture() ? "#define TEXTURE" : ""}
       ${this.hasNormalTexture() ? "#define NORMALTEXTURE" : ""}
       ${this.hasCubeTexture() ? "#define CUBETEXTURE" : ""}
+      ${this.hasVertexColor() ? "#define VERTEXCOLOR" : ""}
 
       precision mediump float;
       precision mediump int;
@@ -336,8 +345,11 @@ export class PhongScene extends Scene {
       in vec3 vEyeVector;
       in vec3 vLightNormal[numLights];
       in vec3 vLightVector[numLights];
-      in vec4 vVertexColor;
       in float vDepth;
+      
+      #ifdef VERTEXCOLOR
+      in vec4 vVertexColor;
+      #endif
 
       #if defined(TEXTURE) || defined(NORMALTEXTURE)
       in vec2 vTextureCoords;
@@ -364,18 +376,23 @@ export class PhongScene extends Scene {
         }
 
         if (uWireframeMode) {
+          #ifdef VERTEXCOLOR
           if (uVertexColorMode) {
             fragColor = vVertexColor;
-          } else {
-            fragColor = uMaterialAmbient;
+            return;
           }
+          #endif
+
+          fragColor = uMaterialAmbient;
           return;
         }
 
+        #ifdef VERTEXCOLOR
         if (uVertexColorMode) {
           fragColor = vVertexColor;
           return;
         }
+        #endif
 
         if (uIgnoreLightingMode) {
           fragColor = uMaterialDiffuse;
@@ -455,7 +472,6 @@ export class PhongScene extends Scene {
     const config:GeometryConfig = {
       "vertices":new GLAttribute("aVertexPosition", 3, GL.FLOAT),
       "normals":new GLAttribute("aVertexNormal", 3, GL.FLOAT),
-      "colors":new GLAttribute("aVertexColor", 4, GL.FLOAT),
       //"offsets":new GLAttribute("aVertexOffset", 3, GL.FLOAT),
       //"quats":new GLAttribute("aVertexQuat", 4, GL.FLOAT),
     }
@@ -463,6 +479,7 @@ export class PhongScene extends Scene {
       config["uvs"] = new GLAttribute("aVertexTextureCoords", 2, GL.FLOAT)
     }
     if (this.hasVertexColor()) {
+      config["colors"] = new GLAttribute("aVertexColor", 4, GL.FLOAT)
       config["useVertexColor"] = new GLUniform("uVertexColorMode", "1i")
     }
     return config
