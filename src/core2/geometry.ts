@@ -9,9 +9,10 @@ import { Face3 } from "../math/face3.js";
 import { RGBAColor } from "../math/rgbacolor.js";
 import { Transform3 } from "../math/transform3.js";
 import { ToArray } from "../misc/toarray.js";
+import { GLUniform } from "../gl/gluniform.js";
 
-type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors"
-export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute}
+type GeometryConfigKey = "vertices" | "indices" | "normals" | "uvs" | "colors" | "useVertexColor"
+export type GeometryConfig = {[key in GeometryConfigKey]?:GLAttribute|GLUniform}
 
 export class Geometry {
   transform = new Transform3()

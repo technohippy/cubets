@@ -4,18 +4,21 @@ import { GLContext } from "../../gl/glcontext.js";
 import { GLBuffer } from "../../gl/glbuffer.js";
 import { ToArray } from "../../misc/toarray.js";
 import { GLIndex } from "../../gl/glindex.js";
+import { GLUniform } from "../../gl/gluniform.js";
 
 export class GeometryContext {
   verticesAttr?:GLAttribute
   normalsAttr?:GLAttribute
   uvsAttr?:GLAttribute
   colorsAttr?:GLAttribute
+  useVertexColor?:GLUniform
 
   constructor(config:GeometryConfig) {
-    this.verticesAttr = config["vertices"]
-    this.normalsAttr = config["normals"]
-    this.uvsAttr = config["uvs"]
-    this.colorsAttr = config["colors"]
+    this.verticesAttr = config["vertices"] as GLAttribute
+    this.normalsAttr = config["normals"] as GLAttribute
+    this.uvsAttr = config["uvs"] as GLAttribute
+    this.colorsAttr = config["colors"] as GLAttribute
+    this.useVertexColor = config["useVertexColor"] as GLUniform
   }
 
   upload(context:GLContext, geometry:Geometry) {
@@ -39,6 +42,10 @@ export class GeometryContext {
     if (this.colorsAttr) {
       this.colorsAttr.buffer = GLBuffer.f32(this.toArray(geometry.colors))
       context.addAttribute(this.colorsAttr)
+    }
+    if (this.useVertexColor) {
+      this.useVertexColor.updateValue(false)
+      context.addUniform(this.useVertexColor)
     }
   }
 
@@ -71,6 +78,7 @@ export class GeometryContext {
     }
     if (0 < geometry.colors.length) {
       this.colorsAttr?.updateBufferData(this.toArray(geometry.colors))
+      this.useVertexColor?.updateValue(true)
     }
   }
 

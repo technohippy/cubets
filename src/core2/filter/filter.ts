@@ -4,7 +4,6 @@ import { GLAttribute } from "../../gl/glattribute.js";
 import { GLUniform } from "../../gl/gluniform.js";
 import { GL2Renderer } from "../../gl/gl2renderer.js";
 import { GLContext } from "../../gl/glcontext.js";
-import { GLTexture } from "../../gl/gltexture.js";
 import { GLTexture2D } from "../../gl/gltexture2d.js";
 import { GLFramebuffer } from "../../gl/glframebuffer.js";
 

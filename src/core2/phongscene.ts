@@ -42,6 +42,21 @@ export class PhongScene extends Scene {
     }
   }
 
+  hasVertexColor():boolean {
+    const vertexColoredMesh = this.meshes.find(m => {
+      if (m.geometry) {
+        return 0 < m.geometry.colors.length
+      } else {
+        return false
+      }
+    })
+    if (vertexColoredMesh) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   clone():Scene {
     const scene = new PhongScene()
     scene.meshes = this.meshes
@@ -432,7 +447,6 @@ export class PhongScene extends Scene {
           float fogAmount = smoothstep(uFogNear, uFogFar, vDepth);
           fragColor = mix(fragColor, uFogColor, fogAmount);  
         }
-        //fragColor = vec4(1, 0, 0, 1);
       }
     `
   }
@@ -441,12 +455,15 @@ export class PhongScene extends Scene {
     const config:GeometryConfig = {
       "vertices":new GLAttribute("aVertexPosition", 3, GL.FLOAT),
       "normals":new GLAttribute("aVertexNormal", 3, GL.FLOAT),
-      //"colors":new GLAttribute("aVertexColor", 4, GL.FLOAT),
+      "colors":new GLAttribute("aVertexColor", 4, GL.FLOAT),
       //"offsets":new GLAttribute("aVertexOffset", 3, GL.FLOAT),
       //"quats":new GLAttribute("aVertexQuat", 4, GL.FLOAT),
     }
     if (this.hasTexture()) {
       config["uvs"] = new GLAttribute("aVertexTextureCoords", 2, GL.FLOAT)
+    }
+    if (this.hasVertexColor()) {
+      config["useVertexColor"] = new GLUniform("uVertexColorMode", "1i")
     }
     return config
   }
