@@ -100,6 +100,8 @@ export class Renderer {
       return
     }
 
+    // 鏡面反射用のコード（未完成）。有効にするとフィルタが適用されなくなる
+    /*
     if (!ignoreReflect) {
       scene.eachMesh((mesh, i) => {
         if (mesh.material?.cubeTexture instanceof ReflectionTexture) {
@@ -126,6 +128,7 @@ export class Renderer {
       })
       context.context.framebuffer = null
     }
+    */
 
     if (camera) {
       camera.setup(this)
