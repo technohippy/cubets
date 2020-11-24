@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cubets: Group</title>
+    <style>
+      canvas {
+        border:1px solid gray;
+      }
+      pre {
+        border:1px dotted gray;
+        width:600px;
+      }
+      .hljs-keyword { color: green; }
+    </style>
+    <link rel="stylesheet" href="../js/default.min.css">
+    <script src="../js/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../js/utils.js"></script>
+  </head>
+  <body>
+    <canvas id="cubets" width="600" height="400"></canvas>
+    <div id="code"></div><script>loadCode()</script>
+    <script type="module">
+      import Cubets from "../../dist/cubets2.js"
+
+      const scene = new Cubets.PhongScene()
+
+      const light = scene.createLight({
+        type:"directional",
+        direction:new Cubets.Vec3(0, 0, -1),
+        diffuseColor:new Cubets.RGBAColor(0.3, 0.3, 0.3),
+        ambientColor:new Cubets.RGBAColor(0.8, 0.8, 0.8),
+      })
+
+      const mesh1 = new Cubets.Mesh(
+        new Cubets.CubeGeometry(1, 4, 1),
+        scene.createMaterial({
+          diffuseColor:Cubets.RGBAColor.Red,
+        }),
+      )
+      mesh1.basePosition = new Cubets.Vec3(0, 2, 0)
+
+      const mesh2 = new Cubets.Mesh(
+        new Cubets.CubeGeometry(1, 6, 1),
+        scene.createMaterial({
+          diffuseColor:Cubets.RGBAColor.Green,
+        }),
+      )
+      mesh2.basePosition = new Cubets.Vec3(0, 3, 0)
+
+      const mesh3 = new Cubets.Mesh(
+        new Cubets.CubeGeometry(1, 8, 1),
+        scene.createMaterial({
+          diffuseColor:Cubets.RGBAColor.Blue,
+        }),
+      )
+      mesh3.basePosition = new Cubets.Vec3(0, 4, 0)
+
+      mesh1.add(mesh2, new Cubets.Vec3(0, -2, 0))
+      mesh2.add(mesh3, new Cubets.Vec3(0, -3, 0))
+
+      mesh1.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 45)
+      mesh2.rotation = Cubets.Quat.fromEulerDegrees(0, 0, -90)
+      mesh3.rotation = Cubets.Quat.fromEulerDegrees(0, 0, 90)
+
+      scene.add(mesh1)
+      scene.add(light)
+      //scene.add(new Cubets.Axis(5, new Cubets.Scene.Material()))
+
+      const camera = scene.createCamera({
+        type:"perspective",
+        fov:Math.PI/3,
+        near:0.1,
+        far:100,
+      })
+      camera.position.z = 10
+      camera.target = new Cubets.Vec3()
+
+      const control = new Cubets.OrbitCameraControl()
+      control.container = document.getElementById("cubets")
+      control.setCamera(camera)
+
+      const renderer = new Cubets.Renderer("#cubets")
+      renderer.renderLoop(scene, camera)
+
+      setInterval(() => {
+        mesh1.rotate(Math.PI/300, new Cubets.Vec3(0,1,0))
+        mesh2.rotate(Math.PI/200, new Cubets.Vec3(1,0,1))
+      }, 10)
+    </script>
+  </body>
+</html>
